@@ -2,8 +2,8 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles: {}
-last_built: 2022-12-16T10:44Z
+last_built: 2022-12-16T10:46Z
 urls:
-  reference: http://djnavarro.net/queue/reference
-  article: http://djnavarro.net/queue/articles
+  reference: http://queue.djnavarro.net/reference
+  article: http://queue.djnavarro.net/articles
 
