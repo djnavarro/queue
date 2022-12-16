@@ -39,5 +39,19 @@ test_that("Task event registration functions work", {
   task$register_task_assigned(worker_id = 666)
   expect_equal(task$get_task_state(), "assigned")
 
+  task$register_task_finished(results = "fake")
+  expect_equal(task$get_task_state(), "done")
+
+})
+
+test_that("Task retrieve returns tibble", {
+
+  task <- Task$new(fun = function() {2 + 2})
+  cols <- c("task_id", "worker_id", "state", "result", "runtime", "fun",
+            "args", "created", "enqueued", "assigned", "started", "finished",
+            "code", "message", "stdout", "stderr")
+
+  expect_s3_class(task$retrieve(), "tbl_df")
+  expect_named(task$retrieve(), cols)
 })
 
