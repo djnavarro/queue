@@ -19,8 +19,8 @@ TaskQueue <- R6::R6Class(
       private$tasks[[length(private$tasks) + 1L]] <- task
     },
 
-    run = function(verbose = FALSE, interval = 0.05) {
-      private$run_batch(verbose, interval)
+    run = function(verbose = FALSE, interval = 0.05, shutdown = TRUE) {
+      private$run_batch(verbose, interval, shutdown)
     },
 
     retrieve = function() {
@@ -34,7 +34,12 @@ TaskQueue <- R6::R6Class(
         state = unlist(lapply(private$tasks, function(x) x$get_task_state())),
         runtime = unlist(lapply(private$tasks, function(x) x$get_task_runtime()))
       )
+    },
+
+    get_queue_workers = function() {
+      private$workers
     }
+
   ),
 
   private = list(
@@ -101,7 +106,7 @@ TaskQueue <- R6::R6Class(
       cli::make_spinner(which = "dots2", template = "{spin} Queue")
     },
 
-    run_batch = function(verbose, interval) {
+    run_batch = function(verbose, interval, shutdown) {
       time_started <- Sys.time()
       spinner <- private$new_spinner()
       report <- self$get_queue_progress()
@@ -122,7 +127,8 @@ TaskQueue <- R6::R6Class(
       spinner$finish()
       time_finished <- Sys.time()
       private$update_final(report, time_started, time_finished)
-      return(invisible(self$retrieve()))
+      if(shutdown) private$workers$shutdown_pool()
+      return(self$retrieve())
     }
   )
 

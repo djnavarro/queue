@@ -56,6 +56,10 @@ WorkerPool <- R6::R6Class(
       if(length(fin)) {
         for(i in seq_len(fin)) private$workers[fin][[i]] <- Worker$new()
       }
+    },
+
+    shutdown_pool = function() {
+      lapply(private$workers, function(x) x$shutdown_worker())
     }
   ),
 

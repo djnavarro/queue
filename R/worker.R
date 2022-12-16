@@ -59,6 +59,10 @@ Worker <- R6::R6Class(
         }
       }
       invisible(FALSE)
+    },
+
+    shutdown_worker = function(grace = 1000) {
+      private$session$close(grace)
     }
   ),
 
