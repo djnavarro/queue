@@ -14,5 +14,6 @@ Imports:
     cli,
     R6,
     tibble
-URL: https://github.com/djnavarro/queue
+URL: https://github.com/djnavarro/queue,
+    http://djnavarro.net/queue/
 BugReports: https://github.com/djnavarro/queue/issues
