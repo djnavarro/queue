@@ -19,8 +19,8 @@ TaskQueue <- R6::R6Class(
       private$tasks[[length(private$tasks) + 1L]] <- task
     },
 
-    run = function(verbose = FALSE) {
-      private$run_batch(verbose)
+    run = function(verbose = FALSE, interval = 0.05) {
+      private$run_batch(verbose, interval)
     },
 
     retrieve = function() {
@@ -66,34 +66,42 @@ TaskQueue <- R6::R6Class(
       private$workers$try_start()
     },
 
-    message_spinner_progress = function(report) {
-      state <- report$state
-      paste(
-        "{spin} Queue progress:", sum(state == "waiting"), "waiting",
-        "\u1405", sum(state == "running"), "running", "\u1405",
-        sum(state == "done"), "done"
-      )
+    update_progress = function(report, last_report, spinner, verbose) {
+      if(verbose) {
+        done <- setdiff(
+          which(report$state == "done"),
+          which(last_report$state == "done")
+        )
+        if(length(done) > 0) {
+          spinner$finish()
+          for(id in done) {
+            msg <- paste("Task complete:", report$task_id[id], "(Time:",
+                         round(as.numeric(report$runtime[id]), 2), "seconds)")
+            cli::cli_alert(msg)
+          }
+          spinner <- private$new_spinner()
+        }
+      }
+      msg <- paste("{spin} Queue progress:", sum(report$state == "waiting"),
+                   "waiting", "\u1405", sum(report$state == "running"),
+                   "running", "\u1405", sum(report$state == "done"), "done")
+      spinner$spin(msg)
+      spinner
     },
 
-    message_batch_finished = function(report, start, stop) {
-      elapsed <- stop - start
+    update_final = function(report, time_started, time_finished) {
+      elapsed <- time_finished - time_started
       runtime <- round(as.numeric(elapsed), 2)
-      paste("Queue complete:", sum(report$state == "done"), "tasks done",
-            "(Total time:", runtime, "seconds)")
-    },
-
-    message_task_finished = function(report) {
-      paste(
-        "Task complete:", report$task_id, "(Time:",
-        round(as.numeric(report$runtime), 2), "seconds)"
-      )
+      msg <- paste("Queue complete:", sum(report$state == "done"),
+                   "tasks done", "(Total time:", runtime, "seconds)")
+      cli::cli_alert_success(msg)
     },
 
     new_spinner = function() {
       cli::make_spinner(which = "dots2", template = "{spin} Queue")
     },
 
-    run_batch = function(verbose) {
+    run_batch = function(verbose, interval) {
       time_started <- Sys.time()
       spinner <- private$new_spinner()
       report <- self$get_queue_progress()
@@ -101,28 +109,19 @@ TaskQueue <- R6::R6Class(
         last_report <- report
         private$schedule()
         report <- self$get_queue_progress()
-        if(verbose) {
-          done <- setdiff(
-            which(report$state == "done"),
-            which(last_report$state == "done")
-          )
-          if(length(done) > 0) {
-            spinner$finish()
-            for(id in done) {
-              cli::cli_alert(private$message_task_finished(report[id,]))
-            }
-            spinner <- private$new_spinner()
-          }
-        }
-        spinner$spin(private$message_spinner_progress(report))
-        if(sum(report$state %in% c("waiting", "running")) == 0) break
-        Sys.sleep(.05)
+        spinner <- private$update_progress(
+          report,
+          last_report,
+          spinner,
+          verbose
+        )
+        finished <- sum(report$state %in% c("waiting", "running")) == 0
+        if(finished) break
+        Sys.sleep(interval)
       }
       spinner$finish()
       time_finished <- Sys.time()
-      cli::cli_alert_success(
-        private$message_batch_finished(report, time_started, time_finished)
-      )
+      private$update_final(report, time_started, time_finished)
       return(invisible(self$retrieve()))
     }
   )
