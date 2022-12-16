@@ -7,6 +7,12 @@ Task <- R6::R6Class(
   classname = "Task",
   public = list(
 
+    #' @description Create a new task object.
+    #' @param fun The function to be called when the task executes.
+    #' @param args A list of arguments to be passed to the function (optional).
+    #' @param id A string specifying a unique task identifier (optional).
+    #' @param enqueue Should the task list itself as part of a queue (default = FALSE).
+    #' @return A new `Task` object.
     initialize = function(fun, args = NULL, id = NULL, enqueue = FALSE) {
       private$fun <- fun
       if(!is.null(args)) private$args <- args
@@ -15,6 +21,8 @@ Task <- R6::R6Class(
       if(enqueue) self$task_enqueue()
     },
 
+    #' @description Retrieve a tidy summary of the task state.
+    #' @return A tibble with one row
     retrieve = function() {
 
       out <- tibble::tibble(
@@ -47,49 +55,97 @@ Task <- R6::R6Class(
       out
     },
 
+    #' @description Retrieve the task function.
+    #' @return A function.
     get_task_fun = function() {
       private$fun
     },
 
+    #' @description Retrieve the task arguments
+    #' @return A list.
     get_task_args = function() {
       private$args
     },
 
+    #' @description Retrieve the task state.
+    #' @return A string specifying the current state of the task. Possible
+    #' values are "created" (task exists), "waiting" (task exists and is
+    #' waiting in a queue), "assigned" (task has been assigned to a worker
+    #' but has not yet started), "running" (task is running on a worker),
+    #' or "done" (task is completed and results have been assigned back
+    #' to the task object)
     get_task_state = function() {
       private$state
     },
 
+    #' @description Retrieve the task id.
+    #' @return A string containing the task identifier.
     get_task_id = function() {
       private$task_id
     },
 
+    #' @description Retrieve the task runtime.
+    #' @return If the task has completed, a difftime value. If the task has
+    #' yet to complete, a `NA` value is returned
     get_task_runtime = function() {
       if(private$state != "done") return(NA_real_)
       private$time_finished - private$time_started
     },
 
+    #' @description Register the task creation by updating internal storage.
+    #' This is intended to be called by `Worker` objects. Users should not
+    #' need to call it.
+    #' @return The function is called for its side-effects. Returns `NULL`
+    #' invisibly.
     task_create = function() {
       private$state <- "created"
       private$time_created <- Sys.time()
+      invisible(NULL)
     },
 
+    #' @description Register the addition of the task to a queue by updating
+    #' internal storage. This is intended to be called by `Worker` objects.
+    #' Users should not need to call it.
+    #' @return The function is called for its side-effects. Returns `NULL`
+    #' invisibly.
     task_enqueue = function() {
       private$state <- "waiting"
       private$time_enqueued <- Sys.time()
+      invisible(NULL)
     },
 
+    #' @description Register the assignment of a task to a worker by updating
+    #' internal storage. This is intended to be called by `Worker` objects.
+    #' Users should not need to call it.
+    #' @param worker_id Identifier for the worker to which the task is assigned.
+    #' @return The function is called for its side-effects. Returns `NULL`
+    #' invisibly.
     task_assign = function(worker_id) {
       private$state <- "assigned"
       private$worker_id <- worker_id
       private$time_assigned <- Sys.time()
+      invisible(NULL)
     },
 
+    #' @description Register the commencement of a task to a worker by updating
+    #' internal storage. This is intended to be called by `Worker` objects.
+    #' Users should not need to call it.
+    #' @param worker_id Identifier for the worker on which the task is starting.
+    #' @return The function is called for its side-effects. Returns `NULL`
+    #' invisibly.
     task_start = function(worker_id) {
       private$state <- "running"
       private$worker_id <- worker_id
       private$time_started <- Sys.time()
+      invisible(NULL)
     },
 
+    #' @description Register the finishing of a task to a worker by updating
+    #' internal storage. This is intended to be called by `Worker` objects.
+    #' Users should not need to call it.
+    #' @param results Results read from the R session.
+    #' @return The function is called for its side-effects. Returns `NULL`
+    #' invisibly.
     task_finish = function(results) {
       private$results <- results
       private$state <- "done"
