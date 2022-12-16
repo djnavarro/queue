@@ -81,9 +81,9 @@ Worker <- R6::R6Class(
       invisible(FALSE)
     },
 
-    #' @description Attempt to finish a running task. This method checks to see
-    #' if the worker has a running task, and if so polls the R session to
-    #' determine if the R process is ready to return. If there is a
+    #' @description Attempt to finish a running task politely. This method checks
+    #' to see if the worker has a running task, and if so polls the R session to
+    #' determine if the R process claims to be ready to return. If there is a
     #' ready-to-return task the results are read from the R process and returned
     #' to the `Task` object. The task status is updated, and then unassigned
     #' from the `Worker`. This method is intended to be called by a `WorkerPool`
@@ -92,13 +92,25 @@ Worker <- R6::R6Class(
     #' @return Invisibly returns `TRUE` or `FALSE`, depending on whether the
     #' attempt was successful.
     try_finish = function(timeout = 0) {
-      if(!is.null(private$task) && private$task$get_task_state() == "running") {
-        if(private$session$poll_process(timeout) == "ready") {
+
+      # if the worker does not have a task, don't try
+      if(is.null(private$task)) return(invisible(FALSE))
+
+      # if the session claims to be busy and the task claims to be running,
+      # we poll politely and only read out the result if the process signals
+      # that it is ready
+      is_running <- private$task$get_task_state() == "running"
+      is_busy <- private$session$get_state() == "busy"
+      if(is_running && is_busy) {
+        is_ready <- private$session$poll_process(timeout) == "ready"
+        if(is_ready) {
           private$task$register_task_finished(private$session$read())
           private$task <- NULL
           return(invisible(TRUE))
         }
       }
+
+
       invisible(FALSE)
     },
 
