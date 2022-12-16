@@ -69,3 +69,21 @@ test_that("Worker objects can work with tasks", {
   expect_equal(class(out$stderr), "list")
 
 })
+
+test_that("Workers can handle session crashes", {
+
+  crash <- function(){.Call("abort")}
+  bad_task <- Task$new(crash)
+  worker <- Worker$new()
+
+  worker$try_assign(bad_task)
+  worker$try_start()
+  worker$try_finish()
+
+  expect_equal(bad_task$get_task_state(), "done")
+  expect_equal(worker$get_worker_state(), "finished")
+
+  out <- bad_task$retrieve()
+  expect_equal(out$code, 501)
+
+})
