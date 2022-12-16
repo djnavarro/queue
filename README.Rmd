@@ -30,10 +30,22 @@ remotes::install_github("djnavarro/queue")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem...
+This is a basic example:
 
 ```{r example}
 library(queue)
-## basic example code
+queue <- TaskQueue$new(workers = 6)
+random_wait <- function() {
+  Sys.sleep(runif(1, min = 0, max = 5))
+  Sys.time()
+}
+for(i in 1:20) queue$push(random_wait)
+out <- queue$run(verbose = TRUE)
+```
+
+The output is stored in a tibble:
+
+```{r example-output}
+out
 ```
 
