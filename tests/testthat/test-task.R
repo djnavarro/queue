@@ -39,6 +39,9 @@ test_that("Task event registration functions work", {
   task$register_task_assigned(worker_id = 666)
   expect_equal(task$get_task_state(), "assigned")
 
+  task$register_task_started(worker_id = 666)
+  expect_equal(task$get_task_state(), "running")
+
   task$register_task_finished(results = "fake")
   expect_equal(task$get_task_state(), "done")
 
