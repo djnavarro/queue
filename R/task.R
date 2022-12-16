@@ -63,6 +63,11 @@ Task <- R6::R6Class(
       private$task_id
     },
 
+    get_task_runtime = function() {
+      if(private$state != "done") return(NA_real_)
+      private$time_finished - private$time_started
+    },
+
     task_create = function() {
       private$state <- "created"
       private$time_created <- Sys.time()
