@@ -47,7 +47,7 @@ TaskQueue <- R6::R6Class(
     get_next_id = function() {
       id <- private$next_id
       private$next_id <- id + 1L
-      paste0(".", id)
+      paste0("task_", id)
     },
 
     get_waiting_tasks = function() {
@@ -75,8 +75,8 @@ TaskQueue <- R6::R6Class(
         if(length(done) > 0) {
           spinner$finish()
           for(id in done) {
-            msg <- paste("Task complete:", report$task_id[id], "(Time:",
-                         round(as.numeric(report$runtime[id]), 2), "seconds)")
+            msg <- paste0("Task done: ", report$task_id[id], " (",
+                         round(as.numeric(report$runtime[id]), 2), "s)")
             cli::cli_alert(msg)
           }
           spinner <- private$new_spinner()
@@ -92,8 +92,8 @@ TaskQueue <- R6::R6Class(
     update_final = function(report, time_started, time_finished) {
       elapsed <- time_finished - time_started
       runtime <- round(as.numeric(elapsed), 2)
-      msg <- paste("Queue complete:", sum(report$state == "done"),
-                   "tasks done", "(Total time:", runtime, "seconds)")
+      msg <- paste0("Queue complete: ", sum(report$state == "done"),
+                   " tasks done", " (", runtime, "s)")
       cli::cli_alert_success(msg)
     },
 
