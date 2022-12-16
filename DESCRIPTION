@@ -1,0 +1,16 @@
+Package: queue
+Title: Simple Multi-Threaded Task Queuing
+Version: 0.0.0.9000
+Authors@R: 
+    person("Danielle", "Navarro", , "djnavarro@protonmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-7648-6578"))
+Description: Implements a simple multi-threaded task queue using R6 classes.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: 
+    callr,
+    cli,
+    R6,
+    tibble
