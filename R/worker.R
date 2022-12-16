@@ -56,7 +56,7 @@ Worker <- R6::R6Class(
     try_assign = function(task) {
       if(is.null(private$task)) {
         private$task <- task
-        private$task$register_task_assigned(self$id)
+        private$task$register_task_assigned(private$worker_id)
         return(invisible(TRUE))
       }
       invisible(FALSE)
@@ -75,7 +75,7 @@ Worker <- R6::R6Class(
           private$task$get_task_fun(),
           private$task$get_task_args()
         )
-        private$task$register_task_started(self$id)
+        private$task$register_task_started(private$worker_id)
         return(invisible(TRUE))
       }
       invisible(FALSE)

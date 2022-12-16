@@ -12,9 +12,9 @@ Task <- R6::R6Class(
     #' @param args A list of arguments to be passed to the function (optional).
     #' @param id A string specifying a unique task identifier (optional).
     #' @return A new `Task` object.
-    initialize = function(fun, args = NULL, id = NULL) {
+    initialize = function(fun, args = list(), id = NULL) {
       private$fun <- fun
-      if(!is.null(args)) private$args <- args
+      private$args <- args
       if(!is.null(id)) private$task_id <- id
       self$register_task_created()
     },
@@ -30,7 +30,7 @@ Task <- R6::R6Class(
         result = list(NULL),
         runtime = NA_real_,
         fun = list(private$fun),
-        args = ifelse(length(args) == 1, list(NULL), args),
+        args = list(private$args),
         created = private$time_created,
         queued = private$time_queued,
         assigned = private$time_assigned,
@@ -153,8 +153,8 @@ Task <- R6::R6Class(
 
   private = list(
     fun = NULL,
-    args = list(NULL),
-    results = list(NULL),
+    args = NULL,
+    results = NULL,
     task_id = NA_character_,
     worker_id = NA_character_,
     state = NA_character_,
