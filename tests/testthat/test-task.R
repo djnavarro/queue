@@ -25,3 +25,19 @@ test_that("Task constituents are retrieved", {
   expect_equal(task$get_task_runtime(), NA_real_)
 })
 
+test_that("Task event registration functions work", {
+
+  fun <- function(x, y) {(2 + x) * y}
+  args <- list(x = 1, y = 2)
+  id <- "arith"
+  task <- Task$new(fun, args, id)
+  expect_equal(task$get_task_state(), "created")
+
+  task$register_task_queued()
+  expect_equal(task$get_task_state(), "waiting")
+
+  task$register_task_assigned(worker_id = 666)
+  expect_equal(task$get_task_state(), "assigned")
+
+})
+

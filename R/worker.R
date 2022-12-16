@@ -56,7 +56,7 @@ Worker <- R6::R6Class(
     try_assign = function(task) {
       if(is.null(private$task)) {
         private$task <- task
-        private$task$task_assign(self$id)
+        private$task$register_task_assigned(self$id)
         return(invisible(TRUE))
       }
       invisible(FALSE)
@@ -75,7 +75,7 @@ Worker <- R6::R6Class(
           private$task$get_task_fun(),
           private$task$get_task_args()
         )
-        private$task$task_start(self$id)
+        private$task$register_task_started(self$id)
         return(invisible(TRUE))
       }
       invisible(FALSE)
@@ -94,7 +94,7 @@ Worker <- R6::R6Class(
     try_finish = function(timeout = 0) {
       if(!is.null(private$task) && private$task$get_task_state() == "running") {
         if(private$session$poll_process(timeout) == "ready") {
-          private$task$task_finish(private$session$read())
+          private$task$register_task_finished(private$session$read())
           private$task <- NULL
           return(invisible(TRUE))
         }

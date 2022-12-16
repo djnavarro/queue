@@ -25,7 +25,8 @@ TaskQueue <- R6::R6Class(
     #' @return Invisibly returns the `Task` object
     push = function(fun, args = list(), id = NULL) {
       if (is.null(id)) id <- private$get_next_id()
-      task <- Task$new(fun, args, id, enqueue = TRUE)
+      task <- Task$new(fun, args, id)
+      task$register_task_queued()
       private$tasks[[length(private$tasks) + 1L]] <- task
       invisible(task)
     },
