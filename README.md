@@ -13,7 +13,7 @@ The queue package allows you to create multi-threaded tasks queues
 You can install the development version of queue like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+remotes::install_github("djnavarro/queue")
 ```
 
 ## Example
