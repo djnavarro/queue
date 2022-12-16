@@ -12,18 +12,28 @@ WorkerPool <- R6::R6Class(
   public = list(
 
     initialize = function(workers = 4L) {
-      for(i in seq_len(workers)) self$pool[[i]] <- Worker$new()
+      for(i in seq_len(workers)) private$workers[[i]] <- Worker$new()
     },
 
-    pool = list(),
+    get_pool_worker = function(ind) {
+      private$workers[[ind]]
+    },
+
+    get_pool_state = function() {
+      vapply(
+        private$workers,
+        function(x) x$get_worker_state(),
+        character(1)
+      )
+    },
 
     try_assign = function(tasks) {
-      n_workers <- length(self$pool)
+      n_workers <- length(private$workers)
       n_tasks <- length(tasks)
       w <- 1
       t <- 1
       while(n_workers > 0 & n_tasks > 0) {
-        assigned <- self$pool[[w]]$try_assign(tasks[[t]])
+        assigned <- private$workers[[w]]$try_assign(tasks[[t]])
         w <- w + 1
         n_workers <- n_workers - 1
         if(assigned) {
@@ -34,22 +44,22 @@ WorkerPool <- R6::R6Class(
     },
 
     try_start = function() {
-      lapply(self$pool, function(x) x$try_start())
+      lapply(private$workers, function(x) x$try_start())
     },
 
     try_finish = function() {
-      lapply(self$pool, function(x) x$try_finish())
+      lapply(private$workers, function(x) x$try_finish())
     },
 
     refill_pool = function() {
-      fin <- which(self$state == "finished")
+      fin <- which(self$get_pool_state() == "finished")
       if(length(fin)) {
-        for(i in seq_len(fin)) self$pool[fin][[i]] <- Worker$new()
+        for(i in seq_len(fin)) private$workers[fin][[i]] <- Worker$new()
       }
     }
   ),
 
-  active = list(
-    state = function() vapply(self$pool, function(x) x$state, character(1))
+  private = list(
+    workers = list()
   )
 )
