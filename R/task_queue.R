@@ -7,39 +7,40 @@ TaskQueue <- R6::R6Class(
   classname = "TaskQueue",
 
   public = list(
-    workers = NULL,
-    tasks = list(),
-    actions = list(),
-    initialize = function(workers = 4) {
-      if(inherits(workers, "WorkerPool")) {
-        self$workers <- workers
-      } else {
-        self$workers <- WorkerPool$new(workers)
-      }
+
+    initialize = function(workers = 4L) {
+      if (inherits(workers, "WorkerPool")) private$workers <- workers
+      else private$workers <- WorkerPool$new(workers)
     },
+
     push = function(fun, args = list(), id = NULL) {
-      if(is.null(id)) id <- private$get_next_id()
-      self$tasks[[self$num_tasks + 1]] <- Task$new(fun, args, id, enqueue = TRUE)
+      if (is.null(id)) id <- private$get_next_id()
+      task <- Task$new(fun, args, id, enqueue = TRUE)
+      private$tasks[[length(private$tasks) + 1L]] <- task
     },
+
     run = function(verbose = FALSE) {
       private$run_batch(verbose)
     },
-    retrieve = function() {
-      out <- lapply(self$tasks, function(x) x$retrieve())
-      do.call(rbind, out)
-    }
-  ),
 
-  active = list(
-    num_tasks = function() length(self$tasks),
-    state = function() {
-      s <- unlist(lapply(self$tasks, function(x) x$get_task_state()))
-      names(s) <- unlist(lapply(self$tasks, function(x) x$task_id))
-      s
+    retrieve = function() {
+      out <- lapply(private$tasks, function(x) x$retrieve())
+      do.call(rbind, out)
+    },
+
+    get_queue_progress = function() {
+      tibble::tibble(
+        task_id = unlist(lapply(private$tasks, function(x) x$get_task_id())),
+        state = unlist(lapply(private$tasks, function(x) x$get_task_state())),
+        runtime = unlist(lapply(private$tasks, function(x) x$get_task_runtime()))
+      )
     }
   ),
 
   private = list(
+
+    workers = NULL,
+    tasks = list(),
 
     next_id = 1L,
 
@@ -49,26 +50,24 @@ TaskQueue <- R6::R6Class(
       paste0(".", id)
     },
 
-    # these feel like hacks: get rid of it when we have a proper tibble
-    get_task_by_id = function(id) {
-      ind <- which(unlist(lapply(self$tasks, function(x) x$task_id == id)))
-      self$tasks[[ind]]
-    },
     get_waiting_tasks = function() {
-      waiting <- vapply(self$tasks, function(x) x$get_task_state() == "waiting", logical(1))
-      self$tasks[waiting]
+      waiting <- vapply(
+        private$tasks,
+        function(x) x$get_task_state() == "waiting",
+        logical(1)
+      )
+      private$tasks[waiting]
     },
 
     schedule = function() {
-      out <- list()
-      out$try_finish  <- self$workers$try_finish()
-      out$refill_pool <- self$workers$refill_pool()
-      out$try_assign  <- self$workers$try_assign(private$get_waiting_tasks())
-      out$try_start   <- self$workers$try_start()
-      invisible(out)
+      private$workers$try_finish()
+      private$workers$refill_pool()
+      private$workers$try_assign(private$get_waiting_tasks())
+      private$workers$try_start()
     },
 
-    message_spinner_progress = function(state) {
+    message_spinner_progress = function(report) {
+      state <- report$state
       paste(
         "{spin} Queue progress:", sum(state == "waiting"), "waiting",
         "\u1405", sum(state == "running"), "running", "\u1405",
@@ -76,16 +75,18 @@ TaskQueue <- R6::R6Class(
       )
     },
 
-    message_batch_finished = function(state, time_elapsed) {
-      runtime <- round(as.numeric(time_elapsed), 2)
-      paste("Queue complete:", sum(state == "done"), "tasks done",
+    message_batch_finished = function(report, start, stop) {
+      elapsed <- stop - start
+      runtime <- round(as.numeric(elapsed), 2)
+      paste("Queue complete:", sum(report$state == "done"), "tasks done",
             "(Total time:", runtime, "seconds)")
     },
 
-    message_task_finished = function(id) {
-      task <- private$get_task_by_id(id)
-      runtime <- round(as.numeric(task$time_elapsed), 2)
-      paste("Task complete:", id, "(Time:", runtime, "seconds)")
+    message_task_finished = function(report) {
+      paste(
+        "Task complete:", report$task_id, "(Time:",
+        round(as.numeric(report$runtime), 2), "seconds)"
+      )
     },
 
     new_spinner = function() {
@@ -95,34 +96,35 @@ TaskQueue <- R6::R6Class(
     run_batch = function(verbose) {
       time_started <- Sys.time()
       spinner <- private$new_spinner()
-      if(verbose) {
-        state <- self$state
-        done_before <- names(which(state == "done"))
-      }
+      report <- self$get_queue_progress()
       repeat{
+        last_report <- report
         private$schedule()
-        state <- self$state
+        report <- self$get_queue_progress()
         if(verbose) {
-          done_now <- names(which(state == "done"))
-          done_just_now <- setdiff(done_now, done_before)
-          if(length(done_just_now)) {
-            done_before <- done_now
+          done <- setdiff(
+            which(report$state == "done"),
+            which(last_report$state == "done")
+          )
+          if(length(done) > 0) {
             spinner$finish()
-            for(id in done_just_now) {
-              cli::cli_alert(private$message_task_finished(id))
+            for(id in done) {
+              cli::cli_alert(private$message_task_finished(report[id,]))
             }
             spinner <- private$new_spinner()
           }
         }
-        spinner$spin(private$message_spinner_progress(state))
-        if(sum(state %in% c("waiting", "running")) == 0) break
+        spinner$spin(private$message_spinner_progress(report))
+        if(sum(report$state %in% c("waiting", "running")) == 0) break
         Sys.sleep(.05)
       }
       spinner$finish()
       time_finished <- Sys.time()
-      time_elapsed <- time_finished - time_started
-      cli::cli_alert_success(private$message_batch_finished(state, time_elapsed))
+      cli::cli_alert_success(
+        private$message_batch_finished(report, time_started, time_finished)
+      )
       return(invisible(self$retrieve()))
     }
   )
+
 )
