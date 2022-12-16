@@ -10,10 +10,24 @@ Worker <- R6::R6Class(
     initialize = function() {
       private$session <- callr::r_session$new(wait = FALSE)
       private$session$initialize()
-      self$id <- private$session$get_pid()
+      private$worker_id <- private$session$get_pid()
     },
 
-    id = NULL,
+    get_worker_id = function() {
+      private$worker_id
+    },
+
+    get_worker_state = function() {
+      private$session$get_state()
+    },
+
+    get_worker_task = function() {
+      private$task
+    },
+
+    get_worker_session = function() {
+      private$session
+    },
 
     try_assign = function(task) {
       if(is.null(private$task)) {
@@ -48,12 +62,9 @@ Worker <- R6::R6Class(
     }
   ),
 
-  active = list(
-    state = function() private$session$get_state()
-  ),
-
   private = list(
     task = NULL,
+    worker_id = NULL,
     session = NULL
   )
 )
