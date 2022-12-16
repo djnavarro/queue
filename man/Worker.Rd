@@ -4,6 +4,11 @@
 \alias{Worker}
 \title{R6 class storing a worker}
 \description{
+R6 class storing a worker
+
+R6 class storing a worker
+}
+\details{
 A Worker is a container that holds a callr rsession object, and possesses
 fields and methods that allow it to work on Tasks
 }
@@ -11,9 +16,14 @@ fields and methods that allow it to work on Tasks
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-Worker-new}{\code{Worker$new()}}
+\item \href{#method-Worker-get_worker_id}{\code{Worker$get_worker_id()}}
+\item \href{#method-Worker-get_worker_state}{\code{Worker$get_worker_state()}}
+\item \href{#method-Worker-get_worker_task}{\code{Worker$get_worker_task()}}
+\item \href{#method-Worker-get_worker_session}{\code{Worker$get_worker_session()}}
 \item \href{#method-Worker-try_assign}{\code{Worker$try_assign()}}
 \item \href{#method-Worker-try_start}{\code{Worker$try_start()}}
 \item \href{#method-Worker-try_finish}{\code{Worker$try_finish()}}
+\item \href{#method-Worker-shutdown_worker}{\code{Worker$shutdown_worker()}}
 \item \href{#method-Worker-clone}{\code{Worker$clone()}}
 }
 }
@@ -21,37 +31,160 @@ fields and methods that allow it to work on Tasks
 \if{html}{\out{<a id="method-Worker-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Worker-new}{}}}
 \subsection{Method \code{new()}}{
+Create a new worker object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Worker$new()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A new \code{Worker} object.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Worker-get_worker_id"></a>}}
+\if{latex}{\out{\hypertarget{method-Worker-get_worker_id}{}}}
+\subsection{Method \code{get_worker_id()}}{
+Retrieve the worker identifier.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Worker$get_worker_id()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+The worker identifier (also the pid for the R process)
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Worker-get_worker_state"></a>}}
+\if{latex}{\out{\hypertarget{method-Worker-get_worker_state}{}}}
+\subsection{Method \code{get_worker_state()}}{
+Retrieve the worker state.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Worker$get_worker_state()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A string specifying the current state of the task. Possible
+values are "starting" (the R session is starting up), "idle" (the R
+session is ready to compute), "busy" (the R session is computing), and
+"finished" (the R session has terminated). Importantly, note that a task
+function that is still running and a task function that is essentially
+finished and waiting to return will both return "busy". To distinguish
+between these two cases you need to use the \code{poll_process()} method of
+a \code{callr::rsession}, as returned by \code{get_worker_session()}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Worker-get_worker_task"></a>}}
+\if{latex}{\out{\hypertarget{method-Worker-get_worker_task}{}}}
+\subsection{Method \code{get_worker_task()}}{
+Retrieve the task assigned to the worker.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Worker$get_worker_task()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+The \code{Task} object currently assigned to this \code{Worker}, or \code{NULL}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Worker-get_worker_session"></a>}}
+\if{latex}{\out{\hypertarget{method-Worker-get_worker_session}{}}}
+\subsection{Method \code{get_worker_session()}}{
+Retrieve the R session linked to the worker
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Worker$get_worker_session()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+An R session object, see \code{callr::r_session}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Worker-try_assign"></a>}}
 \if{latex}{\out{\hypertarget{method-Worker-try_assign}{}}}
 \subsection{Method \code{try_assign()}}{
+Attempt to assign a task to this worker. This method checks
+that the task and the worker are both in an appropriate state. If they
+are, both objects register their connection to the other. This method is
+intended to be called by a \code{WorkerPool} or a \code{TaskQueue}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Worker$try_assign(task)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{task}}{A \code{Task} object corresponding to the to-be-assigned task.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Invisibly returns \code{TRUE} or \code{FALSE}, depending on whether the
+attempt was successful.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Worker-try_start"></a>}}
 \if{latex}{\out{\hypertarget{method-Worker-try_start}{}}}
 \subsection{Method \code{try_start()}}{
+Attempt to start the task. This method checks to see if the
+that worker has an assigned task, and if so starts it running within the
+R session. It also registers the change of status within the \code{Task}
+object itself. This method is intended to be called by a \code{WorkerPool}
+or a \code{TaskQueue}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Worker$try_start()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Invisibly returns \code{TRUE} or \code{FALSE}, depending on whether the
+attempt was successful.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Worker-try_finish"></a>}}
 \if{latex}{\out{\hypertarget{method-Worker-try_finish}{}}}
 \subsection{Method \code{try_finish()}}{
+Attempt to finish a running task. This method checks to see
+if the worker has a running task, and if so polls the R session to
+determine if the R process is ready to return. If there is a
+ready-to-return task the results are read from the R process and returned
+to the \code{Task} object. The task status is updated, and then unassigned
+from the \code{Worker}. This method is intended to be called by a \code{WorkerPool}
+or a \code{TaskQueue}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Worker$try_finish(timeout = 0)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{timeout}}{Length of time to wait when process is polled (default = 0)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Invisibly returns \code{TRUE} or \code{FALSE}, depending on whether the
+attempt was successful.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Worker-shutdown_worker"></a>}}
+\if{latex}{\out{\hypertarget{method-Worker-shutdown_worker}{}}}
+\subsection{Method \code{shutdown_worker()}}{
+Attempt to shut down the R session gracefully
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Worker$shutdown_worker(grace = 1000)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grace}}{Grace period in milliseconds. If the process is still
+running after this period, it will be killed.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Worker-clone"></a>}}

@@ -4,6 +4,11 @@
 \alias{Task}
 \title{R6 class storing a task}
 \description{
+R6 class storing a task
+
+R6 class storing a task
+}
+\details{
 A task is a container that holds a function and arguments, and eventually
 the results of that function when called. Various metadata fields are stored.
 }
@@ -15,6 +20,8 @@ the results of that function when called. Various metadata fields are stored.
 \item \href{#method-Task-get_task_fun}{\code{Task$get_task_fun()}}
 \item \href{#method-Task-get_task_args}{\code{Task$get_task_args()}}
 \item \href{#method-Task-get_task_state}{\code{Task$get_task_state()}}
+\item \href{#method-Task-get_task_id}{\code{Task$get_task_id()}}
+\item \href{#method-Task-get_task_runtime}{\code{Task$get_task_runtime()}}
 \item \href{#method-Task-task_create}{\code{Task$task_create()}}
 \item \href{#method-Task-task_enqueue}{\code{Task$task_enqueue()}}
 \item \href{#method-Task-task_assign}{\code{Task$task_assign()}}
@@ -27,91 +34,212 @@ the results of that function when called. Various metadata fields are stored.
 \if{html}{\out{<a id="method-Task-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Task-new}{}}}
 \subsection{Method \code{new()}}{
+Create a new task object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$new(fun, args = NULL, id = NULL, enqueue = FALSE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fun}}{The function to be called when the task executes.}
+
+\item{\code{args}}{A list of arguments to be passed to the function (optional).}
+
+\item{\code{id}}{A string specifying a unique task identifier (optional).}
+
+\item{\code{enqueue}}{Should the task list itself as part of a queue (default = FALSE).}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new \code{Task} object.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Task-retrieve"></a>}}
 \if{latex}{\out{\hypertarget{method-Task-retrieve}{}}}
 \subsection{Method \code{retrieve()}}{
+Retrieve a tidy summary of the task state.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$retrieve()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A tibble with one row
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Task-get_task_fun"></a>}}
 \if{latex}{\out{\hypertarget{method-Task-get_task_fun}{}}}
 \subsection{Method \code{get_task_fun()}}{
+Retrieve the task function.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$get_task_fun()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A function.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Task-get_task_args"></a>}}
 \if{latex}{\out{\hypertarget{method-Task-get_task_args}{}}}
 \subsection{Method \code{get_task_args()}}{
+Retrieve the task arguments
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$get_task_args()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A list.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Task-get_task_state"></a>}}
 \if{latex}{\out{\hypertarget{method-Task-get_task_state}{}}}
 \subsection{Method \code{get_task_state()}}{
+Retrieve the task state.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$get_task_state()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A string specifying the current state of the task. Possible
+values are "created" (task exists), "waiting" (task exists and is
+waiting in a queue), "assigned" (task has been assigned to a worker
+but has not yet started), "running" (task is running on a worker),
+or "done" (task is completed and results have been assigned back
+to the task object)
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Task-get_task_id"></a>}}
+\if{latex}{\out{\hypertarget{method-Task-get_task_id}{}}}
+\subsection{Method \code{get_task_id()}}{
+Retrieve the task id.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Task$get_task_id()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A string containing the task identifier.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Task-get_task_runtime"></a>}}
+\if{latex}{\out{\hypertarget{method-Task-get_task_runtime}{}}}
+\subsection{Method \code{get_task_runtime()}}{
+Retrieve the task runtime.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Task$get_task_runtime()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+If the task has completed, a difftime value. If the task has
+yet to complete, a \code{NA} value is returned
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Task-task_create"></a>}}
 \if{latex}{\out{\hypertarget{method-Task-task_create}{}}}
 \subsection{Method \code{task_create()}}{
+Register the task creation by updating internal storage.
+This is intended to be called by \code{Worker} objects. Users should not
+need to call it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$task_create()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+The function is called for its side-effects. Returns \code{NULL}
+invisibly.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Task-task_enqueue"></a>}}
 \if{latex}{\out{\hypertarget{method-Task-task_enqueue}{}}}
 \subsection{Method \code{task_enqueue()}}{
+Register the addition of the task to a queue by updating
+internal storage. This is intended to be called by \code{Worker} objects.
+Users should not need to call it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$task_enqueue()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+The function is called for its side-effects. Returns \code{NULL}
+invisibly.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Task-task_assign"></a>}}
 \if{latex}{\out{\hypertarget{method-Task-task_assign}{}}}
 \subsection{Method \code{task_assign()}}{
+Register the assignment of a task to a worker by updating
+internal storage. This is intended to be called by \code{Worker} objects.
+Users should not need to call it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$task_assign(worker_id)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{worker_id}}{Identifier for the worker to which the task is assigned.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The function is called for its side-effects. Returns \code{NULL}
+invisibly.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Task-task_start"></a>}}
 \if{latex}{\out{\hypertarget{method-Task-task_start}{}}}
 \subsection{Method \code{task_start()}}{
+Register the commencement of a task to a worker by updating
+internal storage. This is intended to be called by \code{Worker} objects.
+Users should not need to call it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$task_start(worker_id)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{worker_id}}{Identifier for the worker on which the task is starting.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The function is called for its side-effects. Returns \code{NULL}
+invisibly.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Task-task_finish"></a>}}
 \if{latex}{\out{\hypertarget{method-Task-task_finish}{}}}
 \subsection{Method \code{task_finish()}}{
+Register the finishing of a task to a worker by updating
+internal storage. This is intended to be called by \code{Worker} objects.
+Users should not need to call it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$task_finish(results)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{results}}{Results read from the R session.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The function is called for its side-effects. Returns \code{NULL}
+invisibly.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Task-clone"></a>}}

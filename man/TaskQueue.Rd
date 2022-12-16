@@ -4,6 +4,11 @@
 \alias{TaskQueue}
 \title{R6 class for a multi-worker task queue}
 \description{
+R6 class for a multi-worker task queue
+
+R6 class for a multi-worker task queue
+}
+\details{
 Documentation baby...
 }
 \section{Methods}{
@@ -13,6 +18,8 @@ Documentation baby...
 \item \href{#method-TaskQueue-push}{\code{TaskQueue$push()}}
 \item \href{#method-TaskQueue-run}{\code{TaskQueue$run()}}
 \item \href{#method-TaskQueue-retrieve}{\code{TaskQueue$retrieve()}}
+\item \href{#method-TaskQueue-get_queue_report}{\code{TaskQueue$get_queue_report()}}
+\item \href{#method-TaskQueue-get_queue_workers}{\code{TaskQueue$get_queue_workers()}}
 \item \href{#method-TaskQueue-clone}{\code{TaskQueue$clone()}}
 }
 }
@@ -20,37 +27,123 @@ Documentation baby...
 \if{html}{\out{<a id="method-TaskQueue-new"></a>}}
 \if{latex}{\out{\hypertarget{method-TaskQueue-new}{}}}
 \subsection{Method \code{new()}}{
+Create a task queue
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TaskQueue$new(workers = 4)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TaskQueue$new(workers = 4L)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{workers}}{Either the number of workers to employ in the task queue,
+or a \code{WorkerPool} object to use when deploying the tasks.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new \code{TaskQueue} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TaskQueue-push"></a>}}
 \if{latex}{\out{\hypertarget{method-TaskQueue-push}{}}}
 \subsection{Method \code{push()}}{
+Adds a task to the queue
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TaskQueue$push(fun, args = list(), id = NULL)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fun}}{The function to be called when the task is scheduled}
+
+\item{\code{args}}{A list of arguments to be passed to the task function (optional)}
+
+\item{\code{id}}{A string specifying a unique identifier for the task (optional: tasks
+will be named "task_1", "task_2", etc if this is unspecified)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Invisibly returns the \code{Task} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TaskQueue-run"></a>}}
 \if{latex}{\out{\hypertarget{method-TaskQueue-run}{}}}
 \subsection{Method \code{run()}}{
+Execute tasks in parallel using the worker pool, assigning
+tasks to workers in the same order in which they were added to the queue
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TaskQueue$run(verbose = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TaskQueue$run(verbose = FALSE, interval = 0.05, shutdown = TRUE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{verbose}}{Should the queue be chatty and report on every task
+completion? Defaults to \code{TRUE}. If set to \code{FALSE}, only a spinner will
+be shown, along with a count of the number of waiting, running, and
+completed tasks.}
+
+\item{\code{interval}}{How often should the task queue poll the workers to see
+if they have finished their assigned tasks? Specified in seconds.}
+
+\item{\code{shutdown}}{Should the workers in the pool be shut down (i.e., all
+R sessions closed) once the tasks are completed. Defaults to \code{TRUE}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Returns a tibble containing the results of all executed tasks and
+various other useful metadata.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TaskQueue-retrieve"></a>}}
 \if{latex}{\out{\hypertarget{method-TaskQueue-retrieve}{}}}
 \subsection{Method \code{retrieve()}}{
+Retrieve the full state of the tasks queue in tidy form. If
+all tasks have completed this output is the same as the output as the
+\code{run()} method.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TaskQueue$retrieve()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Returns a tibble containing the results of all executed tasks and
+various other useful metadata. Incomplete tasks nay have missing data.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TaskQueue-get_queue_report"></a>}}
+\if{latex}{\out{\hypertarget{method-TaskQueue-get_queue_report}{}}}
+\subsection{Method \code{get_queue_report()}}{
+Get as simplified description of the current state of the
+task queue. The corresponding private method is used internally to
+generate progress reports and to monitor progress of the task queue,
+but might be handy to have a public version.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TaskQueue$get_queue_report()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Returns a tibble with three columns: task_id, state, and runtime
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TaskQueue-get_queue_workers"></a>}}
+\if{latex}{\out{\hypertarget{method-TaskQueue-get_queue_workers}{}}}
+\subsection{Method \code{get_queue_workers()}}{
+Retrieve the workers
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TaskQueue$get_queue_workers()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A \code{WorkerPool} object
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TaskQueue-clone"></a>}}

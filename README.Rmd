@@ -30,7 +30,7 @@ remotes::install_github("djnavarro/queue")
 
 ## Example
 
-This is a basic example:
+Here's a basic example:
 
 ```{r example}
 library(queue)
