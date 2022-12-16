@@ -17,3 +17,6 @@ Imports:
 URL: https://github.com/djnavarro/queue,
     http://djnavarro.net/queue/
 BugReports: https://github.com/djnavarro/queue/issues
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
