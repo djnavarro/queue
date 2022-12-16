@@ -51,4 +51,3 @@ The output is stored in a tibble:
 out
 ```
 
-

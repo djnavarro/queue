@@ -51,10 +51,36 @@ test_that("Task retrieve returns tibble", {
 
   task <- Task$new(fun = function() {2 + 2})
   cols <- c("task_id", "worker_id", "state", "result", "runtime", "fun",
-            "args", "created", "enqueued", "assigned", "started", "finished",
+            "args", "created", "queued", "assigned", "started", "finished",
             "code", "message", "stdout", "stderr")
 
   expect_s3_class(task$retrieve(), "tbl_df")
   expect_named(task$retrieve(), cols)
 })
+
+test_that("Registered information arrives at retrieval", {
+
+  task <- Task$new(
+    fun = function(x) {x + 2},
+    args = list(x = 2),
+    id = "add-two"
+  )
+  task$register_task_queued()
+  task$register_task_assigned(worker_id = 666)
+  task$register_task_started(worker_id = 666)
+  task$register_task_finished(results = "fake_results_dont_arrive")
+  out <- task$retrieve()
+
+  expect_equal(out$task_id, "add-two")
+  expect_equal(out$worker_id, 666)
+  expect_equal(out$state, "done")
+
+  expect_s3_class(out$created, "POSIXct")
+  expect_s3_class(out$queued, "POSIXct")
+  expect_s3_class(out$assigned, "POSIXct")
+  expect_s3_class(out$started, "POSIXct")
+  expect_s3_class(out$finished, "POSIXct")
+
+})
+
 

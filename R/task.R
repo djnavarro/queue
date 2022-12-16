@@ -32,7 +32,7 @@ Task <- R6::R6Class(
         fun = list(private$fun),
         args = ifelse(length(args) == 1, list(NULL), args),
         created = private$time_created,
-        enqueued = private$time_enqueued,
+        queued = private$time_queued,
         assigned = private$time_assigned,
         started = private$time_started,
         finished = private$time_finished,
@@ -108,7 +108,7 @@ Task <- R6::R6Class(
     #' invisibly.
     register_task_queued = function() {
       private$state <- "waiting"
-      private$time_enqueued <- Sys.time()
+      private$time_queued <- Sys.time()
       invisible(NULL)
     },
 
@@ -159,7 +159,7 @@ Task <- R6::R6Class(
     worker_id = NA_character_,
     state = NA_character_,
     time_created = NA_real_,
-    time_enqueued = NA_real_,
+    time_queued = NA_real_,
     time_assigned = NA_real_,
     time_started = NA_real_,
     time_finished = NA_real_
