@@ -32,18 +32,19 @@ TaskQueue <- R6::R6Class(
 
     #' @description Execute tasks in parallel using the worker pool, assigning
     #' tasks to workers in the same order in which they were added to the queue
-    #' @param verbose Should the queue be chatty and report on every task
-    #' completion? Defaults to `TRUE`. If set to `FALSE`, only a spinner will
-    #' be shown, along with a count of the number of waiting, running, and
-    #' completed tasks.
+    #' @param message What messages should be reported by the queue while it is
+    #' running? Options are "none" (no messages), "minimal" (a spinner is shown
+    #' alongside counts of waiting, running, and completed tasks), and "verbose"
+    #' (in addition to the spinner, each task is summarized as it completes).
+    #' Default is "minimal".
     #' @param interval How often should the task queue poll the workers to see
     #' if they have finished their assigned tasks? Specified in seconds.
     #' @param shutdown Should the workers in the pool be shut down (i.e., all
     #' R sessions closed) once the tasks are completed. Defaults to `TRUE`.
     #' @return Returns a tibble containing the results of all executed tasks and
     #' various other useful metadata.
-    run = function(verbose = FALSE, interval = 0.05, shutdown = TRUE) {
-      private$run_batch(verbose, interval, shutdown)
+    run = function(message = "minimal", interval = 0.05, shutdown = TRUE) {
+      private$run_batch(message, interval, shutdown)
     },
 
     #' @description Retrieve the full state of the tasks queue in tidy form. If
@@ -110,8 +111,9 @@ TaskQueue <- R6::R6Class(
 
     # send the user a pretty progress report on how the queue has progressed
     # since the last time we polled it
-    update_progress = function(report, last_report, spinner, verbose) {
-      if(verbose) {
+    update_progress = function(report, last_report, spinner, message) {
+      if(message == "none") return(spinner)
+      if(message == "verbose") {
         done <- setdiff(
           which(report$state == "done"),
           which(last_report$state == "done")
@@ -126,20 +128,25 @@ TaskQueue <- R6::R6Class(
           spinner <- private$new_spinner()
         }
       }
-      msg <- paste("{spin} Queue progress:", sum(report$state == "waiting"),
-                   "waiting", "\u1405", sum(report$state == "running"),
-                   "running", "\u1405", sum(report$state == "done"), "done")
-      spinner$spin(msg)
+      if(message %in% c("verbose", "minimal")) {
+        msg <- paste("{spin} Queue progress:", sum(report$state == "waiting"),
+                     "waiting", "\u1405", sum(report$state == "running"),
+                     "running", "\u1405", sum(report$state == "done"), "done")
+        spinner$spin(msg)
+      }
       spinner
     },
 
     # send the user a final status report on the queue
-    update_final = function(report, time_started, time_finished) {
-      elapsed <- time_finished - time_started
-      runtime <- round(as.numeric(elapsed), 2)
-      msg <- paste0("Queue complete: ", sum(report$state == "done"),
-                    " tasks done", " (", runtime, "s)")
-      cli::cli_alert_success(msg)
+    update_final = function(report, time_started, time_finished, message) {
+      if(message == "none") return()
+      if(message %in% c("verbose", "minimal")) {
+        elapsed <- time_finished - time_started
+        runtime <- round(as.numeric(elapsed), 2)
+        msg <- paste0("Queue complete: ", sum(report$state == "done"),
+                      " tasks done", " (", runtime, "s)")
+        cli::cli_alert_success(msg)
+      }
     },
 
     # helper function to create a spinner
@@ -159,7 +166,7 @@ TaskQueue <- R6::R6Class(
 
     # run all tasks assigned to the queue as a batch job, and return
     # the tidied up results to the user
-    run_batch = function(verbose, interval, shutdown) {
+    run_batch = function(message, interval, shutdown) {
       time_started <- Sys.time()
       spinner <- private$new_spinner()
       report <- private$get_report()
@@ -171,7 +178,7 @@ TaskQueue <- R6::R6Class(
           report,
           last_report,
           spinner,
-          verbose
+          message
         )
         finished <- sum(report$state %in% c("waiting", "running")) == 0
         if(finished) break
@@ -179,10 +186,9 @@ TaskQueue <- R6::R6Class(
       }
       spinner$finish()
       time_finished <- Sys.time()
-      private$update_final(report, time_started, time_finished)
+      private$update_final(report, time_started, time_finished, message)
       if(shutdown) private$workers$shutdown_pool()
       return(self$retrieve())
     }
   )
-
 )

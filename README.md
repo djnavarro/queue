@@ -24,34 +24,34 @@ Here’s a basic example:
 
 ``` r
 library(queue)
-queue <- TaskQueue$new(workers = 6)
 random_wait <- function() {
   Sys.sleep(runif(1, min = 0, max = 5))
   Sys.time()
 }
+queue <- TaskQueue$new(workers = 6)
 for(i in 1:20) queue$push(random_wait)
-out <- queue$run(verbose = TRUE)
-#> → Task done: task_6 (1.07s)
-#> → Task done: task_7 (1.41s)
-#> → Task done: task_8 (0.11s)
-#> → Task done: task_4 (2.72s)
-#> → Task done: task_5 (3.29s)
-#> → Task done: task_9 (0.92s)
-#> → Task done: task_12 (0.17s)
-#> → Task done: task_2 (3.76s)
-#> → Task done: task_1 (4.1s)
-#> → Task done: task_10 (1.9s)
-#> → Task done: task_3 (4.8s)
-#> → Task done: task_14 (1.72s)
-#> → Task done: task_16 (0.86s)
-#> → Task done: task_13 (2.77s)
-#> → Task done: task_19 (1.38s)
-#> → Task done: task_17 (2.19s)
-#> → Task done: task_11 (4.38s)
-#> → Task done: task_15 (4.66s)
-#> → Task done: task_18 (4.18s)
-#> → Task done: task_20 (4.36s)
-#> ✔ Queue complete: 20 tasks done (10.93s)
+out <- queue$run(message = "verbose")
+#> → Task done: task_3 (0.13s)
+#> → Task done: task_5 (0.37s)
+#> → Task done: task_2 (1.28s)
+#> → Task done: task_1 (2.07s)
+#> → Task done: task_7 (2.17s)
+#> → Task done: task_4 (2.99s)
+#> → Task done: task_6 (3.11s)
+#> → Task done: task_8 (3.36s)
+#> → Task done: task_14 (0.45s)
+#> → Task done: task_10 (2.46s)
+#> → Task done: task_12 (2.11s)
+#> → Task done: task_13 (1.99s)
+#> → Task done: task_9 (4.46s)
+#> → Task done: task_15 (1.55s)
+#> → Task done: task_11 (4.81s)
+#> → Task done: task_20 (1.6s)
+#> → Task done: task_18 (2.3s)
+#> → Task done: task_16 (3.44s)
+#> → Task done: task_17 (3.94s)
+#> → Task done: task_19 (3.71s)
+#> ✔ Queue complete: 20 tasks done (9.56s)
 ```
 
 The output is stored in a tibble:
@@ -61,26 +61,26 @@ out
 #> # A tibble: 20 × 15
 #>    task_id state result     runtime        fun    args   created            
 #>    <chr>   <chr> <list>     <drtn>         <list> <list> <dttm>             
-#>  1 task_1  done  <dttm [1]> 4.1032739 secs <fn>   <NULL> 2022-12-16 21:32:31
-#>  2 task_2  done  <dttm [1]> 3.7589240 secs <fn>   <NULL> 2022-12-16 21:32:31
-#>  3 task_3  done  <dttm [1]> 4.7972717 secs <fn>   <NULL> 2022-12-16 21:32:31
-#>  4 task_4  done  <dttm [1]> 2.7174783 secs <fn>   <NULL> 2022-12-16 21:32:31
-#>  5 task_5  done  <dttm [1]> 3.2928810 secs <fn>   <NULL> 2022-12-16 21:32:31
-#>  6 task_6  done  <dttm [1]> 1.0663207 secs <fn>   <NULL> 2022-12-16 21:32:31
-#>  7 task_7  done  <dttm [1]> 1.4110322 secs <fn>   <NULL> 2022-12-16 21:32:31
-#>  8 task_8  done  <dttm [1]> 0.1143486 secs <fn>   <NULL> 2022-12-16 21:32:31
-#>  9 task_9  done  <dttm [1]> 0.9160516 secs <fn>   <NULL> 2022-12-16 21:32:31
-#> 10 task_10 done  <dttm [1]> 1.8957493 secs <fn>   <NULL> 2022-12-16 21:32:31
-#> 11 task_11 done  <dttm [1]> 4.3754835 secs <fn>   <NULL> 2022-12-16 21:32:31
-#> 12 task_12 done  <dttm [1]> 0.1735280 secs <fn>   <NULL> 2022-12-16 21:32:31
-#> 13 task_13 done  <dttm [1]> 2.7669959 secs <fn>   <NULL> 2022-12-16 21:32:31
-#> 14 task_14 done  <dttm [1]> 1.7240422 secs <fn>   <NULL> 2022-12-16 21:32:31
-#> 15 task_15 done  <dttm [1]> 4.6562624 secs <fn>   <NULL> 2022-12-16 21:32:31
-#> 16 task_16 done  <dttm [1]> 0.8638632 secs <fn>   <NULL> 2022-12-16 21:32:31
-#> 17 task_17 done  <dttm [1]> 2.1852658 secs <fn>   <NULL> 2022-12-16 21:32:31
-#> 18 task_18 done  <dttm [1]> 4.1764796 secs <fn>   <NULL> 2022-12-16 21:32:31
-#> 19 task_19 done  <dttm [1]> 1.3767705 secs <fn>   <NULL> 2022-12-16 21:32:31
-#> 20 task_20 done  <dttm [1]> 4.3623860 secs <fn>   <NULL> 2022-12-16 21:32:31
+#>  1 task_1  done  <dttm [1]> 2.0711689 secs <fn>   <NULL> 2022-12-16 22:35:35
+#>  2 task_2  done  <dttm [1]> 1.2755511 secs <fn>   <NULL> 2022-12-16 22:35:35
+#>  3 task_3  done  <dttm [1]> 0.1344159 secs <fn>   <NULL> 2022-12-16 22:35:35
+#>  4 task_4  done  <dttm [1]> 2.9904590 secs <fn>   <NULL> 2022-12-16 22:35:35
+#>  5 task_5  done  <dttm [1]> 0.3722873 secs <fn>   <NULL> 2022-12-16 22:35:35
+#>  6 task_6  done  <dttm [1]> 3.1123674 secs <fn>   <NULL> 2022-12-16 22:35:35
+#>  7 task_7  done  <dttm [1]> 2.1650698 secs <fn>   <NULL> 2022-12-16 22:35:35
+#>  8 task_8  done  <dttm [1]> 3.3554914 secs <fn>   <NULL> 2022-12-16 22:35:35
+#>  9 task_9  done  <dttm [1]> 4.4619942 secs <fn>   <NULL> 2022-12-16 22:35:35
+#> 10 task_10 done  <dttm [1]> 2.4574857 secs <fn>   <NULL> 2022-12-16 22:35:35
+#> 11 task_11 done  <dttm [1]> 4.8144801 secs <fn>   <NULL> 2022-12-16 22:35:35
+#> 12 task_12 done  <dttm [1]> 2.1112382 secs <fn>   <NULL> 2022-12-16 22:35:35
+#> 13 task_13 done  <dttm [1]> 1.9892695 secs <fn>   <NULL> 2022-12-16 22:35:35
+#> 14 task_14 done  <dttm [1]> 0.4500039 secs <fn>   <NULL> 2022-12-16 22:35:35
+#> 15 task_15 done  <dttm [1]> 1.5530598 secs <fn>   <NULL> 2022-12-16 22:35:35
+#> 16 task_16 done  <dttm [1]> 3.4375207 secs <fn>   <NULL> 2022-12-16 22:35:35
+#> 17 task_17 done  <dttm [1]> 3.9445057 secs <fn>   <NULL> 2022-12-16 22:35:35
+#> 18 task_18 done  <dttm [1]> 2.3006504 secs <fn>   <NULL> 2022-12-16 22:35:35
+#> 19 task_19 done  <dttm [1]> 3.7057896 secs <fn>   <NULL> 2022-12-16 22:35:35
+#> 20 task_20 done  <dttm [1]> 1.6024036 secs <fn>   <NULL> 2022-12-16 22:35:35
 #> # … with 8 more variables: enqueued <dttm>, assigned <dttm>, started <dttm>,
 #> #   finished <dttm>, code <int>, message <chr>, stdout <list>, stderr <list>
 ```
