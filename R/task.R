@@ -59,6 +59,10 @@ Task <- R6::R6Class(
       private$state
     },
 
+    get_task_id = function() {
+      private$task_id
+    },
+
     task_create = function() {
       private$state <- "created"
       private$time_created <- Sys.time()
