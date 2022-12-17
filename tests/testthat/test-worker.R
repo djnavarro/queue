@@ -12,17 +12,14 @@ test_that("Worker objects initialize R sessions", {
   expect_equal(worker$get_worker_id(), session$get_pid())
 
   worker$shutdown_worker(grace = 0)
+  Sys.sleep(.2)
+
   expect_true(!session$is_alive())
   expect_equal(worker$get_worker_state(), "finished")
 
 })
 
 test_that("Worker objects can work with tasks", {
-
-  # revisit later, but pretty sure CI failures on windows here are
-  # because the test is a hacky one-off event that assumes there is time
-  # for inter-process communication which may not be true
-  skip_on_os("windows")
 
   worker <- Worker$new()
   worker_id <- worker$get_worker_id()
@@ -41,12 +38,13 @@ test_that("Worker objects can work with tasks", {
   expect_equal(worker$get_worker_state(), "idle")
 
   worker$try_start()
+  Sys.sleep(.2)
+
   expect_equal(task$get_task_state(), "running")
   expect_equal(worker$get_worker_state(), "busy")
 
-  Sys.sleep(.05)
   worker$try_finish()
-  Sys.sleep(.05)
+  Sys.sleep(.2)
 
   expect_equal(task$get_task_state(), "done")
   expect_equal(worker$get_worker_state(), "idle")
@@ -89,11 +87,13 @@ test_that("Workers can report running time", {
   # when task is running, neither is NA
   worker$try_assign(task)
   worker$try_start()
+  Sys.sleep(.2)
   expect_equal(unname(is.na(worker$get_worker_runtime())), c(FALSE, FALSE))
 
   # when session is finished both are NA
   worker$try_finish()
   worker$shutdown_worker(grace = 0)
+  Sys.sleep(.2)
   expect_equal(unname(is.na(worker$get_worker_runtime())), c(TRUE, TRUE))
 
 })
@@ -116,7 +116,7 @@ test_that("Worker shutdown tries to rescue tasks", {
   worker <- Worker$new()
   worker$try_assign(task)
   worker$try_start()
-  Sys.sleep(.1)                     # allow worker to finish computing but..
+  Sys.sleep(.2)                     # allow worker to finish computing but..
   worker$shutdown_worker(grace = 0) # ...shutdown without try_finish
   expect_equal(worker$get_worker_state(), "finished")   # session is finished
   expect_equal(task$get_task_state(), "done")           # task is done
@@ -133,7 +133,7 @@ test_that("Worker shutdown tries to rescue tasks", {
   worker$try_assign(task)
   worker$try_start()
   expect_equal(task$get_task_state(), "running")      # okay, we're running...
-  Sys.sleep(.1)                                       # allow worker time to crash :)
+  Sys.sleep(.2)                                       # allow worker time to crash :)
   worker$shutdown_worker(grace = 0)                   # so controller gives up
   expect_equal(worker$get_worker_state(), "finished") # ...worker has stopped
   expect_equal(task$get_task_state(), "done")         # ...task is "done"
