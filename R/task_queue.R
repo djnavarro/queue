@@ -158,6 +158,14 @@ TaskQueue <- R6::R6Class(
     # get progress report containing only those fields needed to monitior
     # the queue and to update the user
     get_report = function() {
+      if(!length(private$tasks)) {
+        report <- tibble::tibble(
+          task_id = character(0),
+          state = character(0),
+          runtime = numeric(0)
+        )
+        return(report)
+      }
       tibble::tibble(
         task_id = unlist(lapply(private$tasks, function(x) x$get_task_id())),
         state = unlist(lapply(private$tasks, function(x) x$get_task_state())),
