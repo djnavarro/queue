@@ -122,16 +122,17 @@ will be named "task_1", "task_2", etc if this is unspecified)</p></dd>
 <p>Execute tasks in parallel using the worker pool, assigning
 tasks to workers in the same order in which they were added to the queue</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TaskQueue</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">FALSE</span>, interval <span class="op">=</span> <span class="fl">0.05</span>, shutdown <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TaskQueue</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span>message <span class="op">=</span> <span class="st">"minimal"</span>, interval <span class="op">=</span> <span class="fl">0.05</span>, shutdown <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>verbose</code></dt>
-<dd><p>Should the queue be chatty and report on every task
-completion? Defaults to <code>TRUE</code>. If set to <code>FALSE</code>, only a spinner will
-be shown, along with a count of the number of waiting, running, and
-completed tasks.</p></dd>
+<p></p><div class="arguments"><dl><dt><code>message</code></dt>
+<dd><p>What messages should be reported by the queue while it is
+running? Options are "none" (no messages), "minimal" (a spinner is shown
+alongside counts of waiting, running, and completed tasks), and "verbose"
+(in addition to the spinner, each task is summarized as it completes).
+Default is "minimal".</p></dd>
 
 
 <dt><code>interval</code></dt>

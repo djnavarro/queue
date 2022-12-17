@@ -64,6 +64,7 @@ fields and methods that allow it to work on Tasks</p>
 <ul><li><p><a href="#method-Worker-new"><code>Worker$new()</code></a></p></li>
 <li><p><a href="#method-Worker-get_worker_id"><code>Worker$get_worker_id()</code></a></p></li>
 <li><p><a href="#method-Worker-get_worker_state"><code>Worker$get_worker_state()</code></a></p></li>
+<li><p><a href="#method-Worker-get_worker_runtime"><code>Worker$get_worker_runtime()</code></a></p></li>
 <li><p><a href="#method-Worker-get_worker_task"><code>Worker$get_worker_task()</code></a></p></li>
 <li><p><a href="#method-Worker-get_worker_session"><code>Worker$get_worker_session()</code></a></p></li>
 <li><p><a href="#method-Worker-try_assign"><code>Worker$try_assign()</code></a></p></li>
@@ -114,27 +115,43 @@ between these two cases you need to use the <code>poll_process()</code> method o
 a <code>callr::rsession</code>, as returned by <code>get_worker_session()</code>.</p>
 </div>
 
-</div><p></p><hr><a id="method-Worker-get_worker_task"></a><div class="section">
-<h3 id="method-get-worker-task-">Method <code>get_worker_task()</code><a class="anchor" aria-label="anchor" href="#method-get-worker-task-"></a></h3>
-<p>Retrieve the task assigned to the worker.</p><div class="section">
+</div><p></p><hr><a id="method-Worker-get_worker_runtime"></a><div class="section">
+<h3 id="method-get-worker-runtime-">Method <code>get_worker_runtime()</code><a class="anchor" aria-label="anchor" href="#method-get-worker-runtime-"></a></h3>
+<p>Return the total length of time the worker session
+has been running, and the length of the time that the current task
+has been running. If the session is finished both values are <code>NA</code>.
+If the session is idle (no task running) the total session time will
+return a value but the current task time will be <code>NA</code>.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Worker</span><span class="op">$</span><span class="fu">get_worker_task</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Worker</span><span class="op">$</span><span class="fu">get_worker_runtime</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
+<p>A vector of two difftimes.</p>
+</div>
+
+</div><p></p><hr><a id="method-Worker-get_worker_task"></a><div class="section">
+<h3 id="method-get-worker-task-">Method <code>get_worker_task()</code><a class="anchor" aria-label="anchor" href="#method-get-worker-task-"></a></h3>
+<p>Retrieve the task assigned to the worker.</p><div class="section">
+<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Worker</span><span class="op">$</span><span class="fu">get_worker_task</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
 <p>The <code>Task</code> object currently assigned to this <code>Worker</code>, or <code>NULL</code>.</p>
 </div>
 
 </div><p></p><hr><a id="method-Worker-get_worker_session"></a><div class="section">
 <h3 id="method-get-worker-session-">Method <code>get_worker_session()</code><a class="anchor" aria-label="anchor" href="#method-get-worker-session-"></a></h3>
 <p>Retrieve the R session linked to the worker</p><div class="section">
-<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Worker</span><span class="op">$</span><span class="fu">get_worker_session</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
+<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
 <p>An R session object, see <code><a href="https://callr.r-lib.org/reference/r_session.html" class="external-link">callr::r_session</a></code></p>
 </div>
 
@@ -144,7 +161,7 @@ a <code>callr::rsession</code>, as returned by <code>get_worker_session()</code>
 that the task and the worker are both in an appropriate state. If they
 are, both objects register their connection to the other. This method is
 intended to be called by a <code>WorkerPool</code> or a <code>TaskQueue</code>.</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Worker</span><span class="op">$</span><span class="fu">try_assign</span><span class="op">(</span><span class="va">task</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -157,7 +174,7 @@ intended to be called by a <code>WorkerPool</code> or a <code>TaskQueue</code>.<
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
 <p>Invisibly returns <code>TRUE</code> or <code>FALSE</code>, depending on whether the
 attempt was successful.</p>
 </div>
@@ -169,26 +186,26 @@ that worker has an assigned task, and if so starts it running within the
 R session. It also registers the change of status within the <code>Task</code>
 object itself. This method is intended to be called by a <code>WorkerPool</code>
 or a <code>TaskQueue</code>.</p><div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Worker</span><span class="op">$</span><span class="fu">try_start</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
+<h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
 <p>Invisibly returns <code>TRUE</code> or <code>FALSE</code>, depending on whether the
 attempt was successful.</p>
 </div>
 
 </div><p></p><hr><a id="method-Worker-try_finish"></a><div class="section">
 <h3 id="method-try-finish-">Method <code>try_finish()</code><a class="anchor" aria-label="anchor" href="#method-try-finish-"></a></h3>
-<p>Attempt to finish a running task. This method checks to see
-if the worker has a running task, and if so polls the R session to
-determine if the R process is ready to return. If there is a
+<p>Attempt to finish a running task politely. This method checks
+to see if the worker has a running task, and if so polls the R session to
+determine if the R process claims to be ready to return. If there is a
 ready-to-return task the results are read from the R process and returned
 to the <code>Task</code> object. The task status is updated, and then unassigned
 from the <code>Worker</code>. This method is intended to be called by a <code>WorkerPool</code>
 or a <code>TaskQueue</code>.</p><div class="section">
-<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Worker</span><span class="op">$</span><span class="fu">try_finish</span><span class="op">(</span>timeout <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -201,15 +218,16 @@ or a <code>TaskQueue</code>.</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
+<h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
 <p>Invisibly returns <code>TRUE</code> or <code>FALSE</code>, depending on whether the
 attempt was successful.</p>
 </div>
 
 </div><p></p><hr><a id="method-Worker-shutdown_worker"></a><div class="section">
 <h3 id="method-shutdown-worker-">Method <code>shutdown_worker()</code><a class="anchor" aria-label="anchor" href="#method-shutdown-worker-"></a></h3>
-<p>Attempt to shut down the R session gracefully</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<p>Attempt to shut down the R session gracefully, after making
+an attempt to salvage any task that the worker believes is still running</p><div class="section">
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Worker</span><span class="op">$</span><span class="fu">shutdown_worker</span><span class="op">(</span>grace <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -226,7 +244,7 @@ running after this period, it will be killed.</p></dd>
 </div><p></p><hr><a id="method-Worker-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Worker</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 

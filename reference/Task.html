@@ -68,17 +68,17 @@ the results of that function when called. Various metadata fields are stored.</p
 <li><p><a href="#method-Task-get_task_state"><code>Task$get_task_state()</code></a></p></li>
 <li><p><a href="#method-Task-get_task_id"><code>Task$get_task_id()</code></a></p></li>
 <li><p><a href="#method-Task-get_task_runtime"><code>Task$get_task_runtime()</code></a></p></li>
-<li><p><a href="#method-Task-task_create"><code>Task$task_create()</code></a></p></li>
-<li><p><a href="#method-Task-task_enqueue"><code>Task$task_enqueue()</code></a></p></li>
-<li><p><a href="#method-Task-task_assign"><code>Task$task_assign()</code></a></p></li>
-<li><p><a href="#method-Task-task_start"><code>Task$task_start()</code></a></p></li>
-<li><p><a href="#method-Task-task_finish"><code>Task$task_finish()</code></a></p></li>
+<li><p><a href="#method-Task-register_task_created"><code>Task$register_task_created()</code></a></p></li>
+<li><p><a href="#method-Task-register_task_waiting"><code>Task$register_task_waiting()</code></a></p></li>
+<li><p><a href="#method-Task-register_task_assigned"><code>Task$register_task_assigned()</code></a></p></li>
+<li><p><a href="#method-Task-register_task_running"><code>Task$register_task_running()</code></a></p></li>
+<li><p><a href="#method-Task-register_task_done"><code>Task$register_task_done()</code></a></p></li>
 <li><p><a href="#method-Task-clone"><code>Task$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-Task-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new task object.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/Task.html">Task</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">fun</span>, args <span class="op">=</span> <span class="cn">NULL</span>, id <span class="op">=</span> <span class="cn">NULL</span>, enqueue <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/Task.html">Task</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">fun</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -93,10 +93,6 @@ the results of that function when called. Various metadata fields are stored.</p
 
 <dt><code>id</code></dt>
 <dd><p>A string specifying a unique task identifier (optional).</p></dd>
-
-
-<dt><code>enqueue</code></dt>
-<dd><p>Should the task list itself as part of a queue (default = FALSE).</p></dd>
 
 
 </dl><p></p></div>
@@ -184,13 +180,13 @@ to the task object)</p>
 yet to complete, a <code>NA</code> value is returned</p>
 </div>
 
-</div><p></p><hr><a id="method-Task-task_create"></a><div class="section">
-<h3 id="method-task-create-">Method <code>task_create()</code><a class="anchor" aria-label="anchor" href="#method-task-create-"></a></h3>
+</div><p></p><hr><a id="method-Task-register_task_created"></a><div class="section">
+<h3 id="method-register-task-created-">Method <code>register_task_created()</code><a class="anchor" aria-label="anchor" href="#method-register-task-created-"></a></h3>
 <p>Register the task creation by updating internal storage.
 This is intended to be called by <code>Worker</code> objects. Users should not
 need to call it.</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">task_create</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">register_task_created</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -199,13 +195,13 @@ need to call it.</p><div class="section">
 invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-Task-task_enqueue"></a><div class="section">
-<h3 id="method-task-enqueue-">Method <code>task_enqueue()</code><a class="anchor" aria-label="anchor" href="#method-task-enqueue-"></a></h3>
+</div><p></p><hr><a id="method-Task-register_task_waiting"></a><div class="section">
+<h3 id="method-register-task-waiting-">Method <code>register_task_waiting()</code><a class="anchor" aria-label="anchor" href="#method-register-task-waiting-"></a></h3>
 <p>Register the addition of the task to a queue by updating
 internal storage. This is intended to be called by <code>Worker</code> objects.
 Users should not need to call it.</p><div class="section">
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">task_enqueue</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">register_task_waiting</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -214,13 +210,13 @@ Users should not need to call it.</p><div class="section">
 invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-Task-task_assign"></a><div class="section">
-<h3 id="method-task-assign-">Method <code>task_assign()</code><a class="anchor" aria-label="anchor" href="#method-task-assign-"></a></h3>
+</div><p></p><hr><a id="method-Task-register_task_assigned"></a><div class="section">
+<h3 id="method-register-task-assigned-">Method <code>register_task_assigned()</code><a class="anchor" aria-label="anchor" href="#method-register-task-assigned-"></a></h3>
 <p>Register the assignment of a task to a worker by updating
 internal storage. This is intended to be called by <code>Worker</code> objects.
 Users should not need to call it.</p><div class="section">
 <h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">task_assign</span><span class="op">(</span><span class="va">worker_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">register_task_assigned</span><span class="op">(</span><span class="va">worker_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -237,13 +233,13 @@ Users should not need to call it.</p><div class="section">
 invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-Task-task_start"></a><div class="section">
-<h3 id="method-task-start-">Method <code>task_start()</code><a class="anchor" aria-label="anchor" href="#method-task-start-"></a></h3>
+</div><p></p><hr><a id="method-Task-register_task_running"></a><div class="section">
+<h3 id="method-register-task-running-">Method <code>register_task_running()</code><a class="anchor" aria-label="anchor" href="#method-register-task-running-"></a></h3>
 <p>Register the commencement of a task to a worker by updating
 internal storage. This is intended to be called by <code>Worker</code> objects.
 Users should not need to call it.</p><div class="section">
 <h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">task_start</span><span class="op">(</span><span class="va">worker_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">register_task_running</span><span class="op">(</span><span class="va">worker_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -260,13 +256,13 @@ Users should not need to call it.</p><div class="section">
 invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-Task-task_finish"></a><div class="section">
-<h3 id="method-task-finish-">Method <code>task_finish()</code><a class="anchor" aria-label="anchor" href="#method-task-finish-"></a></h3>
+</div><p></p><hr><a id="method-Task-register_task_done"></a><div class="section">
+<h3 id="method-register-task-done-">Method <code>register_task_done()</code><a class="anchor" aria-label="anchor" href="#method-register-task-done-"></a></h3>
 <p>Register the finishing of a task to a worker by updating
 internal storage. This is intended to be called by <code>Worker</code> objects.
 Users should not need to call it.</p><div class="section">
 <h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">task_finish</span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">register_task_done</span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
