@@ -89,3 +89,21 @@ test_that("TaskQueue output looks right", {
                       "code", "message", "stdout", "stderr"))
 
 })
+
+
+test_that("Verbose output produces spinner and task reports", {
+
+  queue <- TaskQueue$new(workers = 2)
+  queue$push(function() Sys.sleep(.1))
+  queue$push(function() Sys.sleep(.1))
+  queue$push(function() Sys.sleep(.1))
+  msg <- capture.output(out <- queue$run(message = "verbose"), type = "message")
+
+  # printed something to message corresponding to expected message events
+  expect_true(length(grep("{spin}", msg, fixed = TRUE)) > 0) # spinner
+  expect_true(length(grep("Task done:", msg, fixed = TRUE)) > 0) # cli_alert prefix
+  expect_true(length(grep("Queue complete", msg, fixed = TRUE)) > 0) # final
+
+
+})
+
