@@ -89,7 +89,7 @@ Worker <- R6::R6Class(
           private$task$get_task_fun(),
           private$task$get_task_args()
         )
-        private$task$register_task_started(private$worker_id)
+        private$task$register_task_running(private$worker_id)
         private$fun_started_at <- Sys.time() # remove when https://github.com/r-lib/callr/issues/241 is fixed
         return(invisible(TRUE))
       }
@@ -119,7 +119,7 @@ Worker <- R6::R6Class(
       if(is_running && is_busy) {
         is_ready <- private$session$poll_process(timeout) == "ready"
         if(is_ready) {
-          private$task$register_task_finished(private$session$read())
+          private$task$register_task_done(private$session$read())
           private$task <- NULL
           return(invisible(TRUE))
         }
@@ -127,10 +127,13 @@ Worker <- R6::R6Class(
       invisible(FALSE)
     },
 
-    #' @description Attempt to shut down the R session gracefully
+    #' @description Attempt to shut down the R session gracefully, after making
+    #' an attempt to salvage any task that the worker believes is still running
     #' @param grace Grace period in milliseconds. If the process is still
     #' running after this period, it will be killed.
     shutdown_worker = function(grace = 1000) {
+
+      # send shutdown
       private$session$close(grace)
     }
   ),

@@ -33,16 +33,16 @@ test_that("Task event registration functions work", {
   task <- Task$new(fun, args, id)
   expect_equal(task$get_task_state(), "created")
 
-  task$register_task_queued()
+  task$register_task_waiting()
   expect_equal(task$get_task_state(), "waiting")
 
   task$register_task_assigned(worker_id = 666)
   expect_equal(task$get_task_state(), "assigned")
 
-  task$register_task_started(worker_id = 666)
+  task$register_task_running(worker_id = 666)
   expect_equal(task$get_task_state(), "running")
 
-  task$register_task_finished(results = "fake")
+  task$register_task_done(results = "fake")
   expect_equal(task$get_task_state(), "done")
 
 })
@@ -65,10 +65,10 @@ test_that("Registered information arrives at retrieval", {
     args = list(x = 2),
     id = "add-two"
   )
-  task$register_task_queued()
+  task$register_task_waiting()
   task$register_task_assigned(worker_id = 666)
-  task$register_task_started(worker_id = 666)
-  task$register_task_finished(results = "fake_results_dont_arrive")
+  task$register_task_running(worker_id = 666)
+  task$register_task_done(results = "fake_results_dont_arrive")
   out <- task$retrieve()
 
   expect_equal(out$task_id, "add-two")

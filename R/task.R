@@ -106,7 +106,7 @@ Task <- R6::R6Class(
     #' Users should not need to call it.
     #' @return The function is called for its side-effects. Returns `NULL`
     #' invisibly.
-    register_task_queued = function() {
+    register_task_waiting = function() {
       private$state <- "waiting"
       private$time_queued <- Sys.time()
       invisible(NULL)
@@ -131,7 +131,7 @@ Task <- R6::R6Class(
     #' @param worker_id Identifier for the worker on which the task is starting.
     #' @return The function is called for its side-effects. Returns `NULL`
     #' invisibly.
-    register_task_started = function(worker_id) {
+    register_task_running = function(worker_id) {
       private$state <- "running"
       private$worker_id <- worker_id
       private$time_started <- Sys.time()
@@ -144,7 +144,7 @@ Task <- R6::R6Class(
     #' @param results Results read from the R session.
     #' @return The function is called for its side-effects. Returns `NULL`
     #' invisibly.
-    register_task_finished = function(results) {
+    register_task_done = function(results) {
       private$results <- results
       private$state <- "done"
       private$time_finished <- Sys.time()
