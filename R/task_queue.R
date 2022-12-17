@@ -64,7 +64,7 @@ TaskQueue <- R6::R6Class(
     #' but might be handy to have a public version.
     #' @return Returns a tibble with three columns: task_id, state, and runtime
     get_queue_report = function() {
-      private::get_report()
+      private$get_report()
     },
 
     #' @description Retrieve the workers
