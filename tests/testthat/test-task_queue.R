@@ -49,4 +49,26 @@ test_that("TaskQueue can execute tasks", {
 
   # check the auto-shutdown
   expect_equal(unname(workers$get_pool_state()), c("finished", "finished"))
+
+})
+
+
+test_that("TaskQueue output looks right", {
+
+  queue <- TaskQueue$new(workers = 2)
+  workers <- queue$get_queue_workers()
+
+  queue$push(function() Sys.sleep(.1))
+  queue$push(function() Sys.sleep(.1))
+  queue$push(function() Sys.sleep(.1))
+  out <- queue$run(message = "none", shutdown = TRUE)
+  Sys.sleep(.2)
+
+  expect_true(inherits(out, "tbl_df"))
+  expect_equal(nrow(out), 3)
+  expect_equal(ncol(out), 16)
+  expect_named(out, c("task_id", "worker_id", "state", "result", "runtime", "fun",
+                      "args", "created", "queued", "assigned", "started", "finished",
+                      "code", "message", "stdout", "stderr"))
+
 })
