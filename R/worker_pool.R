@@ -89,9 +89,10 @@ WorkerPool <- R6::R6Class(
     #' current state of each worker: should not be "finished" for any worker.
     #' Names denote worker ids.
     refill_pool = function() {
-      fin <- which(self$get_pool_state() == "finished")
-      if(length(fin)) {
-        for(i in seq_len(fin)) private$workers[fin][[i]] <- Worker$new()
+      for(i in seq_along(private$workers)) {
+        if(private$workers[[i]]$get_worker_state() == "finished") {
+          private$workers[[i]] <- Worker$new()
+        }
       }
       self$get_pool_state()
     },
