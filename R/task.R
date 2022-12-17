@@ -152,9 +152,9 @@ Task <- R6::R6Class(
   ),
 
   private = list(
-    fun = NULL,
-    args = NULL,
-    results = NULL,
+    fun = list(NULL),
+    args = list(NULL),
+    results = list(NULL),
     task_id = NA_character_,
     worker_id = NA_character_,
     state = NA_character_,
