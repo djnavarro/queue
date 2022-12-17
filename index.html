@@ -62,7 +62,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The queue package allows you to create multi-threaded tasks queues</p>
+<p>The queue package allows you to create multi-threaded task queues</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -83,53 +83,53 @@
 <span><span class="va">queue</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/TaskQueue.html">TaskQueue</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span> <span class="va">queue</span><span class="op">$</span><span class="fu">push</span><span class="op">(</span><span class="va">random_wait</span><span class="op">)</span></span>
 <span><span class="va">out</span> <span class="op">&lt;-</span> <span class="va">queue</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span>message <span class="op">=</span> <span class="st">"verbose"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; → Task done: task_6 (0.05s)</span></span>
-<span><span class="co">#&gt; → Task done: task_4 (1.36s)</span></span>
-<span><span class="co">#&gt; → Task done: task_1 (2.32s)</span></span>
-<span><span class="co">#&gt; → Task done: task_7 (2.36s)</span></span>
-<span><span class="co">#&gt; → Task done: task_2 (2.78s)</span></span>
-<span><span class="co">#&gt; → Task done: task_3 (3.06s)</span></span>
-<span><span class="co">#&gt; → Task done: task_5 (4.51s)</span></span>
-<span><span class="co">#&gt; → Task done: task_9 (3.26s)</span></span>
-<span><span class="co">#&gt; → Task done: task_14 (0.21s)</span></span>
-<span><span class="co">#&gt; → Task done: task_11 (3.07s)</span></span>
-<span><span class="co">#&gt; → Task done: task_8 (4.76s)</span></span>
-<span><span class="co">#&gt; → Task done: task_10 (3.85s)</span></span>
-<span><span class="co">#&gt; → Task done: task_12 (3.49s)</span></span>
-<span><span class="co">#&gt; → Task done: task_17 (1.18s)</span></span>
-<span><span class="co">#&gt; → Task done: task_16 (1.98s)</span></span>
-<span><span class="co">#&gt; → Task done: task_19 (1.34s)</span></span>
-<span><span class="co">#&gt; → Task done: task_13 (3.5s)</span></span>
-<span><span class="co">#&gt; → Task done: task_15 (3.57s)</span></span>
-<span><span class="co">#&gt; → Task done: task_18 (3.42s)</span></span>
-<span><span class="co">#&gt; → Task done: task_20 (3.46s)</span></span>
-<span><span class="co">#&gt; ✔ Queue complete: 20 tasks done (10.88s)</span></span></code></pre></div>
+<span><span class="co">#&gt; → Task done: task_4 (0.5s)</span></span>
+<span><span class="co">#&gt; → Task done: task_2 (1.23s)</span></span>
+<span><span class="co">#&gt; → Task done: task_8 (0.18s)</span></span>
+<span><span class="co">#&gt; → Task done: task_6 (2.32s)</span></span>
+<span><span class="co">#&gt; → Task done: task_7 (2.04s)</span></span>
+<span><span class="co">#&gt; → Task done: task_1 (2.61s)</span></span>
+<span><span class="co">#&gt; → Task done: task_9 (1.19s)</span></span>
+<span><span class="co">#&gt; → Task done: task_11 (0.25s)</span></span>
+<span><span class="co">#&gt; → Task done: task_5 (3.25s)</span></span>
+<span><span class="co">#&gt; → Task done: task_15 (0.29s)</span></span>
+<span><span class="co">#&gt; → Task done: task_13 (1.09s)</span></span>
+<span><span class="co">#&gt; → Task done: task_10 (2s)</span></span>
+<span><span class="co">#&gt; → Task done: task_3 (4.65s)</span></span>
+<span><span class="co">#&gt; → Task done: task_12 (2.95s)</span></span>
+<span><span class="co">#&gt; → Task done: task_20 (0.3s)</span></span>
+<span><span class="co">#&gt; → Task done: task_18 (2.09s)</span></span>
+<span><span class="co">#&gt; → Task done: task_14 (4.77s)</span></span>
+<span><span class="co">#&gt; → Task done: task_16 (4.55s)</span></span>
+<span><span class="co">#&gt; → Task done: task_17 (4.62s)</span></span>
+<span><span class="co">#&gt; → Task done: task_19 (4.2s)</span></span>
+<span><span class="co">#&gt; ✔ Queue complete: 20 tasks done (8.97s)</span></span></code></pre></div>
 <p>The output is stored in a tibble:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">out</span></span>
 <span><span class="co">#&gt; # A tibble: 20 × 16</span></span>
 <span><span class="co">#&gt;    task_id worker_id state result     runtime   fun   args   created            </span></span>
 <span><span class="co">#&gt;    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt; &lt;list&gt;     &lt;drtn&gt;    &lt;lis&gt; &lt;list&gt; &lt;dttm&gt;             </span></span>
-<span><span class="co">#&gt;  1 task_1     635771 done  &lt;dttm [1]&gt; 2.318988… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt;  2 task_2     635783 done  &lt;dttm [1]&gt; 2.777316… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt;  3 task_3     635795 done  &lt;dttm [1]&gt; 3.063051… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt;  4 task_4     635807 done  &lt;dttm [1]&gt; 1.361345… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt;  5 task_5     635819 done  &lt;dttm [1]&gt; 4.505504… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt;  6 task_6     635831 done  &lt;dttm [1]&gt; 0.054956… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt;  7 task_7     635831 done  &lt;dttm [1]&gt; 2.363450… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt;  8 task_8     635807 done  &lt;dttm [1]&gt; 4.756309… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt;  9 task_9     635771 done  &lt;dttm [1]&gt; 3.257435… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt; 10 task_10    635831 done  &lt;dttm [1]&gt; 3.847261… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt; 11 task_11    635783 done  &lt;dttm [1]&gt; 3.066454… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt; 12 task_12    635795 done  &lt;dttm [1]&gt; 3.493597… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt; 13 task_13    635819 done  &lt;dttm [1]&gt; 3.498409… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt; 14 task_14    635771 done  &lt;dttm [1]&gt; 0.213202… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt; 15 task_15    635771 done  &lt;dttm [1]&gt; 3.569851… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt; 16 task_16    635783 done  &lt;dttm [1]&gt; 1.981123… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt; 17 task_17    635807 done  &lt;dttm [1]&gt; 1.180276… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt; 18 task_18    635831 done  &lt;dttm [1]&gt; 3.420555… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt; 19 task_19    635795 done  &lt;dttm [1]&gt; 1.340868… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
-<span><span class="co">#&gt; 20 task_20    635807 done  &lt;dttm [1]&gt; 3.464793… &lt;fn&gt;  &lt;list&gt; 2022-12-17 19:31:05</span></span>
+<span><span class="co">#&gt;  1 task_1     655413 done  &lt;dttm [1]&gt; 2.610021… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt;  2 task_2     655425 done  &lt;dttm [1]&gt; 1.229150… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt;  3 task_3     655437 done  &lt;dttm [1]&gt; 4.650622… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt;  4 task_4     655449 done  &lt;dttm [1]&gt; 0.497227… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt;  5 task_5     655461 done  &lt;dttm [1]&gt; 3.246130… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt;  6 task_6     655474 done  &lt;dttm [1]&gt; 2.318947… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt;  7 task_7     655449 done  &lt;dttm [1]&gt; 2.043578… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt;  8 task_8     655425 done  &lt;dttm [1]&gt; 0.176116… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt;  9 task_9     655425 done  &lt;dttm [1]&gt; 1.193250… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt; 10 task_10    655474 done  &lt;dttm [1]&gt; 2.004132… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt; 11 task_11    655449 done  &lt;dttm [1]&gt; 0.247079… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt; 12 task_12    655413 done  &lt;dttm [1]&gt; 2.951664… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt; 13 task_13    655425 done  &lt;dttm [1]&gt; 1.090405… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt; 14 task_14    655449 done  &lt;dttm [1]&gt; 4.771457… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt; 15 task_15    655461 done  &lt;dttm [1]&gt; 0.288183… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt; 16 task_16    655461 done  &lt;dttm [1]&gt; 4.551815… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt; 17 task_17    655425 done  &lt;dttm [1]&gt; 4.623109… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt; 18 task_18    655474 done  &lt;dttm [1]&gt; 2.090163… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt; 19 task_19    655437 done  &lt;dttm [1]&gt; 4.203654… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
+<span><span class="co">#&gt; 20 task_20    655413 done  &lt;dttm [1]&gt; 0.295464… &lt;fn&gt;  &lt;list&gt; 2022-12-17 21:23:40</span></span>
 <span><span class="co">#&gt; # … with 8 more variables: queued &lt;dttm&gt;, assigned &lt;dttm&gt;, started &lt;dttm&gt;,</span></span>
 <span><span class="co">#&gt; #   finished &lt;dttm&gt;, code &lt;int&gt;, message &lt;chr&gt;, stdout &lt;list&gt;, stderr &lt;list&gt;</span></span></code></pre></div>
 </div>

@@ -122,12 +122,23 @@ will be named "task_1", "task_2", etc if this is unspecified)</p></dd>
 <p>Execute tasks in parallel using the worker pool, assigning
 tasks to workers in the same order in which they were added to the queue</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TaskQueue</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span>message <span class="op">=</span> <span class="st">"minimal"</span>, interval <span class="op">=</span> <span class="fl">0.05</span>, shutdown <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TaskQueue</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span></span>
+<span>  timelimit <span class="op">=</span> <span class="fl">60</span>,</span>
+<span>  message <span class="op">=</span> <span class="st">"minimal"</span>,</span>
+<span>  interval <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  shutdown <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>message</code></dt>
+<p></p><div class="arguments"><dl><dt><code>timelimit</code></dt>
+<dd><p>How long (in seconds) should the worker pool wait for a
+task to complete before terminating the child process and moving onto the
+next task? (default is 60 seconds, but this is fairly arbitrary)</p></dd>
+
+
+<dt><code>message</code></dt>
 <dd><p>What messages should be reported by the queue while it is
 running? Options are "none" (no messages), "minimal" (a spinner is shown
 alongside counts of waiting, running, and completed tasks), and "verbose"

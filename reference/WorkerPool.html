@@ -71,6 +71,7 @@ fields and methods that allow it to work on Tasks</p>
 <li><p><a href="#method-WorkerPool-try_finish"><code>WorkerPool$try_finish()</code></a></p></li>
 <li><p><a href="#method-WorkerPool-refill_pool"><code>WorkerPool$refill_pool()</code></a></p></li>
 <li><p><a href="#method-WorkerPool-shutdown_pool"><code>WorkerPool$shutdown_pool()</code></a></p></li>
+<li><p><a href="#method-WorkerPool-shutdown_overdue_workers"><code>WorkerPool$shutdown_overdue_workers()</code></a></p></li>
 <li><p><a href="#method-WorkerPool-clone"><code>WorkerPool$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-WorkerPool-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -215,15 +216,44 @@ current state of each worker: should be "finished" for all workers.
 Names denote worker ids.</p>
 </div>
 
-</div><p></p><hr><a id="method-WorkerPool-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-WorkerPool-shutdown_overdue_workers"></a><div class="section">
+<h3 id="method-shutdown-overdue-workers-">Method <code>shutdown_overdue_workers()</code><a class="anchor" aria-label="anchor" href="#method-shutdown-overdue-workers-"></a></h3>
+<p>Terminate workers that have worked on their current task
+for longer than a pre-specified time limit.</p><div class="section">
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">WorkerPool</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">WorkerPool</span><span class="op">$</span><span class="fu">shutdown_overdue_workers</span><span class="op">(</span><span class="va">timelimit</span>, grace <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>timelimit</code></dt>
+<dd><p>Pre-specified time limit for the task, in seconds.</p></dd>
+
+
+<dt><code>grace</code></dt>
+<dd><p>Grace period for the shutdown, in milliseconds. If a
+worker process is still running after this period, it will be killed.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
+<p>This function is called primarily for its side effect. It
+returns a named character documenting the outcome, indicating the
+current state of each worker: should be "finished" for all workers.
+Names denote worker ids.</p>
+</div>
+
+</div><p></p><hr><a id="method-WorkerPool-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">WorkerPool</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
