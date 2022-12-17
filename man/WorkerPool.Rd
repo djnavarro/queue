@@ -157,9 +157,17 @@ Names denote worker ids.
 \subsection{Method \code{shutdown_pool()}}{
 Terminate all workers in the worker pool.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{WorkerPool$shutdown_pool()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{WorkerPool$shutdown_pool(grace = 1000)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grace}}{Grace period in milliseconds. If a worker process is still
+running after this period, it will be killed.}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 This function is called primarily for its side effect. It
 returns a named character documenting the outcome, indicating the

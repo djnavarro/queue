@@ -76,16 +76,17 @@ Invisibly returns the \code{Task} object
 Execute tasks in parallel using the worker pool, assigning
 tasks to workers in the same order in which they were added to the queue
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TaskQueue$run(verbose = FALSE, interval = 0.05, shutdown = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TaskQueue$run(message = "minimal", interval = 0.05, shutdown = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{verbose}}{Should the queue be chatty and report on every task
-completion? Defaults to \code{TRUE}. If set to \code{FALSE}, only a spinner will
-be shown, along with a count of the number of waiting, running, and
-completed tasks.}
+\item{\code{message}}{What messages should be reported by the queue while it is
+running? Options are "none" (no messages), "minimal" (a spinner is shown
+alongside counts of waiting, running, and completed tasks), and "verbose"
+(in addition to the spinner, each task is summarized as it completes).
+Default is "minimal".}
 
 \item{\code{interval}}{How often should the task queue poll the workers to see
 if they have finished their assigned tasks? Specified in seconds.}

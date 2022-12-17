@@ -22,11 +22,11 @@ the results of that function when called. Various metadata fields are stored.
 \item \href{#method-Task-get_task_state}{\code{Task$get_task_state()}}
 \item \href{#method-Task-get_task_id}{\code{Task$get_task_id()}}
 \item \href{#method-Task-get_task_runtime}{\code{Task$get_task_runtime()}}
-\item \href{#method-Task-task_create}{\code{Task$task_create()}}
-\item \href{#method-Task-task_enqueue}{\code{Task$task_enqueue()}}
-\item \href{#method-Task-task_assign}{\code{Task$task_assign()}}
-\item \href{#method-Task-task_start}{\code{Task$task_start()}}
-\item \href{#method-Task-task_finish}{\code{Task$task_finish()}}
+\item \href{#method-Task-register_task_created}{\code{Task$register_task_created()}}
+\item \href{#method-Task-register_task_waiting}{\code{Task$register_task_waiting()}}
+\item \href{#method-Task-register_task_assigned}{\code{Task$register_task_assigned()}}
+\item \href{#method-Task-register_task_running}{\code{Task$register_task_running()}}
+\item \href{#method-Task-register_task_done}{\code{Task$register_task_done()}}
 \item \href{#method-Task-clone}{\code{Task$clone()}}
 }
 }
@@ -36,7 +36,7 @@ the results of that function when called. Various metadata fields are stored.
 \subsection{Method \code{new()}}{
 Create a new task object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Task$new(fun, args = NULL, id = NULL, enqueue = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Task$new(fun, args = list(), id = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -47,8 +47,6 @@ Create a new task object.
 \item{\code{args}}{A list of arguments to be passed to the function (optional).}
 
 \item{\code{id}}{A string specifying a unique task identifier (optional).}
-
-\item{\code{enqueue}}{Should the task list itself as part of a queue (default = FALSE).}
 }
 \if{html}{\out{</div>}}
 }
@@ -141,14 +139,14 @@ yet to complete, a \code{NA} value is returned
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Task-task_create"></a>}}
-\if{latex}{\out{\hypertarget{method-Task-task_create}{}}}
-\subsection{Method \code{task_create()}}{
+\if{html}{\out{<a id="method-Task-register_task_created"></a>}}
+\if{latex}{\out{\hypertarget{method-Task-register_task_created}{}}}
+\subsection{Method \code{register_task_created()}}{
 Register the task creation by updating internal storage.
 This is intended to be called by \code{Worker} objects. Users should not
 need to call it.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Task$task_create()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Task$register_task_created()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
@@ -157,14 +155,14 @@ invisibly.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Task-task_enqueue"></a>}}
-\if{latex}{\out{\hypertarget{method-Task-task_enqueue}{}}}
-\subsection{Method \code{task_enqueue()}}{
+\if{html}{\out{<a id="method-Task-register_task_waiting"></a>}}
+\if{latex}{\out{\hypertarget{method-Task-register_task_waiting}{}}}
+\subsection{Method \code{register_task_waiting()}}{
 Register the addition of the task to a queue by updating
 internal storage. This is intended to be called by \code{Worker} objects.
 Users should not need to call it.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Task$task_enqueue()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Task$register_task_waiting()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
@@ -173,14 +171,14 @@ invisibly.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Task-task_assign"></a>}}
-\if{latex}{\out{\hypertarget{method-Task-task_assign}{}}}
-\subsection{Method \code{task_assign()}}{
+\if{html}{\out{<a id="method-Task-register_task_assigned"></a>}}
+\if{latex}{\out{\hypertarget{method-Task-register_task_assigned}{}}}
+\subsection{Method \code{register_task_assigned()}}{
 Register the assignment of a task to a worker by updating
 internal storage. This is intended to be called by \code{Worker} objects.
 Users should not need to call it.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Task$task_assign(worker_id)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Task$register_task_assigned(worker_id)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -196,14 +194,14 @@ invisibly.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Task-task_start"></a>}}
-\if{latex}{\out{\hypertarget{method-Task-task_start}{}}}
-\subsection{Method \code{task_start()}}{
+\if{html}{\out{<a id="method-Task-register_task_running"></a>}}
+\if{latex}{\out{\hypertarget{method-Task-register_task_running}{}}}
+\subsection{Method \code{register_task_running()}}{
 Register the commencement of a task to a worker by updating
 internal storage. This is intended to be called by \code{Worker} objects.
 Users should not need to call it.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Task$task_start(worker_id)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Task$register_task_running(worker_id)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -219,14 +217,14 @@ invisibly.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Task-task_finish"></a>}}
-\if{latex}{\out{\hypertarget{method-Task-task_finish}{}}}
-\subsection{Method \code{task_finish()}}{
+\if{html}{\out{<a id="method-Task-register_task_done"></a>}}
+\if{latex}{\out{\hypertarget{method-Task-register_task_done}{}}}
+\subsection{Method \code{register_task_done()}}{
 Register the finishing of a task to a worker by updating
 internal storage. This is intended to be called by \code{Worker} objects.
 Users should not need to call it.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Task$task_finish(results)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Task$register_task_done(results)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

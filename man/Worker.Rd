@@ -18,6 +18,7 @@ fields and methods that allow it to work on Tasks
 \item \href{#method-Worker-new}{\code{Worker$new()}}
 \item \href{#method-Worker-get_worker_id}{\code{Worker$get_worker_id()}}
 \item \href{#method-Worker-get_worker_state}{\code{Worker$get_worker_state()}}
+\item \href{#method-Worker-get_worker_runtime}{\code{Worker$get_worker_runtime()}}
 \item \href{#method-Worker-get_worker_task}{\code{Worker$get_worker_task()}}
 \item \href{#method-Worker-get_worker_session}{\code{Worker$get_worker_session()}}
 \item \href{#method-Worker-try_assign}{\code{Worker$try_assign()}}
@@ -71,6 +72,23 @@ function that is still running and a task function that is essentially
 finished and waiting to return will both return "busy". To distinguish
 between these two cases you need to use the \code{poll_process()} method of
 a \code{callr::rsession}, as returned by \code{get_worker_session()}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Worker-get_worker_runtime"></a>}}
+\if{latex}{\out{\hypertarget{method-Worker-get_worker_runtime}{}}}
+\subsection{Method \code{get_worker_runtime()}}{
+Return the total length of time the worker session
+has been running, and the length of the time that the current task
+has been running. If the session is finished both values are \code{NA}.
+If the session is idle (no task running) the total session time will
+return a value but the current task time will be \code{NA}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Worker$get_worker_runtime()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A vector of two difftimes.
 }
 }
 \if{html}{\out{<hr>}}
@@ -145,9 +163,9 @@ attempt was successful.
 \if{html}{\out{<a id="method-Worker-try_finish"></a>}}
 \if{latex}{\out{\hypertarget{method-Worker-try_finish}{}}}
 \subsection{Method \code{try_finish()}}{
-Attempt to finish a running task. This method checks to see
-if the worker has a running task, and if so polls the R session to
-determine if the R process is ready to return. If there is a
+Attempt to finish a running task politely. This method checks
+to see if the worker has a running task, and if so polls the R session to
+determine if the R process claims to be ready to return. If there is a
 ready-to-return task the results are read from the R process and returned
 to the \code{Task} object. The task status is updated, and then unassigned
 from the \code{Worker}. This method is intended to be called by a \code{WorkerPool}
@@ -172,7 +190,8 @@ attempt was successful.
 \if{html}{\out{<a id="method-Worker-shutdown_worker"></a>}}
 \if{latex}{\out{\hypertarget{method-Worker-shutdown_worker}{}}}
 \subsection{Method \code{shutdown_worker()}}{
-Attempt to shut down the R session gracefully
+Attempt to shut down the R session gracefully, after making
+an attempt to salvage any task that the worker believes is still running
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Worker$shutdown_worker(grace = 1000)}\if{html}{\out{</div>}}
 }

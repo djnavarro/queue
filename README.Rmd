@@ -50,4 +50,3 @@ The output is stored in a tibble:
 ```{r example-output}
 out
 ```
-

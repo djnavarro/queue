@@ -35,6 +35,12 @@ Worker <- R6::R6Class(
       private$session$get_state()
     },
 
+    #' @description Return the total length of time the worker session
+    #' has been running, and the length of the time that the current task
+    #' has been running. If the session is finished both values are `NA`.
+    #' If the session is idle (no task running) the total session time will
+    #' return a value but the current task time will be `NA`.
+    #' @return A vector of two difftimes.
     get_worker_runtime = function() {
       # after https://github.com/r-lib/callr/issues/241 resolves use this:
       # private$session$get_running_time()
