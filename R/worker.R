@@ -124,8 +124,6 @@ Worker <- R6::R6Class(
           return(invisible(TRUE))
         }
       }
-
-
       invisible(FALSE)
     },
 

@@ -70,3 +70,25 @@ test_that("Worker objects can work with tasks", {
 
 })
 
+test_that("Workers can report running time", {
+
+  worker <- Worker$new()
+  task <- Task$new(function() {2 + 2})
+
+  # when rsession exists and no task is running, only task is NA
+  expect_s3_class(worker$get_worker_runtime(), "difftime")
+  expect_length(worker$get_worker_runtime(), 2)
+  expect_named(worker$get_worker_runtime(), c("total", "current"))
+  expect_equal(unname(is.na(worker$get_worker_runtime())), c(FALSE, TRUE))
+
+  # when task is running, neither is NA
+  worker$try_assign(task)
+  worker$try_start()
+  expect_equal(unname(is.na(worker$get_worker_runtime())), c(FALSE, FALSE))
+
+  # when session is finished both are NA
+  worker$try_finish()
+  worker$shutdown_worker(grace = 0)
+  expect_equal(unname(is.na(worker$get_worker_runtime())), c(TRUE, TRUE))
+
+})
