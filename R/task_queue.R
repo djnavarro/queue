@@ -54,6 +54,27 @@ TaskQueue <- R6::R6Class(
     #' @return Returns a tibble containing the results of all executed tasks and
     #' various other useful metadata. Incomplete tasks nay have missing data.
     retrieve = function() {
+      if(!length(private$tasks)) {
+        out <- tibble::tibble(
+          task_id = character(0),
+          worker_id = character(0),
+          state = character(0),
+          result = list(),
+          runtime = numeric(0),
+          fun = list(),
+          args = list(),
+          created = as.POSIXct(numeric(0)),
+          queued = as.POSIXct(numeric(0)),
+          assigned = as.POSIXct(numeric(0)),
+          started = as.POSIXct(numeric(0)),
+          finished = as.POSIXct(numeric(0)),
+          code = integer(0),
+          message = character(0),
+          stdout = list(),
+          stderr = list()
+        )
+        return(out)
+      }
       out <- lapply(private$tasks, function(x) x$retrieve())
       do.call(rbind, out)
     },
