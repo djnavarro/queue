@@ -97,12 +97,14 @@ WorkerPool <- R6::R6Class(
     },
 
     #' @description Terminate all workers in the worker pool.
+    #' @param grace Grace period in milliseconds. If a worker process is still
+    #' running after this period, it will be killed.
     #' @return This function is called primarily for its side effect. It
     #' returns a named character documenting the outcome, indicating the
     #' current state of each worker: should be "finished" for all workers.
     #' Names denote worker ids.
-    shutdown_pool = function() {
-      lapply(private$workers, function(x) x$shutdown_worker())
+    shutdown_pool = function(grace = 1000) {
+      lapply(private$workers, function(x) x$shutdown_worker(grace))
       self$get_pool_state()
     }
   ),
