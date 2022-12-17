@@ -97,3 +97,48 @@ test_that("Workers can report running time", {
   expect_equal(unname(is.na(worker$get_worker_runtime())), c(TRUE, TRUE))
 
 })
+
+
+test_that("Worker shutdown tries to rescue tasks", {
+
+  task <- Task$new(function() 2 + 2)
+
+  # assigned but not-running tasks return to waiting
+  worker <- Worker$new()
+  worker$try_assign(task)
+  worker$shutdown_worker(grace = 0)
+  expect_equal(worker$get_worker_state(), "finished")
+  expect_equal(task$get_task_state(), "waiting")
+
+  # running tasks attempt to finish and move to done
+  # this is a case where the function should be ready,
+  # but oops we forgot to explicitly call try_finish()
+  worker <- Worker$new()
+  worker$try_assign(task)
+  worker$try_start()
+  Sys.sleep(.1)                     # allow worker to finish computing but..
+  worker$shutdown_worker(grace = 0) # ...shutdown without try_finish
+  expect_equal(worker$get_worker_state(), "finished")   # session is finished
+  expect_equal(task$get_task_state(), "done")           # task is done
+  out <- task$retrieve()
+  expect_equal(out$result, list(4)) # result is stored
+  expect_equal(out$code, 200)       # good code stored
+
+  # a task that will crash the R session
+  task <- Task$new(function() .Call("abort"))
+
+  # as above, except the worker session has crashed/stalled before return
+  worker <- Worker$new()
+  worker$try_assign(task)
+  worker$try_start()
+  expect_equal(task$get_task_state(), "running")      # okay, we're running...
+  Sys.sleep(.1)                                       # allow worker time to crash :)
+  worker$try_finish()                                 # this won't work
+  expect_equal(task$get_task_state(), "running")      # yes, still running...
+  worker$shutdown_worker(grace = 0)                   # so controller gives up
+  expect_equal(worker$get_worker_state(), "finished") # ...worker has stopped
+  expect_equal(task$get_task_state(), "done")         # ...task is "done"
+  out <- task$retrieve()
+  expect_equal(out$result, list(NULL))                # no result was returned
+
+})

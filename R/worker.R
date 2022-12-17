@@ -133,6 +133,24 @@ Worker <- R6::R6Class(
     #' running after this period, it will be killed.
     shutdown_worker = function(grace = 1000) {
 
+      # rescue task if possible
+      if(length(private$task)) {
+
+        task_state <- private$task$get_task_state()
+        if(task_state == "assigned") {
+          private$task$register_task_waiting()
+          private$task <- NULL
+        }
+        if(task_state == "running") {
+          result <- private$session$read()
+          private$task$register_task_done(result)
+          private$task <- NULL
+        }
+        if(task_state %in% c("done", "created")) {
+          private$task <- NULL
+        }
+      }
+
       # send shutdown
       private$session$close(grace)
     }
