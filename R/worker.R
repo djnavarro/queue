@@ -13,6 +13,7 @@ Worker <- R6::R6Class(
       private$session <- callr::r_session$new(wait = FALSE)
       private$session$initialize()
       private$worker_id <- private$session$get_pid()
+      private$started_at <- Sys.time() # remove when https://github.com/r-lib/callr/issues/241 is fixed
     },
 
     #' @description Retrieve the worker identifier.
@@ -32,6 +33,19 @@ Worker <- R6::R6Class(
     #' a `callr::rsession`, as returned by `get_worker_session()`.
     get_worker_state = function() {
       private$session$get_state()
+    },
+
+    get_worker_runtime = function() {
+      # after https://github.com/r-lib/callr/issues/241 resolves use this:
+      # private$session$get_running_time()
+
+      # temporary workaround:
+      now <- Sys.time()
+      finished <- private$session$get_state() == "finished"
+      idle <- private$session$get_state() == "idle"
+      no_uptime <- as.difftime(NA_real_, units = "secs")
+      c(total = if (finished) no_uptime else now - private$started_at,
+        current = if (finished | idle) no_uptime else now - private$fun_started_at)
     },
 
     #' @description Retrieve the task assigned to the worker.
@@ -76,6 +90,7 @@ Worker <- R6::R6Class(
           private$task$get_task_args()
         )
         private$task$register_task_started(private$worker_id)
+        private$fun_started_at <- Sys.time() # remove when https://github.com/r-lib/callr/issues/241 is fixed
         return(invisible(TRUE))
       }
       invisible(FALSE)
@@ -125,6 +140,8 @@ Worker <- R6::R6Class(
   private = list(
     task = NULL,
     worker_id = NULL,
-    session = NULL
+    session = NULL,
+    started_at = as.POSIXct(NA),    # remove when https://github.com/r-lib/callr/issues/241 is fixed
+    fun_started_at = as.POSIXct(NA) # remove when https://github.com/r-lib/callr/issues/241 is fixed
   )
 )
