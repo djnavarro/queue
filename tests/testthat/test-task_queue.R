@@ -104,6 +104,40 @@ test_that("Verbose output produces spinner and task reports", {
   expect_true(length(grep("Task done:", msg, fixed = TRUE)) > 0) # cli_alert prefix
   expect_true(length(grep("Queue complete", msg, fixed = TRUE)) > 0) # final
 
+})
+
+
+test_that("Tasks that exceed runtime limits are shutdown", {
+
+  # workers 1 and 3 will complete, 2 will be killed without returning
+  queue <- TaskQueue$new(workers = 3)
+  queue$push(function() {Sys.sleep(.1); TRUE})
+  queue$push(function() {Sys.sleep(10); TRUE})
+  queue$push(function() {Sys.sleep(.1); TRUE})
+  out <- queue$run(timelimit = .5, message = "none")
+
+  expect_true(inherits(out, "tbl_df"))
+  expect_equal(out$code, c(200, NA, 200))
+  expect_equal(out$state, c("done", "done", "done"))
+  expect_equal(out$result, list(TRUE, NULL, TRUE))
 
 })
+
+
+test_that("Tasks that crash the thread are caught by runtime limits", {
+
+  # workers 1 and 3 will complete, 2 crashes before returning
+  queue <- TaskQueue$new(workers = 3)
+  queue$push(function() {Sys.sleep(.1); TRUE})
+  queue$push(function() {.Call("abort"); TRUE})
+  queue$push(function() {Sys.sleep(.1); TRUE})
+  out <- queue$run(timelimit = .5, message = "none")
+
+  expect_true(inherits(out, "tbl_df"))
+  expect_equal(out$code, c(200, NA, 200))
+  expect_equal(out$state, c("done", "done", "done"))
+  expect_equal(out$result, list(TRUE, NULL, TRUE))
+
+})
+
 

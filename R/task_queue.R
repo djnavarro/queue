@@ -33,6 +33,9 @@ TaskQueue <- R6::R6Class(
 
     #' @description Execute tasks in parallel using the worker pool, assigning
     #' tasks to workers in the same order in which they were added to the queue
+    #' @param timelimit How long (in seconds) should the worker pool wait for a
+    #' task to complete before terminating the child process and moving onto the
+    #' next task? (default is 60 seconds, but this is fairly arbitrary)
     #' @param message What messages should be reported by the queue while it is
     #' running? Options are "none" (no messages), "minimal" (a spinner is shown
     #' alongside counts of waiting, running, and completed tasks), and "verbose"
@@ -44,8 +47,11 @@ TaskQueue <- R6::R6Class(
     #' R sessions closed) once the tasks are completed. Defaults to `TRUE`.
     #' @return Returns a tibble containing the results of all executed tasks and
     #' various other useful metadata.
-    run = function(message = "minimal", interval = 0.05, shutdown = TRUE) {
-      private$run_batch(message, interval, shutdown)
+    run = function(timelimit = 60,
+                   message = "minimal",
+                   interval = 0.05,
+                   shutdown = TRUE) {
+      private$run_batch(timelimit, message, interval, shutdown)
     },
 
     #' @description Retrieve the full state of the tasks queue in tidy form. If
@@ -124,8 +130,9 @@ TaskQueue <- R6::R6Class(
     # in turn ask each Worker to *try* to finish/assign/start the relevant
     # job. the main thing that happens within the TaskQueue itself is finding
     # the list of waiting tasks
-    schedule = function() {
+    schedule = function(timelimit) {
       private$workers$try_finish()
+      private$workers$shutdown_overdue_workers(timelimit)
       private$workers$refill_pool()
       private$workers$try_assign(private$get_waiting_tasks())
       private$workers$try_start()
@@ -176,7 +183,7 @@ TaskQueue <- R6::R6Class(
       cli::make_spinner(which = "dots2", template = "{spin} Queue")
     },
 
-    # get progress report containing only those fields needed to monitior
+    # get progress report containing only those fields needed to monitor
     # the queue and to update the user
     get_report = function() {
       if(!length(private$tasks)) {
@@ -196,13 +203,13 @@ TaskQueue <- R6::R6Class(
 
     # run all tasks assigned to the queue as a batch job, and return
     # the tidied up results to the user
-    run_batch = function(message, interval, shutdown) {
+    run_batch = function(timelimit, message, interval, shutdown) {
       time_started <- Sys.time()
       spinner <- private$new_spinner()
       report <- private$get_report()
       repeat{
         last_report <- report
-        private$schedule()
+        private$schedule(timelimit)
         report <- private$get_report()
         spinner <- private$update_progress(
           report,

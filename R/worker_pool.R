@@ -107,10 +107,40 @@ WorkerPool <- R6::R6Class(
     shutdown_pool = function(grace = 1000) {
       lapply(private$workers, function(x) x$shutdown_worker(grace))
       self$get_pool_state()
+    },
+
+    #' @description Terminate workers that have worked on their current task
+    #' for longer than a pre-specified time limit.
+    #' @param timelimit Pre-specified time limit for the task, in seconds.
+    #' @param grace Grace period for the shutdown, in milliseconds. If a
+    #' worker process is still running after this period, it will be killed.
+    #' @return This function is called primarily for its side effect. It
+    #' returns a named character documenting the outcome, indicating the
+    #' current state of each worker: should be "finished" for all workers.
+    #' Names denote worker ids.
+    shutdown_overdue_workers = function(timelimit, grace = 1000) {
+      private$enforce_runtime_limit(timelimit, grace)
+      self$get_pool_state()
     }
+
   ),
 
   private = list(
-    workers = list()
+    workers = list(),
+
+    # check how long each worker has been working at its current task
+    # and kill those that have been at it too long
+    enforce_runtime_limit = function(timelimit, grace) {
+      runtime <- vapply(
+        private$workers,
+        function(x) x$get_worker_runtime()["current"],
+        as.difftime(NA_real_, units = "secs")
+      )
+      runtime <- as.numeric(runtime, units = "secs")
+      too_long <- which(runtime > timelimit)
+      for(i in too_long) {
+        private$workers[[i]]$shutdown_worker(grace)
+      }
+    }
   )
 )
