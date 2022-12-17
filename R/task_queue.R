@@ -13,6 +13,7 @@ TaskQueue <- R6::R6Class(
     #' or a `WorkerPool` object to use when deploying the tasks.
     #' @return A new `TaskQueue` object
     initialize = function(workers = 4L) {
+      private$tasks <- TaskList$new()
       if (inherits(workers, "WorkerPool")) private$workers <- workers
       else private$workers <- WorkerPool$new(workers)
     },
@@ -27,7 +28,7 @@ TaskQueue <- R6::R6Class(
       if (is.null(id)) id <- private$get_next_id()
       task <- Task$new(fun, args, id)
       task$register_task_waiting()
-      private$tasks[[length(private$tasks) + 1L]] <- task
+      private$tasks$push(task)
       invisible(task)
     },
 
@@ -60,29 +61,7 @@ TaskQueue <- R6::R6Class(
     #' @return Returns a tibble containing the results of all executed tasks and
     #' various other useful metadata. Incomplete tasks nay have missing data.
     retrieve = function() {
-      if(!length(private$tasks)) {
-        out <- tibble::tibble(
-          task_id = character(0),
-          worker_id = character(0),
-          state = character(0),
-          result = list(),
-          runtime = numeric(0),
-          fun = list(),
-          args = list(),
-          created = as.POSIXct(numeric(0)),
-          queued = as.POSIXct(numeric(0)),
-          assigned = as.POSIXct(numeric(0)),
-          started = as.POSIXct(numeric(0)),
-          finished = as.POSIXct(numeric(0)),
-          code = integer(0),
-          message = character(0),
-          stdout = list(),
-          stderr = list()
-        )
-        return(out)
-      }
-      out <- lapply(private$tasks, function(x) x$retrieve())
-      do.call(rbind, out)
+      private$tasks$retrieve()
     },
 
     #' @description Get as simplified description of the current state of the
@@ -91,7 +70,7 @@ TaskQueue <- R6::R6Class(
     #' but might be handy to have a public version.
     #' @return Returns a tibble with three columns: task_id, state, and runtime
     get_queue_report = function() {
-      private$get_report()
+      private$tasks$report()
     },
 
     #' @description Retrieve the workers
@@ -106,7 +85,7 @@ TaskQueue <- R6::R6Class(
 
     # containers for tasks and workers
     workers = NULL,
-    tasks = list(),
+    tasks = NULL,
 
     # helpers used to assign task ids if the user doesn't
     next_id = 1L,
@@ -118,12 +97,7 @@ TaskQueue <- R6::R6Class(
 
     # retrieve the list of tasks still in "waiting" status
     get_waiting_tasks = function() {
-      waiting <- vapply(
-        private$tasks,
-        function(x) x$get_task_state() == "waiting",
-        logical(1)
-      )
-      private$tasks[waiting]
+      private$tasks$with_state("waiting")
     },
 
     # tasks scheduling is mostly devolved to the WorkerPool methods, which
@@ -183,34 +157,16 @@ TaskQueue <- R6::R6Class(
       cli::make_spinner(which = "dots2", template = "{spin} Queue")
     },
 
-    # get progress report containing only those fields needed to monitor
-    # the queue and to update the user
-    get_report = function() {
-      if(!length(private$tasks)) {
-        report <- tibble::tibble(
-          task_id = character(0),
-          state = character(0),
-          runtime = numeric(0)
-        )
-        return(report)
-      }
-      tibble::tibble(
-        task_id = unlist(lapply(private$tasks, function(x) x$get_task_id())),
-        state = unlist(lapply(private$tasks, function(x) x$get_task_state())),
-        runtime = unlist(lapply(private$tasks, function(x) x$get_task_runtime()))
-      )
-    },
-
     # run all tasks assigned to the queue as a batch job, and return
     # the tidied up results to the user
     run_batch = function(timelimit, message, interval, shutdown) {
       time_started <- Sys.time()
       spinner <- private$new_spinner()
-      report <- private$get_report()
+      report <- private$tasks$report()
       repeat{
         last_report <- report
         private$schedule(timelimit)
-        report <- private$get_report()
+        report <- private$tasks$report()
         spinner <- private$update_progress(
           report,
           last_report,
@@ -229,3 +185,4 @@ TaskQueue <- R6::R6Class(
     }
   )
 )
+
