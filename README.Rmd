@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/djnavarro/queue/branch/main/graph/badge.svg)](https://app.codecov.io/gh/djnavarro/queue?branch=main)
 <!-- badges: end -->
 
-The queue package allows you to create multi-threaded tasks queues
+The queue package allows you to create multi-threaded task queues
 
 ## Installation
 

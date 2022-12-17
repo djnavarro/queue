@@ -25,6 +25,7 @@ fields and methods that allow it to work on Tasks
 \item \href{#method-WorkerPool-try_finish}{\code{WorkerPool$try_finish()}}
 \item \href{#method-WorkerPool-refill_pool}{\code{WorkerPool$refill_pool()}}
 \item \href{#method-WorkerPool-shutdown_pool}{\code{WorkerPool$shutdown_pool()}}
+\item \href{#method-WorkerPool-shutdown_overdue_workers}{\code{WorkerPool$shutdown_overdue_workers()}}
 \item \href{#method-WorkerPool-clone}{\code{WorkerPool$clone()}}
 }
 }
@@ -165,6 +166,33 @@ Terminate all workers in the worker pool.
 \describe{
 \item{\code{grace}}{Grace period in milliseconds. If a worker process is still
 running after this period, it will be killed.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+This function is called primarily for its side effect. It
+returns a named character documenting the outcome, indicating the
+current state of each worker: should be "finished" for all workers.
+Names denote worker ids.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-WorkerPool-shutdown_overdue_workers"></a>}}
+\if{latex}{\out{\hypertarget{method-WorkerPool-shutdown_overdue_workers}{}}}
+\subsection{Method \code{shutdown_overdue_workers()}}{
+Terminate workers that have worked on their current task
+for longer than a pre-specified time limit.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{WorkerPool$shutdown_overdue_workers(timelimit, grace = 1000)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{timelimit}}{Pre-specified time limit for the task, in seconds.}
+
+\item{\code{grace}}{Grace period for the shutdown, in milliseconds. If a
+worker process is still running after this period, it will be killed.}
 }
 \if{html}{\out{</div>}}
 }

@@ -76,12 +76,21 @@ Invisibly returns the \code{Task} object
 Execute tasks in parallel using the worker pool, assigning
 tasks to workers in the same order in which they were added to the queue
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TaskQueue$run(message = "minimal", interval = 0.05, shutdown = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TaskQueue$run(
+  timelimit = 60,
+  message = "minimal",
+  interval = 0.05,
+  shutdown = TRUE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{timelimit}}{How long (in seconds) should the worker pool wait for a
+task to complete before terminating the child process and moving onto the
+next task? (default is 60 seconds, but this is fairly arbitrary)}
+
 \item{\code{message}}{What messages should be reported by the queue while it is
 running? Options are "none" (no messages), "minimal" (a spinner is shown
 alongside counts of waiting, running, and completed tasks), and "verbose"
