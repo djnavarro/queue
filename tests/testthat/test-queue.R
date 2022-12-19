@@ -1,8 +1,8 @@
-test_that("TaskQueue works at start up", {
+test_that("Queue works at start up", {
 
-  queue <- TaskQueue$new(workers = 2)
+  queue <- Queue$new(workers = 2)
 
-  expect_true(inherits(queue, "TaskQueue"))
+  expect_true(inherits(queue, "Queue"))
   expect_true(inherits(queue$get_queue_workers(), "WorkerPool"))
 
   report <- queue$get_queue_report()
@@ -13,9 +13,9 @@ test_that("TaskQueue works at start up", {
 
 })
 
-test_that("TaskQueue can push tasks", {
+test_that("Queue can push tasks", {
 
-  queue <- TaskQueue$new(workers = 2)
+  queue <- Queue$new(workers = 2)
   queue$push(function() Sys.sleep(.1))
   queue$push(function() Sys.sleep(.1))
   queue$push(function() Sys.sleep(.1))
@@ -29,9 +29,9 @@ test_that("TaskQueue can push tasks", {
 
 })
 
-test_that("TaskQueue can execute tasks", {
+test_that("Queue can execute tasks", {
 
-  queue <- TaskQueue$new(workers = 2)
+  queue <- Queue$new(workers = 2)
   workers <- queue$get_queue_workers()
 
   queue$push(function() Sys.sleep(.1))
@@ -53,9 +53,9 @@ test_that("TaskQueue can execute tasks", {
 })
 
 
-test_that("TaskQueue output looks right", {
+test_that("Queue output looks right", {
 
-  queue <- TaskQueue$new(workers = 2)
+  queue <- Queue$new(workers = 2)
   workers <- queue$get_queue_workers()
 
   out <- queue$retrieve()
@@ -93,7 +93,7 @@ test_that("TaskQueue output looks right", {
 
 test_that("Verbose output produces spinner and task reports", {
 
-  queue <- TaskQueue$new(workers = 2)
+  queue <- Queue$new(workers = 2)
   queue$push(function() Sys.sleep(.1))
   queue$push(function() Sys.sleep(.1))
   queue$push(function() Sys.sleep(.1))
@@ -110,7 +110,7 @@ test_that("Verbose output produces spinner and task reports", {
 test_that("Tasks that exceed runtime limits are shutdown", {
 
   # workers 1 and 3 will complete, 2 will be killed without returning
-  queue <- TaskQueue$new(workers = 3)
+  queue <- Queue$new(workers = 3)
   queue$push(function() {Sys.sleep(.1); TRUE})
   queue$push(function() {Sys.sleep(10); TRUE})
   queue$push(function() {Sys.sleep(.1); TRUE})
@@ -127,7 +127,7 @@ test_that("Tasks that exceed runtime limits are shutdown", {
 test_that("Tasks that crash the thread are caught by runtime limits", {
 
   # workers 1 and 3 will complete, 2 crashes before returning
-  queue <- TaskQueue$new(workers = 3)
+  queue <- Queue$new(workers = 3)
   queue$push(function() {Sys.sleep(.1); TRUE})
   queue$push(function() {.Call("abort"); TRUE})
   queue$push(function() {Sys.sleep(.1); TRUE})

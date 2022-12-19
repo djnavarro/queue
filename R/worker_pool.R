@@ -44,7 +44,7 @@ WorkerPool <- R6::R6Class(
     },
 
     #' @description Attempt to assign tasks to workers. This method is
-    #' intended to be called by `TaskQueue` objects.
+    #' intended to be called by `Queue` objects.
     #' @param tasks A list of `Task` objects
     #' @return Invisibly returns `NULL`
     try_assign = function(tasks) {
@@ -65,7 +65,7 @@ WorkerPool <- R6::R6Class(
     },
 
     #' @description Attempt to start any assigned but not-yet-started tasks
-    #' in the worker pool. This method is intended to be called by `TaskQueue`
+    #' in the worker pool. This method is intended to be called by `Queue`
     #' objects.
     #' @return Invisibly returns `NULL`
     try_start = function() {
@@ -74,7 +74,7 @@ WorkerPool <- R6::R6Class(
     },
 
     #' @description Attempt to finish any started but not-yet-returned tasks
-    #' in the worker pool. This method is intended to be called by `TaskQueue`
+    #' in the worker pool. This method is intended to be called by `Queue`
     #' objects.
     #' @return Invisibly returns `NULL`
     try_finish = function() {

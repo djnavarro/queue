@@ -74,7 +74,7 @@ test_that("WorkerPools can batch assign/start/finish tasks (tasks > workers)", {
   workers <- WorkerPool$new(4)
 
   # try assign should leave all 4 tasks assigned, 1 waiting/created
-  # would be "waiting" in the normal course of events when a TaskQueue
+  # would be "waiting" in the normal course of events when a Queue
   # manages this, but I'm manually messing with it in the tests
   workers$try_assign(tasks)
   state <- lapply(tasks, function(x) x$get_task_state())

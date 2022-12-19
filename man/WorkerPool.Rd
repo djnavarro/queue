@@ -89,7 +89,7 @@ denote worker ids
 \if{latex}{\out{\hypertarget{method-WorkerPool-try_assign}{}}}
 \subsection{Method \code{try_assign()}}{
 Attempt to assign tasks to workers. This method is
-intended to be called by \code{TaskQueue} objects.
+intended to be called by \code{Queue} objects.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{WorkerPool$try_assign(tasks)}\if{html}{\out{</div>}}
 }
@@ -110,7 +110,7 @@ Invisibly returns \code{NULL}
 \if{latex}{\out{\hypertarget{method-WorkerPool-try_start}{}}}
 \subsection{Method \code{try_start()}}{
 Attempt to start any assigned but not-yet-started tasks
-in the worker pool. This method is intended to be called by \code{TaskQueue}
+in the worker pool. This method is intended to be called by \code{Queue}
 objects.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{WorkerPool$try_start()}\if{html}{\out{</div>}}
@@ -125,7 +125,7 @@ Invisibly returns \code{NULL}
 \if{latex}{\out{\hypertarget{method-WorkerPool-try_finish}{}}}
 \subsection{Method \code{try_finish()}}{
 Attempt to finish any started but not-yet-returned tasks
-in the worker pool. This method is intended to be called by \code{TaskQueue}
+in the worker pool. This method is intended to be called by \code{Queue}
 objects.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{WorkerPool$try_finish()}\if{html}{\out{</div>}}

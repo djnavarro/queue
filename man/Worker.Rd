@@ -124,7 +124,7 @@ An R session object, see \code{callr::r_session}
 Attempt to assign a task to this worker. This method checks
 that the task and the worker are both in an appropriate state. If they
 are, both objects register their connection to the other. This method is
-intended to be called by a \code{WorkerPool} or a \code{TaskQueue}.
+intended to be called by a \code{WorkerPool} or a \code{Queue}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Worker$try_assign(task)}\if{html}{\out{</div>}}
 }
@@ -149,7 +149,7 @@ Attempt to start the task. This method checks to see if the
 that worker has an assigned task, and if so starts it running within the
 R session. It also registers the change of status within the \code{Task}
 object itself. This method is intended to be called by a \code{WorkerPool}
-or a \code{TaskQueue}.
+or a \code{Queue}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Worker$try_start()}\if{html}{\out{</div>}}
 }
@@ -169,7 +169,7 @@ determine if the R process claims to be ready to return. If there is a
 ready-to-return task the results are read from the R process and returned
 to the \code{Task} object. The task status is updated, and then unassigned
 from the \code{Worker}. This method is intended to be called by a \code{WorkerPool}
-or a \code{TaskQueue}.
+or a \code{Queue}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Worker$try_finish(timeout = 0)}\if{html}{\out{</div>}}
 }

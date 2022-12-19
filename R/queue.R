@@ -3,15 +3,15 @@
 #' Documentation baby...
 #'
 #' @export
-TaskQueue <- R6::R6Class(
-  classname = "TaskQueue",
+Queue <- R6::R6Class(
+  classname = "Queue",
 
   public = list(
 
     #' @description Create a task queue
     #' @param workers Either the number of workers to employ in the task queue,
     #' or a `WorkerPool` object to use when deploying the tasks.
-    #' @return A new `TaskQueue` object
+    #' @return A new `Queue` object
     initialize = function(workers = 4L) {
       private$tasks <- TaskList$new()
       if (inherits(workers, "WorkerPool")) private$workers <- workers
@@ -102,7 +102,7 @@ TaskQueue <- R6::R6Class(
 
     # tasks scheduling is mostly devolved to the WorkerPool methods, which
     # in turn ask each Worker to *try* to finish/assign/start the relevant
-    # job. the main thing that happens within the TaskQueue itself is finding
+    # job. the main thing that happens within the Queue itself is finding
     # the list of waiting tasks
     schedule = function(timelimit) {
       private$workers$try_finish()

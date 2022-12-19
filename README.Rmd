@@ -40,7 +40,7 @@ random_wait <- function() {
   Sys.sleep(runif(1, min = 0, max = 5))
   Sys.time()
 }
-queue <- TaskQueue$new(workers = 6)
+queue <- Queue$new(workers = 6)
 for(i in 1:20) queue$push(random_wait)
 out <- queue$run(message = "verbose")
 ```

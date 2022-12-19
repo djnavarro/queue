@@ -69,7 +69,7 @@ Worker <- R6::R6Class(
     #' @description Attempt to assign a task to this worker. This method checks
     #' that the task and the worker are both in an appropriate state. If they
     #' are, both objects register their connection to the other. This method is
-    #' intended to be called by a `WorkerPool` or a `TaskQueue`.
+    #' intended to be called by a `WorkerPool` or a `Queue`.
     #' @param task A `Task` object corresponding to the to-be-assigned task.
     #' @return Invisibly returns `TRUE` or `FALSE`, depending on whether the
     #' attempt was successful.
@@ -86,7 +86,7 @@ Worker <- R6::R6Class(
     #' that worker has an assigned task, and if so starts it running within the
     #' R session. It also registers the change of status within the `Task`
     #' object itself. This method is intended to be called by a `WorkerPool`
-    #' or a `TaskQueue`.
+    #' or a `Queue`.
     #' @return Invisibly returns `TRUE` or `FALSE`, depending on whether the
     #' attempt was successful.
     try_start = function() {
@@ -108,7 +108,7 @@ Worker <- R6::R6Class(
     #' ready-to-return task the results are read from the R process and returned
     #' to the `Task` object. The task status is updated, and then unassigned
     #' from the `Worker`. This method is intended to be called by a `WorkerPool`
-    #' or a `TaskQueue`.
+    #' or a `Queue`.
     #' @param timeout Length of time to wait when process is polled (default = 0)
     #' @return Invisibly returns `TRUE` or `FALSE`, depending on whether the
     #' attempt was successful.
