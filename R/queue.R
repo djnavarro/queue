@@ -92,11 +92,6 @@ Queue <- R6::R6Class(
       paste0("task_", id)
     },
 
-    # retrieve the list of tasks still in "waiting" status
-    get_waiting_tasks = function() {
-      private$tasks$subset_in_state("waiting")
-    },
-
     # tasks scheduling is mostly devolved to the WorkerPool methods, which
     # in turn ask each Worker to *try* to finish/assign/start the relevant
     # job. the main thing that happens within the Queue itself is finding
@@ -105,7 +100,7 @@ Queue <- R6::R6Class(
       private$workers$try_finish()
       private$workers$shutdown_overdue_workers(timelimit)
       private$workers$refill_pool()
-      private$workers$try_assign(private$get_waiting_tasks())
+      private$workers$try_assign(private$tasks$subset_in_state("waiting"))
       private$workers$try_start()
     },
 

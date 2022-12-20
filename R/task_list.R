@@ -10,24 +10,21 @@ TaskList <- R6::R6Class(
     initialize = function() {},
 
     #' @description Return the number of tasks in the list
-    #' @return An integer
+    #' @return Integer
     length = function() {
       length(private$tasks)
     },
 
     #' @description Append a single task to the bottom of the `TaskList`
     #' @param task A `Task` object
-    #' @return Invisibly returns the input
     add_task = function(task) {
       private$tasks[[length(private$tasks) + 1L]] <- task
     },
 
     #' @description Remove one or more tasks from the `TaskList`
     #' @param x Indices or names of the tasks to remove
-    #' @return ???
-    drop_task = function(x) {
+    remove_task = function(x) {
       private$tasks[x] <- NULL
-
     },
 
     #' @description Return a single `Task` contained in the `TaskList`
@@ -47,7 +44,6 @@ TaskList <- R6::R6Class(
       }
       subset_list
     },
-
 
     #' @description Return a list of tasks in a given state
     #' @param x The name of the state (e.g., "waiting")

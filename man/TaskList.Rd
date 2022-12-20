@@ -17,7 +17,7 @@ A task list is a container that holds a collection of tasks
 \item \href{#method-TaskList-new}{\code{TaskList$new()}}
 \item \href{#method-TaskList-length}{\code{TaskList$length()}}
 \item \href{#method-TaskList-add_task}{\code{TaskList$add_task()}}
-\item \href{#method-TaskList-drop_task}{\code{TaskList$drop_task()}}
+\item \href{#method-TaskList-remove_task}{\code{TaskList$remove_task()}}
 \item \href{#method-TaskList-get_task}{\code{TaskList$get_task()}}
 \item \href{#method-TaskList-subset}{\code{TaskList$subset()}}
 \item \href{#method-TaskList-subset_in_state}{\code{TaskList$subset_in_state()}}
@@ -46,7 +46,7 @@ Return the number of tasks in the list
 }
 
 \subsection{Returns}{
-An integer
+Integer
 }
 }
 \if{html}{\out{<hr>}}
@@ -65,17 +65,14 @@ Append a single task to the bottom of the \code{TaskList}
 }
 \if{html}{\out{</div>}}
 }
-\subsection{Returns}{
-Invisibly returns the input
-}
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-TaskList-drop_task"></a>}}
-\if{latex}{\out{\hypertarget{method-TaskList-drop_task}{}}}
-\subsection{Method \code{drop_task()}}{
+\if{html}{\out{<a id="method-TaskList-remove_task"></a>}}
+\if{latex}{\out{\hypertarget{method-TaskList-remove_task}{}}}
+\subsection{Method \code{remove_task()}}{
 Remove one or more tasks from the \code{TaskList}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TaskList$drop_task(x)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TaskList$remove_task(x)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -84,9 +81,6 @@ Remove one or more tasks from the \code{TaskList}
 \item{\code{x}}{Indices or names of the tasks to remove}
 }
 \if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-???
 }
 }
 \if{html}{\out{<hr>}}
