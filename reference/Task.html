@@ -52,8 +52,19 @@ R6 class storing a task"><!-- mathjax --><script src="https://cdnjs.cloudflare.c
 
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>A task is a container that holds a function and arguments, and eventually
-the results of that function when called. Various metadata fields are stored.</p>
+    <p>A <code>Task</code> object is used as a storage class. It is a container used to hold an
+R function and any arguments to be passed to the function. It can also hold
+any output returned by the function, anything printed to stdout or stderr
+when the function is called, and various other metadata such as the process
+id of the worker that executed the function, timestamps, and so on.</p>
+<p>The methods for <code>Task</code> objects fall into two groups, roughly speaking. The
+<code>get_*()</code> methods are used to return information about the <code>Task</code>, and the
+<code>register_*()</code> methods are used to register information related to events
+relevant to the <code>Task</code> status.</p>
+<p>The <code>retrieve()</code> method is special, and returns a tibble containing all
+information stored about the task. Objects further up the hierarchy use this
+method to return nicely organised output that summarise the results from
+many tasks.</p>
     </div>
     <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
@@ -76,7 +87,11 @@ the results of that function when called. Various metadata fields are stored.</p
 <li><p><a href="#method-Task-clone"><code>Task$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-Task-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
-<p>Create a new task object.</p><div class="section">
+<p>Create a new task. Conceptually, a <code>Task</code> is viewed as a
+function that will be executed by the <code>Worker</code> to which it is assigned,
+and it is generally expected that any resources the function requires
+are passed through the arguments since the execution context will be a
+different R session to the one in which the function is defined.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/Task.html">Task</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">fun</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -111,7 +126,28 @@ the results of that function when called. Various metadata fields are stored.</p
 
 <div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
-<p>A tibble with one row</p>
+<p>A tibble containing a single row, and the following columns:</p><ul><li><p><code>task_id</code> A character string specifying the task identifier</p></li>
+<li><p><code>worker_id</code> An integer specifying the worker process id (pid)</p></li>
+<li><p><code>state</code> A character string indicating the task status ("created",
+"waiting", "assigned", "running", or "done")</p></li>
+<li><p><code>result</code> A list containing the function output, or NULL</p></li>
+<li><p><code>runtime</code> Completion time for the task (NA if the task is not done)</p></li>
+<li><p><code>fun</code> A list containing the function</p></li>
+<li><p><code>args</code> A list containing the arguments</p></li>
+<li><p><code>created</code> The time at which the task was created</p></li>
+<li><p><code>queued</code> The time at which the task was added to a <code>Queue</code></p></li>
+<li><p><code>assigned</code> The time at which the task was assigned to a <code>Worker</code></p></li>
+<li><p><code>started</code> The time at which the <code>Worker</code> called the function</p></li>
+<li><p><code>finished</code> The time at which the <code>Worker</code> output was returned</p></li>
+<li><p><code>code</code> The status code returned by the callr R session (integer)</p></li>
+<li><p><code>message</code> The message returned by the callr R session (character)</p></li>
+<li><p><code>stdout</code> List containing the contents of stdout during function execution</p></li>
+<li><p><code>stderr</code> List containing the contents of stderr during function execution</p></li>
+<li><p><code>error</code>  List containing <code>NULL</code></p></li>
+</ul><p>Note: at present there is one field from the callr rsession::read() method
+that isn't captured here, and that's the error field. I'll add that after
+I've finished wrapping my head around what that actually does. The <code>error</code>
+column, at present, is included only as a placeholder</p>
 </div>
 
 </div><p></p><hr><a id="method-Task-get_task_fun"></a><div class="section">
