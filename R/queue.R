@@ -104,74 +104,20 @@ Queue <- R6::R6Class(
       private$workers$try_start()
     },
 
-    # send the user a pretty progress report on how the queue has progressed
-    # since the last time we polled it
-    update_progress = function(report, last_report, spinner, message) {
-      if(message == "none") return(spinner)
-      if(message == "verbose") {
-        done <- setdiff(
-          which(report$state == "done"),
-          which(last_report$state == "done")
-        )
-        if(length(done) > 0) {
-          spinner$finish()
-          for(id in done) {
-            msg <- paste0("Task done: ", report$task_id[id], " (",
-                          round(as.numeric(report$runtime[id]), 2), "s)")
-            cli::cli_alert(msg)
-          }
-          spinner <- private$new_spinner()
-        }
-      }
-      if(message %in% c("verbose", "minimal")) {
-        msg <- paste("{spin} Queue progress:", sum(report$state == "waiting"),
-                     "waiting", "\u1405", sum(report$state == "running"),
-                     "running", "\u1405", sum(report$state == "done"), "done")
-        spinner$spin(msg)
-      }
-      spinner
-    },
-
-    # send the user a final status report on the queue
-    update_final = function(report, time_started, time_finished, message) {
-      if(message == "none") return()
-      if(message %in% c("verbose", "minimal")) {
-        elapsed <- time_finished - time_started
-        runtime <- round(as.numeric(elapsed), 2)
-        msg <- paste0("Queue complete: ", sum(report$state == "done"),
-                      " tasks done", " (", runtime, "s)")
-        cli::cli_alert_success(msg)
-      }
-    },
-
-    # helper function to create a spinner
-    new_spinner = function() {
-      cli::make_spinner(which = "dots2", template = "{spin} Queue")
-    },
-
     # run all tasks assigned to the queue as a batch job, and return
     # the tidied up results to the user
     run_batch = function(timelimit, message, interval, shutdown) {
       time_started <- Sys.time()
-      spinner <- private$new_spinner()
-      report <- private$tasks$report()
       repeat{
-        last_report <- report
         private$schedule(timelimit)
-        report <- private$tasks$report()
-        spinner <- private$update_progress(
-          report,
-          last_report,
-          spinner,
-          message
-        )
-        finished <- sum(report$state %in% c("waiting", "running")) == 0
+        state <- private$tasks$status(message)
+        finished <- sum(state %in% c("waiting", "running")) == 0
         if(finished) break
         Sys.sleep(interval)
       }
-      spinner$finish()
       time_finished <- Sys.time()
-      private$update_final(report, time_started, time_finished, message)
+      elapsed <- time_finished - time_started
+      private$tasks$status(message, finished_in = elapsed)
       if(shutdown) private$workers$shutdown_pool()
       return(self$retrieve())
     }

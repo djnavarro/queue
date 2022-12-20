@@ -7,7 +7,9 @@ TaskList <- R6::R6Class(
 
   public = list(
     #' @description Create a new task list
-    initialize = function() {},
+    initialize = function() {
+      private$spinner <- private$make_spinner()
+    },
 
     #' @description Return the number of tasks in the list
     #' @return Integer
@@ -88,28 +90,79 @@ TaskList <- R6::R6Class(
       do.call(rbind, out)
     },
 
-    #' @description Report an abbreviated summary of the tasks
-    #' @return Returns a tibble with three columns: task_id, state, runtime
-    report = function() {
-      if(!self$length()) {
-        r <- tibble::tibble(
-          task_id = character(0),
-          state = character(0),
-          runtime = numeric(0)
-        )
-        return(r)
-      }
-      tibble::tibble(
-        task_id = unlist(lapply(private$tasks, function(x) x$get_task_id())),
-        state = unlist(lapply(private$tasks, function(x) x$get_task_state())),
-        runtime = unlist(lapply(private$tasks, function(x) x$get_task_runtime()))
+    #' @description Update the user on the current state of the `TaskList`
+    #' @param message Character specifying whether the message type: "none",
+    #' "minimal" (the default), or "verbose"
+    #' @param finished_in Specifies the finishing time, and triggers a task completion
+    #' message
+    #' @return Invisibly returns a vector of the states of all tasks
+    status = function(message, finished_in = NULL) {
+      state <- vapply(
+        private$tasks,
+        function(t) t$get_task_state(),
+        character(1)
       )
+      if(message == "none") return(invisible(state))
+      if(message == "verbose") {
+        done <- private$which_tasks_done()
+        just_done <- setdiff(done, private$done_last_update)
+        if(length(just_done) > 0) {
+          private$done_last_update <- done
+          private$spinner$finish()
+          for(id in just_done) cli::cli_alert(private$update_task_done(id))
+          private$spinner <- private$make_spinner()
+        }
+      }
+      if(message %in% c("verbose", "minimal")) {
+        private$spinner$spin(private$update_overall(state))
+      }
+      if(!is.null(finished_in)) {
+        private$spinner$finish()
+        private$update_final(state, finished_in)
+      }
+      invisible(state)
     }
-
-
   ),
 
   private = list(
-    tasks = list()
+
+    tasks = list(),
+
+    which_tasks_done = function() {
+      which(vapply(
+        private$tasks,
+        function(t) t$get_task_state() == "done",
+        logical(1)
+      ))
+    },
+
+    done_last_update = numeric(0),
+
+    make_spinner = function() {
+      cli::make_spinner(which = "dots2", template = "{spin} Queue")
+    },
+
+    spinner = NULL,
+
+    update_overall = function(state) {
+      n_waiting <- sum(state == "waiting")
+      n_running <- sum(state == "running")
+      n_done <- sum(state == "done")
+      paste("{spin} Queue progress:", n_waiting, "waiting", "\u1405",
+            n_running, "running", "\u1405", n_done, "done")
+    },
+
+    update_task_done = function(id) {
+      task_id <- private$tasks[[id]]$get_task_id()
+      runtime <- private$tasks[[id]]$get_task_runtime()
+      paste0("Task done: ", task_id, " (", round(as.numeric(runtime), 2), "s)")
+    },
+
+    update_final = function(state, finished_in) {
+      cli::cli_alert_success(paste0(
+        "Queue complete: ", sum(state == "done"),
+        " tasks done", " (", round(as.numeric(finished_in), 2), "s)"
+      ))
+    }
   )
 )

@@ -22,7 +22,7 @@ A task list is a container that holds a collection of tasks
 \item \href{#method-TaskList-subset}{\code{TaskList$subset()}}
 \item \href{#method-TaskList-subset_in_state}{\code{TaskList$subset_in_state()}}
 \item \href{#method-TaskList-retrieve}{\code{TaskList$retrieve()}}
-\item \href{#method-TaskList-report}{\code{TaskList$report()}}
+\item \href{#method-TaskList-status}{\code{TaskList$status()}}
 \item \href{#method-TaskList-clone}{\code{TaskList$clone()}}
 }
 }
@@ -160,16 +160,27 @@ various other useful metadata. Incomplete tasks may have missing data.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-TaskList-report"></a>}}
-\if{latex}{\out{\hypertarget{method-TaskList-report}{}}}
-\subsection{Method \code{report()}}{
-Report an abbreviated summary of the tasks
+\if{html}{\out{<a id="method-TaskList-status"></a>}}
+\if{latex}{\out{\hypertarget{method-TaskList-status}{}}}
+\subsection{Method \code{status()}}{
+Update the user on the current state of the \code{TaskList}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TaskList$report()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TaskList$status(message, finished_in = NULL)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{message}}{Character specifying whether the message type: "none",
+"minimal" (the default), or "verbose"}
+
+\item{\code{finished_in}}{Specifies the finishing time, and triggers a task completion
+message}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
-Returns a tibble with three columns: task_id, state, runtime
+Invisibly returns a vector of the states of all tasks
 }
 }
 \if{html}{\out{<hr>}}

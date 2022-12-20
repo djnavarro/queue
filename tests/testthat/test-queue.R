@@ -16,13 +16,7 @@ test_that("Queue can push tasks", {
   queue$push(function() Sys.sleep(.1))
 
   tasks <- queue$get_queue_tasks()
-  report <- tasks$report()
-
-  expect_true(inherits(report, "tbl_df"))
-  expect_equal(nrow(report), 3)
-  expect_equal(ncol(report), 3)
-  expect_named(report, c("task_id", "state", "runtime"))
-  expect_equal(report$state, c("waiting", "waiting", "waiting"))
+  expect_equal(tasks$length(), 3)
 
 })
 
@@ -38,13 +32,8 @@ test_that("Queue can execute tasks", {
   Sys.sleep(.2)
 
   tasks <- queue$get_queue_tasks()
-  report <- tasks$report()
-
-  expect_true(inherits(report, "tbl_df"))
-  expect_equal(nrow(report), 3)
-  expect_equal(ncol(report), 3)
-  expect_named(report, c("task_id", "state", "runtime"))
-  expect_equal(report$state, c("done", "done", "done"))
+  state <- tasks$status(message = "none")
+  expect_equal(state, c("done", "done", "done"))
 
   # check the auto-shutdown
   expect_equal(unname(workers$get_pool_state()), c("finished", "finished"))
