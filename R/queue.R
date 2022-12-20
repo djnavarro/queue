@@ -28,7 +28,7 @@ Queue <- R6::R6Class(
       if (is.null(id)) id <- private$get_next_id()
       task <- Task$new(fun, args, id)
       task$register_task_waiting()
-      private$tasks$push(task)
+      private$tasks$add_task(task)
       invisible(task)
     },
 
@@ -59,24 +59,21 @@ Queue <- R6::R6Class(
     #' all tasks have completed this output is the same as the output as the
     #' `run()` method.
     #' @return Returns a tibble containing the results of all executed tasks and
-    #' various other useful metadata. Incomplete tasks nay have missing data.
+    #' various other useful metadata. Incomplete tasks may have missing data.
     retrieve = function() {
       private$tasks$retrieve()
-    },
-
-    #' @description Get as simplified description of the current state of the
-    #' task queue. The corresponding private method is used internally to
-    #' generate progress reports and to monitor progress of the task queue,
-    #' but might be handy to have a public version.
-    #' @return Returns a tibble with three columns: task_id, state, and runtime
-    get_queue_report = function() {
-      private$tasks$report()
     },
 
     #' @description Retrieve the workers
     #' @return A `WorkerPool` object
     get_queue_workers = function() {
       private$workers
+    },
+
+    #' @description Retrieve the tasks
+    #' @return A `TaskList` object
+    get_queue_tasks = function() {
+      private$tasks
     }
 
   ),
@@ -97,7 +94,7 @@ Queue <- R6::R6Class(
 
     # retrieve the list of tasks still in "waiting" status
     get_waiting_tasks = function() {
-      private$tasks$with_state("waiting")
+      private$tasks$subset_in_state("waiting")
     },
 
     # tasks scheduling is mostly devolved to the WorkerPool methods, which

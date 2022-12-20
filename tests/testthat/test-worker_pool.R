@@ -26,17 +26,16 @@ test_that("WorkerPools initialise, shutdown, and refill", {
 test_that("WorkerPools can batch assign/start/finish tasks (workers > tasks)", {
 
   # 3 waiting tasks, 4 idle workers (tasks are slow)
-  tasks <- list(
-    Task$new(function() Sys.sleep(.01)),
-    Task$new(function() Sys.sleep(.01)),
-    Task$new(function() Sys.sleep(.01))
-  )
+  tasks <- TaskList$new()
+  tasks$add_task(Task$new(function() Sys.sleep(.01)))
+  tasks$add_task(Task$new(function() Sys.sleep(.01)))
+  tasks$add_task(Task$new(function() Sys.sleep(.01)))
+
   workers <- WorkerPool$new(4)
 
   # try assign should leave all three tasks assigned
   workers$try_assign(tasks)
-  state <- lapply(tasks, function(x) x$get_task_state())
-  expect_equal(unname(unlist(state)), rep("assigned", 3))
+  expect_equal(tasks$subset_in_state("assigned")$length(), 3)
 
   # try start should show three workers running, one idle
   workers$try_start()
@@ -49,8 +48,7 @@ test_that("WorkerPools can batch assign/start/finish tasks (workers > tasks)", {
   # try finish should show all workers idle, all tasks done
   workers$try_finish()
   Sys.sleep(.2)
-  state <- lapply(tasks, function(x) x$get_task_state())
-  expect_equal(unname(unlist(state)), rep("done", 3))
+  expect_equal(tasks$subset_in_state("done")$length(), 3)
   expect_equal(
     unname(unlist(workers$get_pool_state())),
     c("idle", "idle", "idle", "idle")
@@ -64,21 +62,19 @@ test_that("WorkerPools can batch assign/start/finish tasks (workers > tasks)", {
 test_that("WorkerPools can batch assign/start/finish tasks (tasks > workers)", {
 
   # 5 waiting tasks, 4 idle workers (tasks are slow)
-  tasks <- list(
-    Task$new(function() Sys.sleep(.01)),
-    Task$new(function() Sys.sleep(.01)),
-    Task$new(function() Sys.sleep(.01)),
-    Task$new(function() Sys.sleep(.01)),
-    Task$new(function() Sys.sleep(.01))
-  )
+  tasks <- TaskList$new()
+  tasks$add_task(Task$new(function() Sys.sleep(.01)))
+  tasks$add_task(Task$new(function() Sys.sleep(.01)))
+  tasks$add_task(Task$new(function() Sys.sleep(.01)))
+  tasks$add_task(Task$new(function() Sys.sleep(.01)))
+  tasks$add_task(Task$new(function() Sys.sleep(.01)))
+
   workers <- WorkerPool$new(4)
 
   # try assign should leave all 4 tasks assigned, 1 waiting/created
-  # would be "waiting" in the normal course of events when a Queue
-  # manages this, but I'm manually messing with it in the tests
   workers$try_assign(tasks)
-  state <- lapply(tasks, function(x) x$get_task_state())
-  expect_equal(unname(unlist(state)), c(rep("assigned", 4), "created"))
+  expect_equal(tasks$subset_in_state("assigned")$length(), 4)
+  expect_equal(tasks$subset_in_state("created")$length(), 1)
 
   # try start should show three workers running, one idle
   workers$try_start()
@@ -91,8 +87,8 @@ test_that("WorkerPools can batch assign/start/finish tasks (tasks > workers)", {
   # try finish should show all workers idle, 4 tasks done, 1 waiting/created
   workers$try_finish()
   Sys.sleep(.2)
-  state <- lapply(tasks, function(x) x$get_task_state())
-  expect_equal(unname(unlist(state)), c(rep("done", 4), "created"))
+  expect_equal(tasks$subset_in_state("done")$length(), 4)
+  expect_equal(tasks$subset_in_state("created")$length(), 1)
   expect_equal(
     unname(unlist(workers$get_pool_state())),
     c("idle", "idle", "idle", "idle")

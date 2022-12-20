@@ -97,7 +97,7 @@ intended to be called by \code{Queue} objects.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{tasks}}{A list of \code{Task} objects}
+\item{\code{tasks}}{A \code{TaskList} object}
 }
 \if{html}{\out{</div>}}
 }

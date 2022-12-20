@@ -4,12 +4,7 @@ test_that("Queue works at start up", {
 
   expect_true(inherits(queue, "Queue"))
   expect_true(inherits(queue$get_queue_workers(), "WorkerPool"))
-
-  report <- queue$get_queue_report()
-  expect_true(inherits(report, "tbl_df"))
-  expect_equal(nrow(report), 0)
-  expect_equal(ncol(report), 3)
-  expect_named(report, c("task_id", "state", "runtime"))
+  expect_true(inherits(queue$get_queue_tasks(), "TaskList"))
 
 })
 
@@ -20,7 +15,9 @@ test_that("Queue can push tasks", {
   queue$push(function() Sys.sleep(.1))
   queue$push(function() Sys.sleep(.1))
 
-  report <- queue$get_queue_report()
+  tasks <- queue$get_queue_tasks()
+  report <- tasks$report()
+
   expect_true(inherits(report, "tbl_df"))
   expect_equal(nrow(report), 3)
   expect_equal(ncol(report), 3)
@@ -40,7 +37,9 @@ test_that("Queue can execute tasks", {
   out <- queue$run(message = "none", shutdown = TRUE)
   Sys.sleep(.2)
 
-  report <- queue$get_queue_report()
+  tasks <- queue$get_queue_tasks()
+  report <- tasks$report()
+
   expect_true(inherits(report, "tbl_df"))
   expect_equal(nrow(report), 3)
   expect_equal(ncol(report), 3)

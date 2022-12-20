@@ -45,15 +45,15 @@ WorkerPool <- R6::R6Class(
 
     #' @description Attempt to assign tasks to workers. This method is
     #' intended to be called by `Queue` objects.
-    #' @param tasks A list of `Task` objects
+    #' @param tasks A `TaskList` object
     #' @return Invisibly returns `NULL`
     try_assign = function(tasks) {
       n_workers <- length(private$workers)
-      n_tasks <- length(tasks)
+      n_tasks <- tasks$length()
       w <- 1
       t <- 1
       while(n_workers > 0 & n_tasks > 0) {
-        assigned <- private$workers[[w]]$try_assign(tasks[[t]])
+        assigned <- private$workers[[w]]$try_assign(tasks$get_task(t))
         w <- w + 1
         n_workers <- n_workers - 1
         if(assigned) {

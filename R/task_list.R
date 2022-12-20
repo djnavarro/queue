@@ -1,20 +1,71 @@
-
-# very thin wrapper because really TaskList should be an object, but not
-# currently exported because ugh this API...
+#' R6 class storing a task list
+#'
+#' A task list is a container that holds a collection of tasks
+#' @export
 TaskList <- R6::R6Class(
   classname = "TaskList",
 
   public = list(
+    #' @description Create a new task list
     initialize = function() {},
 
+    #' @description Return the number of tasks in the list
+    #' @return An integer
     length = function() {
       length(private$tasks)
     },
 
-    push = function(task) {
+    #' @description Append a single task to the bottom of the `TaskList`
+    #' @param task A `Task` object
+    #' @return Invisibly returns the input
+    add_task = function(task) {
       private$tasks[[length(private$tasks) + 1L]] <- task
     },
 
+    #' @description Remove one or more tasks from the `TaskList`
+    #' @param x Indices or names of the tasks to remove
+    #' @return ???
+    drop_task = function(x) {
+      private$tasks[x] <- NULL
+
+    },
+
+    #' @description Return a single `Task` contained in the `TaskList`
+    #' @param x The index or name of the task to return
+    #' @return A `Task` object
+    get_task = function(x) {
+      private$tasks[[x]]
+    },
+
+    #' @description Return a subset of the `TaskList` as another `TaskList`
+    #' @param x The indices of the `Tasks` to retain
+    #' @return A `TaskList` object
+    subset = function(x) {
+      subset_list <- TaskList$new()
+      for(task in private$tasks[x]) {
+        subset_list$add_task(task)
+      }
+      subset_list
+    },
+
+
+    #' @description Return a list of tasks in a given state
+    #' @param x The name of the state (e.g., "waiting")
+    #' @return A `TaskList` object
+    subset_in_state = function(x) {
+      which <- vapply(
+        private$tasks,
+        function(t) t$get_task_state() == x,
+        logical(1)
+      )
+      self$subset(which)
+    },
+
+    #' @description Retrieve the full state of the tasks in tidy form. If
+    #' all tasks have completed this output is the same as the output as the
+    #' `run()` method for a `Queue` object.
+    #' @return Returns a tibble containing the results of all executed tasks and
+    #' various other useful metadata. Incomplete tasks may have missing data.
     retrieve = function() {
       if(!self$length()) {
         out <- tibble::tibble(
@@ -41,6 +92,8 @@ TaskList <- R6::R6Class(
       do.call(rbind, out)
     },
 
+    #' @description Report an abbreviated summary of the tasks
+    #' @return Returns a tibble with three columns: task_id, state, runtime
     report = function() {
       if(!self$length()) {
         r <- tibble::tibble(
@@ -55,16 +108,8 @@ TaskList <- R6::R6Class(
         state = unlist(lapply(private$tasks, function(x) x$get_task_state())),
         runtime = unlist(lapply(private$tasks, function(x) x$get_task_runtime()))
       )
-    },
-
-    with_state = function(value) {
-      which <- vapply(
-        private$tasks,
-        function(x) x$get_task_state() == value,
-        logical(1)
-      )
-      private$tasks[which]
     }
+
 
   ),
 

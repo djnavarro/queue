@@ -18,8 +18,8 @@ Documentation baby...
 \item \href{#method-Queue-push}{\code{Queue$push()}}
 \item \href{#method-Queue-run}{\code{Queue$run()}}
 \item \href{#method-Queue-retrieve}{\code{Queue$retrieve()}}
-\item \href{#method-Queue-get_queue_report}{\code{Queue$get_queue_report()}}
 \item \href{#method-Queue-get_queue_workers}{\code{Queue$get_queue_workers()}}
+\item \href{#method-Queue-get_queue_tasks}{\code{Queue$get_queue_tasks()}}
 \item \href{#method-Queue-clone}{\code{Queue$clone()}}
 }
 }
@@ -123,23 +123,7 @@ all tasks have completed this output is the same as the output as the
 
 \subsection{Returns}{
 Returns a tibble containing the results of all executed tasks and
-various other useful metadata. Incomplete tasks nay have missing data.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Queue-get_queue_report"></a>}}
-\if{latex}{\out{\hypertarget{method-Queue-get_queue_report}{}}}
-\subsection{Method \code{get_queue_report()}}{
-Get as simplified description of the current state of the
-task queue. The corresponding private method is used internally to
-generate progress reports and to monitor progress of the task queue,
-but might be handy to have a public version.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Queue$get_queue_report()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Returns a tibble with three columns: task_id, state, and runtime
+various other useful metadata. Incomplete tasks may have missing data.
 }
 }
 \if{html}{\out{<hr>}}
@@ -153,6 +137,19 @@ Retrieve the workers
 
 \subsection{Returns}{
 A \code{WorkerPool} object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Queue-get_queue_tasks"></a>}}
+\if{latex}{\out{\hypertarget{method-Queue-get_queue_tasks}{}}}
+\subsection{Method \code{get_queue_tasks()}}{
+Retrieve the tasks
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Queue$get_queue_tasks()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A \code{TaskList} object
 }
 }
 \if{html}{\out{<hr>}}
