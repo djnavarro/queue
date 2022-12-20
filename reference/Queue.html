@@ -64,8 +64,8 @@ R6 class for a multi-worker task queue"><!-- mathjax --><script src="https://cdn
 <li><p><a href="#method-Queue-push"><code>Queue$push()</code></a></p></li>
 <li><p><a href="#method-Queue-run"><code>Queue$run()</code></a></p></li>
 <li><p><a href="#method-Queue-retrieve"><code>Queue$retrieve()</code></a></p></li>
-<li><p><a href="#method-Queue-get_queue_report"><code>Queue$get_queue_report()</code></a></p></li>
 <li><p><a href="#method-Queue-get_queue_workers"><code>Queue$get_queue_workers()</code></a></p></li>
+<li><p><a href="#method-Queue-get_queue_tasks"><code>Queue$get_queue_tasks()</code></a></p></li>
 <li><p><a href="#method-Queue-clone"><code>Queue$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-Queue-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -176,34 +176,31 @@ all tasks have completed this output is the same as the output as the
 <div class="section">
 <h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
 <p>Returns a tibble containing the results of all executed tasks and
-various other useful metadata. Incomplete tasks nay have missing data.</p>
-</div>
-
-</div><p></p><hr><a id="method-Queue-get_queue_report"></a><div class="section">
-<h3 id="method-get-queue-report-">Method <code>get_queue_report()</code><a class="anchor" aria-label="anchor" href="#method-get-queue-report-"></a></h3>
-<p>Get as simplified description of the current state of the
-task queue. The corresponding private method is used internally to
-generate progress reports and to monitor progress of the task queue,
-but might be handy to have a public version.</p><div class="section">
-<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Queue</span><span class="op">$</span><span class="fu">get_queue_report</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
-<h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
-<p>Returns a tibble with three columns: task_id, state, and runtime</p>
+various other useful metadata. Incomplete tasks may have missing data.</p>
 </div>
 
 </div><p></p><hr><a id="method-Queue-get_queue_workers"></a><div class="section">
 <h3 id="method-get-queue-workers-">Method <code>get_queue_workers()</code><a class="anchor" aria-label="anchor" href="#method-get-queue-workers-"></a></h3>
 <p>Retrieve the workers</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Queue</span><span class="op">$</span><span class="fu">get_queue_workers</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
 <p>A <code>WorkerPool</code> object</p>
+</div>
+
+</div><p></p><hr><a id="method-Queue-get_queue_tasks"></a><div class="section">
+<h3 id="method-get-queue-tasks-">Method <code>get_queue_tasks()</code><a class="anchor" aria-label="anchor" href="#method-get-queue-tasks-"></a></h3>
+<p>Retrieve the tasks</p><div class="section">
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Queue</span><span class="op">$</span><span class="fu">get_queue_tasks</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<p>A <code>TaskList</code> object</p>
 </div>
 
 </div><p></p><hr><a id="method-Queue-clone"></a><div class="section">
