@@ -35,7 +35,7 @@ test_that("WorkerPools can batch assign/start/finish tasks (workers > tasks)", {
 
   # try assign should leave all three tasks assigned
   workers$try_assign(tasks)
-  expect_equal(tasks$subset_in_state("assigned")$length(), 3)
+  expect_equal(tasks$get_tasks_in_state("assigned")$length(), 3)
 
   # try start should show three workers running, one idle
   workers$try_start()
@@ -48,7 +48,7 @@ test_that("WorkerPools can batch assign/start/finish tasks (workers > tasks)", {
   # try finish should show all workers idle, all tasks done
   workers$try_finish()
   Sys.sleep(.2)
-  expect_equal(tasks$subset_in_state("done")$length(), 3)
+  expect_equal(tasks$get_tasks_in_state("done")$length(), 3)
   expect_equal(
     unname(unlist(workers$get_pool_state())),
     c("idle", "idle", "idle", "idle")
@@ -73,8 +73,8 @@ test_that("WorkerPools can batch assign/start/finish tasks (tasks > workers)", {
 
   # try assign should leave all 4 tasks assigned, 1 waiting/created
   workers$try_assign(tasks)
-  expect_equal(tasks$subset_in_state("assigned")$length(), 4)
-  expect_equal(tasks$subset_in_state("created")$length(), 1)
+  expect_equal(tasks$get_tasks_in_state("assigned")$length(), 4)
+  expect_equal(tasks$get_tasks_in_state("created")$length(), 1)
 
   # try start should show three workers running, one idle
   workers$try_start()
@@ -87,8 +87,8 @@ test_that("WorkerPools can batch assign/start/finish tasks (tasks > workers)", {
   # try finish should show all workers idle, 4 tasks done, 1 waiting/created
   workers$try_finish()
   Sys.sleep(.2)
-  expect_equal(tasks$subset_in_state("done")$length(), 4)
-  expect_equal(tasks$subset_in_state("created")$length(), 1)
+  expect_equal(tasks$get_tasks_in_state("done")$length(), 4)
+  expect_equal(tasks$get_tasks_in_state("created")$length(), 1)
   expect_equal(
     unname(unlist(workers$get_pool_state())),
     c("idle", "idle", "idle", "idle")

@@ -36,27 +36,57 @@ TaskList <- R6::R6Class(
       private$tasks[[x]]
     },
 
-    #' @description Return a subset of the `TaskList` as another `TaskList`
-    #' @param x The indices of the `Tasks` to retain
-    #' @return A `TaskList` object
-    subset = function(x) {
-      subset_list <- TaskList$new()
-      for(task in private$tasks[x]) {
-        subset_list$add_task(task)
+    #' @description Return the status of all tasks in the `TaskList`. If
+    #' requested, this method will also display messages summarising the
+    #' current state of the tasks, and any tasks that have completed since
+    #' the last time a status was returned. This messaging system is called
+    #' by `Queue` objects as they work on a tasks
+    #' @param message Character specifying what type of message to display:
+    #' "none" (the default), "minimal", or "verbose"
+    #' @param finished_in A numeric value or a difftime specifying how long
+    #' the tasks have taken to complete. This argument is only used when
+    #' displaying messages, and it is used only to trigger the display of a
+    #' tidy "all tasks completed" style message. It is purely cosmetic and
+    #' does not affect the task status.
+    #' @return A character vector specifying the completion status for all
+    #' listed tasks
+    get_state = function(message = "none", finished_in = NULL) {
+      state <- vapply(
+        private$tasks,
+        function(t) t$get_task_state(),
+        character(1)
+      )
+      if(message == "none") return(invisible(state))
+      if(message == "verbose") {
+        done <- private$which_tasks_done()
+        just_done <- setdiff(done, private$done_last_update)
+        if(length(just_done) > 0) {
+          private$done_last_update <- done
+          private$spinner$finish()
+          for(id in just_done) cli::cli_alert(private$update_task_done(id))
+          private$spinner <- private$make_spinner()
+        }
       }
-      subset_list
+      if(message %in% c("verbose", "minimal")) {
+        private$spinner$spin(private$update_overall(state))
+      }
+      if(!is.null(finished_in)) {
+        private$spinner$finish()
+        private$update_final(state, finished_in)
+      }
+      invisible(state)
     },
 
     #' @description Return a list of tasks in a given state
     #' @param x The name of the state (e.g., "waiting")
     #' @return A `TaskList` object
-    subset_in_state = function(x) {
+    get_tasks_in_state = function(x) {
       which <- vapply(
         private$tasks,
         function(t) t$get_task_state() == x,
         logical(1)
       )
-      self$subset(which)
+      private$get_subset(which)
     },
 
     #' @description Retrieve the full state of the tasks in tidy form. If
@@ -88,45 +118,21 @@ TaskList <- R6::R6Class(
       }
       out <- lapply(private$tasks, function(x) x$retrieve())
       do.call(rbind, out)
-    },
-
-    #' @description Update the user on the current state of the `TaskList`
-    #' @param message Character specifying whether the message type: "none",
-    #' "minimal" (the default), or "verbose"
-    #' @param finished_in Specifies the finishing time, and triggers a task completion
-    #' message
-    #' @return Invisibly returns a vector of the states of all tasks
-    status = function(message, finished_in = NULL) {
-      state <- vapply(
-        private$tasks,
-        function(t) t$get_task_state(),
-        character(1)
-      )
-      if(message == "none") return(invisible(state))
-      if(message == "verbose") {
-        done <- private$which_tasks_done()
-        just_done <- setdiff(done, private$done_last_update)
-        if(length(just_done) > 0) {
-          private$done_last_update <- done
-          private$spinner$finish()
-          for(id in just_done) cli::cli_alert(private$update_task_done(id))
-          private$spinner <- private$make_spinner()
-        }
-      }
-      if(message %in% c("verbose", "minimal")) {
-        private$spinner$spin(private$update_overall(state))
-      }
-      if(!is.null(finished_in)) {
-        private$spinner$finish()
-        private$update_final(state, finished_in)
-      }
-      invisible(state)
     }
   ),
 
   private = list(
 
     tasks = list(),
+
+    # subsets the tasks list
+    get_subset = function(x) {
+      subset_list <- TaskList$new()
+      for(task in private$tasks[x]) {
+        subset_list$add_task(task)
+      }
+      subset_list
+    },
 
     which_tasks_done = function() {
       which(vapply(

@@ -19,10 +19,9 @@ A task list is a container that holds a collection of tasks
 \item \href{#method-TaskList-add_task}{\code{TaskList$add_task()}}
 \item \href{#method-TaskList-remove_task}{\code{TaskList$remove_task()}}
 \item \href{#method-TaskList-get_task}{\code{TaskList$get_task()}}
-\item \href{#method-TaskList-subset}{\code{TaskList$subset()}}
-\item \href{#method-TaskList-subset_in_state}{\code{TaskList$subset_in_state()}}
+\item \href{#method-TaskList-get_state}{\code{TaskList$get_state()}}
+\item \href{#method-TaskList-get_tasks_in_state}{\code{TaskList$get_tasks_in_state()}}
 \item \href{#method-TaskList-retrieve}{\code{TaskList$retrieve()}}
-\item \href{#method-TaskList-status}{\code{TaskList$status()}}
 \item \href{#method-TaskList-clone}{\code{TaskList$clone()}}
 }
 }
@@ -104,32 +103,44 @@ A \code{Task} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-TaskList-subset"></a>}}
-\if{latex}{\out{\hypertarget{method-TaskList-subset}{}}}
-\subsection{Method \code{subset()}}{
-Return a subset of the \code{TaskList} as another \code{TaskList}
+\if{html}{\out{<a id="method-TaskList-get_state"></a>}}
+\if{latex}{\out{\hypertarget{method-TaskList-get_state}{}}}
+\subsection{Method \code{get_state()}}{
+Return the status of all tasks in the \code{TaskList}. If
+requested, this method will also display messages summarising the
+current state of the tasks, and any tasks that have completed since
+the last time a status was returned. This messaging system is called
+by \code{Queue} objects as they work on a tasks
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TaskList$subset(x)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TaskList$get_state(message = "none", finished_in = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{x}}{The indices of the \code{Tasks} to retain}
+\item{\code{message}}{Character specifying what type of message to display:
+"none" (the default), "minimal", or "verbose"}
+
+\item{\code{finished_in}}{A numeric value or a difftime specifying how long
+the tasks have taken to complete. This argument is only used when
+displaying messages, and it is used only to trigger the display of a
+tidy "all tasks completed" style message. It is purely cosmetic and
+does not affect the task status.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A \code{TaskList} object
+A character vector specifying the completion status for all
+listed tasks
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-TaskList-subset_in_state"></a>}}
-\if{latex}{\out{\hypertarget{method-TaskList-subset_in_state}{}}}
-\subsection{Method \code{subset_in_state()}}{
+\if{html}{\out{<a id="method-TaskList-get_tasks_in_state"></a>}}
+\if{latex}{\out{\hypertarget{method-TaskList-get_tasks_in_state}{}}}
+\subsection{Method \code{get_tasks_in_state()}}{
 Return a list of tasks in a given state
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TaskList$subset_in_state(x)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TaskList$get_tasks_in_state(x)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -157,30 +168,6 @@ all tasks have completed this output is the same as the output as the
 \subsection{Returns}{
 Returns a tibble containing the results of all executed tasks and
 various other useful metadata. Incomplete tasks may have missing data.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-TaskList-status"></a>}}
-\if{latex}{\out{\hypertarget{method-TaskList-status}{}}}
-\subsection{Method \code{status()}}{
-Update the user on the current state of the \code{TaskList}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TaskList$status(message, finished_in = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{message}}{Character specifying whether the message type: "none",
-"minimal" (the default), or "verbose"}
-
-\item{\code{finished_in}}{Specifies the finishing time, and triggers a task completion
-message}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Invisibly returns a vector of the states of all tasks
 }
 }
 \if{html}{\out{<hr>}}

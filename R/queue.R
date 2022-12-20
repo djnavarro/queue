@@ -100,7 +100,7 @@ Queue <- R6::R6Class(
       private$workers$try_finish()
       private$workers$shutdown_overdue_workers(timelimit)
       private$workers$refill_pool()
-      private$workers$try_assign(private$tasks$subset_in_state("waiting"))
+      private$workers$try_assign(private$tasks$get_tasks_in_state("waiting"))
       private$workers$try_start()
     },
 
@@ -110,14 +110,14 @@ Queue <- R6::R6Class(
       time_started <- Sys.time()
       repeat{
         private$schedule(timelimit)
-        state <- private$tasks$status(message)
+        state <- private$tasks$get_state(message)
         finished <- sum(state %in% c("waiting", "running")) == 0
         if(finished) break
         Sys.sleep(interval)
       }
       time_finished <- Sys.time()
       elapsed <- time_finished - time_started
-      private$tasks$status(message, finished_in = elapsed)
+      private$tasks$get_state(message, finished_in = elapsed)
       if(shutdown) private$workers$shutdown_pool()
       return(self$retrieve())
     }
