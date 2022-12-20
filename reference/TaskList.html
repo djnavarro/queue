@@ -65,10 +65,9 @@ R6 class storing a task list"><!-- mathjax --><script src="https://cdnjs.cloudfl
 <li><p><a href="#method-TaskList-add_task"><code>TaskList$add_task()</code></a></p></li>
 <li><p><a href="#method-TaskList-remove_task"><code>TaskList$remove_task()</code></a></p></li>
 <li><p><a href="#method-TaskList-get_task"><code>TaskList$get_task()</code></a></p></li>
-<li><p><a href="#method-TaskList-subset"><code>TaskList$subset()</code></a></p></li>
-<li><p><a href="#method-TaskList-subset_in_state"><code>TaskList$subset_in_state()</code></a></p></li>
+<li><p><a href="#method-TaskList-get_state"><code>TaskList$get_state()</code></a></p></li>
+<li><p><a href="#method-TaskList-get_tasks_in_state"><code>TaskList$get_tasks_in_state()</code></a></p></li>
 <li><p><a href="#method-TaskList-retrieve"><code>TaskList$retrieve()</code></a></p></li>
-<li><p><a href="#method-TaskList-status"><code>TaskList$status()</code></a></p></li>
 <li><p><a href="#method-TaskList-clone"><code>TaskList$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-TaskList-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -142,31 +141,45 @@ R6 class storing a task list"><!-- mathjax --><script src="https://cdnjs.cloudfl
 <p>A <code>Task</code> object</p>
 </div>
 
-</div><p></p><hr><a id="method-TaskList-subset"></a><div class="section">
-<h3 id="method-subset-">Method <code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code><a class="anchor" aria-label="anchor" href="#method-subset-"></a></h3>
-<p>Return a subset of the <code>TaskList</code> as another <code>TaskList</code></p><div class="section">
+</div><p></p><hr><a id="method-TaskList-get_state"></a><div class="section">
+<h3 id="method-get-state-">Method <code>get_state()</code><a class="anchor" aria-label="anchor" href="#method-get-state-"></a></h3>
+<p>Return the status of all tasks in the <code>TaskList</code>. If
+requested, this method will also display messages summarising the
+current state of the tasks, and any tasks that have completed since
+the last time a status was returned. This messaging system is called
+by <code>Queue</code> objects as they work on a tasks</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TaskList</span><span class="op">$</span><span class="fu">subset</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TaskList</span><span class="op">$</span><span class="fu">get_state</span><span class="op">(</span>message <span class="op">=</span> <span class="st">"none"</span>, finished_in <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>x</code></dt>
-<dd><p>The indices of the <code>Tasks</code> to retain</p></dd>
+<p></p><div class="arguments"><dl><dt><code>message</code></dt>
+<dd><p>Character specifying what type of message to display:
+"none" (the default), "minimal", or "verbose"</p></dd>
+
+
+<dt><code>finished_in</code></dt>
+<dd><p>A numeric value or a difftime specifying how long
+the tasks have taken to complete. This argument is only used when
+displaying messages, and it is used only to trigger the display of a
+tidy "all tasks completed" style message. It is purely cosmetic and
+does not affect the task status.</p></dd>
 
 
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
-<p>A <code>TaskList</code> object</p>
+<p>A character vector specifying the completion status for all
+listed tasks</p>
 </div>
 
-</div><p></p><hr><a id="method-TaskList-subset_in_state"></a><div class="section">
-<h3 id="method-subset-in-state-">Method <code>subset_in_state()</code><a class="anchor" aria-label="anchor" href="#method-subset-in-state-"></a></h3>
+</div><p></p><hr><a id="method-TaskList-get_tasks_in_state"></a><div class="section">
+<h3 id="method-get-tasks-in-state-">Method <code>get_tasks_in_state()</code><a class="anchor" aria-label="anchor" href="#method-get-tasks-in-state-"></a></h3>
 <p>Return a list of tasks in a given state</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TaskList</span><span class="op">$</span><span class="fu">subset_in_state</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TaskList</span><span class="op">$</span><span class="fu">get_tasks_in_state</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -197,41 +210,15 @@ all tasks have completed this output is the same as the output as the
 various other useful metadata. Incomplete tasks may have missing data.</p>
 </div>
 
-</div><p></p><hr><a id="method-TaskList-status"></a><div class="section">
-<h3 id="method-status-">Method <code>status()</code><a class="anchor" aria-label="anchor" href="#method-status-"></a></h3>
-<p>Update the user on the current state of the <code>TaskList</code></p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TaskList</span><span class="op">$</span><span class="fu">status</span><span class="op">(</span><span class="va">message</span>, finished_in <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
-<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>message</code></dt>
-<dd><p>Character specifying whether the message type: "none",
-"minimal" (the default), or "verbose"</p></dd>
-
-
-<dt><code>finished_in</code></dt>
-<dd><p>Specifies the finishing time, and triggers a task completion
-message</p></dd>
-
-
-</dl><p></p></div>
-</div>
-<div class="section">
-<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
-<p>Invisibly returns a vector of the states of all tasks</p>
-</div>
-
 </div><p></p><hr><a id="method-TaskList-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TaskList</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
