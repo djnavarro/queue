@@ -52,7 +52,7 @@ test_that("Task retrieve returns tibble", {
   task <- Task$new(fun = function() {2 + 2})
   cols <- c("task_id", "worker_id", "state", "result", "runtime", "fun",
             "args", "created", "queued", "assigned", "started", "finished",
-            "code", "message", "stdout", "stderr")
+            "code", "message", "stdout", "stderr", "error")
 
   expect_s3_class(task$retrieve(), "tbl_df")
   expect_named(task$retrieve(), cols)

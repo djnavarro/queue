@@ -46,13 +46,15 @@ test_that("Queue output looks right", {
   queue <- Queue$new(workers = 2)
   workers <- queue$get_queue_workers()
 
+  col_names <- c("task_id", "worker_id", "state", "result", "runtime", "fun",
+                 "args", "created", "queued", "assigned", "started", "finished",
+                 "code", "message", "stdout", "stderr", "error")
+
   out <- queue$retrieve()
   expect_true(inherits(out, "tbl_df"))
   expect_equal(nrow(out), 0)
-  expect_equal(ncol(out), 16)
-  expect_named(out, c("task_id", "worker_id", "state", "result", "runtime", "fun",
-                      "args", "created", "queued", "assigned", "started", "finished",
-                      "code", "message", "stdout", "stderr"))
+  expect_equal(ncol(out), 17)
+  expect_named(out, col_names)
 
   queue$push(function() Sys.sleep(.1))
   queue$push(function() Sys.sleep(.1))
@@ -61,20 +63,16 @@ test_that("Queue output looks right", {
   out <- queue$retrieve()
   expect_true(inherits(out, "tbl_df"))
   expect_equal(nrow(out), 3)
-  expect_equal(ncol(out), 16)
-  expect_named(out, c("task_id", "worker_id", "state", "result", "runtime", "fun",
-                      "args", "created", "queued", "assigned", "started", "finished",
-                      "code", "message", "stdout", "stderr"))
+  expect_equal(ncol(out), 17)
+  expect_named(out, col_names)
 
   out <- queue$run(message = "none", shutdown = TRUE)
   Sys.sleep(.2)
 
   expect_true(inherits(out, "tbl_df"))
   expect_equal(nrow(out), 3)
-  expect_equal(ncol(out), 16)
-  expect_named(out, c("task_id", "worker_id", "state", "result", "runtime", "fun",
-                      "args", "created", "queued", "assigned", "started", "finished",
-                      "code", "message", "stdout", "stderr"))
+  expect_equal(ncol(out), 17)
+  expect_named(out, col_names)
 
 })
 

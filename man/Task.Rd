@@ -9,8 +9,21 @@ R6 class storing a task
 R6 class storing a task
 }
 \details{
-A task is a container that holds a function and arguments, and eventually
-the results of that function when called. Various metadata fields are stored.
+A \code{Task} object is used as a storage class. It is a container used to hold an
+R function and any arguments to be passed to the function. It can also hold
+any output returned by the function, anything printed to stdout or stderr
+when the function is called, and various other metadata such as the process
+id of the worker that executed the function, timestamps, and so on.
+
+The methods for \code{Task} objects fall into two groups, roughly speaking. The
+\verb{get_*()} methods are used to return information about the \code{Task}, and the
+\verb{register_*()} methods are used to register information related to events
+relevant to the \code{Task} status.
+
+The \code{retrieve()} method is special, and returns a tibble containing all
+information stored about the task. Objects further up the hierarchy use this
+method to return nicely organised output that summarise the results from
+many tasks.
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -34,7 +47,11 @@ the results of that function when called. Various metadata fields are stored.
 \if{html}{\out{<a id="method-Task-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Task-new}{}}}
 \subsection{Method \code{new()}}{
-Create a new task object.
+Create a new task. Conceptually, a \code{Task} is viewed as a
+function that will be executed by the \code{Worker} to which it is assigned,
+and it is generally expected that any resources the function requires
+are passed through the arguments since the execution context will be a
+different R session to the one in which the function is defined.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$new(fun, args = list(), id = NULL)}\if{html}{\out{</div>}}
 }
@@ -64,7 +81,32 @@ Retrieve a tidy summary of the task state.
 }
 
 \subsection{Returns}{
-A tibble with one row
+A tibble containing a single row, and the following columns:
+\itemize{
+\item \code{task_id} A character string specifying the task identifier
+\item \code{worker_id} An integer specifying the worker process id (pid)
+\item \code{state} A character string indicating the task status ("created",
+"waiting", "assigned", "running", or "done")
+\item \code{result} A list containing the function output, or NULL
+\item \code{runtime} Completion time for the task (NA if the task is not done)
+\item \code{fun} A list containing the function
+\item \code{args} A list containing the arguments
+\item \code{created} The time at which the task was created
+\item \code{queued} The time at which the task was added to a \code{Queue}
+\item \code{assigned} The time at which the task was assigned to a \code{Worker}
+\item \code{started} The time at which the \code{Worker} called the function
+\item \code{finished} The time at which the \code{Worker} output was returned
+\item \code{code} The status code returned by the callr R session (integer)
+\item \code{message} The message returned by the callr R session (character)
+\item \code{stdout} List containing the contents of stdout during function execution
+\item \code{stderr} List containing the contents of stderr during function execution
+\item \code{error}  List containing \code{NULL}
+}
+
+Note: at present there is one field from the callr rsession::read() method
+that isn't captured here, and that's the error field. I'll add that after
+I've finished wrapping my head around what that actually does. The \code{error}
+column, at present, is included only as a placeholder
 }
 }
 \if{html}{\out{<hr>}}

@@ -1,13 +1,31 @@
 #' R6 class storing a task
 #'
-#' A task is a container that holds a function and arguments, and eventually
-#' the results of that function when called. Various metadata fields are stored.
+#' A `Task` object is used as a storage class. It is a container used to hold an
+#' R function and any arguments to be passed to the function. It can also hold
+#' any output returned by the function, anything printed to stdout or stderr
+#' when the function is called, and various other metadata such as the process
+#' id of the worker that executed the function, timestamps, and so on.
+#'
+#' The methods for `Task` objects fall into two groups, roughly speaking. The
+#' `get_*()` methods are used to return information about the `Task`, and the
+#' `register_*()` methods are used to register information related to events
+#' relevant to the `Task` status.
+#'
+#' The `retrieve()` method is special, and returns a tibble containing all
+#' information stored about the task. Objects further up the hierarchy use this
+#' method to return nicely organised output that summarise the results from
+#' many tasks.
+#'
 #' @export
 Task <- R6::R6Class(
   classname = "Task",
   public = list(
 
-    #' @description Create a new task object.
+    #' @description Create a new task. Conceptually, a `Task` is viewed as a
+    #' function that will be executed by the `Worker` to which it is assigned,
+    #' and it is generally expected that any resources the function requires
+    #' are passed through the arguments since the execution context will be a
+    #' different R session to the one in which the function is defined.
     #' @param fun The function to be called when the task executes.
     #' @param args A list of arguments to be passed to the function (optional).
     #' @param id A string specifying a unique task identifier (optional).
@@ -20,7 +38,31 @@ Task <- R6::R6Class(
     },
 
     #' @description Retrieve a tidy summary of the task state.
-    #' @return A tibble with one row
+    #' @return A tibble containing a single row, and the following columns:
+    #' * `task_id` A character string specifying the task identifier
+    #' * `worker_id` An integer specifying the worker process id (pid)
+    #' * `state` A character string indicating the task status ("created",
+    #'   "waiting", "assigned", "running", or "done")
+    #' * `result` A list containing the function output, or NULL
+    #' * `runtime` Completion time for the task (NA if the task is not done)
+    #' * `fun` A list containing the function
+    #' * `args` A list containing the arguments
+    #' * `created` The time at which the task was created
+    #' * `queued` The time at which the task was added to a `Queue`
+    #' * `assigned` The time at which the task was assigned to a `Worker`
+    #' * `started` The time at which the `Worker` called the function
+    #' * `finished` The time at which the `Worker` output was returned
+    #' * `code` The status code returned by the callr R session (integer)
+    #' * `message` The message returned by the callr R session (character)
+    #' * `stdout` List containing the contents of stdout during function execution
+    #' * `stderr` List containing the contents of stderr during function execution
+    #' * `error`  List containing `NULL`
+    #'
+    #' Note: at present there is one field from the callr rsession::read() method
+    #' that isn't captured here, and that's the error field. I'll add that after
+    #' I've finished wrapping my head around what that actually does. The `error`
+    #' column, at present, is included only as a placeholder
+    #' @md
     retrieve = function() {
 
       out <- tibble::tibble(
@@ -39,7 +81,8 @@ Task <- R6::R6Class(
         code = NA_integer_,
         message = NA_character_,
         stdout = list(NULL),
-        stderr = list(NULL)
+        stderr = list(NULL),
+        error = list(NULL)
       )
 
       if(inherits(private$results, "callr_session_result")) {
@@ -166,6 +209,25 @@ Task <- R6::R6Class(
   )
 )
 
+no_task_output <- tibble::tibble(
+    task_id = character(0),
+    worker_id = character(0),
+    state = character(0),
+    result = list(),
+    runtime = numeric(0),
+    fun = list(),
+    args = list(),
+    created = numeric(0),
+    queued = numeric(0),
+    assigned = numeric(0),
+    started = numeric(0),
+    finished = numeric(0),
+    code = numeric(0),
+    message = character(0),
+    stdout = list(),
+    stderr = list(),
+    error = list()
+  )
 
 
 
