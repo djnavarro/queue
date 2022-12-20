@@ -9,7 +9,12 @@ R6 class storing a task list
 R6 class storing a task list
 }
 \details{
-A task list is a container that holds a collection of tasks
+The TaskList class is used as a storage class. It provides a container that
+holds a collection of Task objects, along with a collection of methods for
+adding, removing, and getting Tasks. It can also report on the status of the
+Tasks contained within the list and retrieve results from those Tasks. What
+it cannot do is manage interactions with Workers or arrange for the Tasks to
+be executed. That's the job of the Queue.
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -52,7 +57,7 @@ Integer
 \if{html}{\out{<a id="method-TaskList-add_task"></a>}}
 \if{latex}{\out{\hypertarget{method-TaskList-add_task}{}}}
 \subsection{Method \code{add_task()}}{
-Append a single task to the bottom of the \code{TaskList}
+Add a task to the \code{TaskList}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TaskList$add_task(task)}\if{html}{\out{</div>}}
 }
@@ -60,7 +65,7 @@ Append a single task to the bottom of the \code{TaskList}
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{task}}{A \code{Task} object}
+\item{\code{task}}{The \code{Task} object to be added}
 }
 \if{html}{\out{</div>}}
 }
@@ -69,7 +74,7 @@ Append a single task to the bottom of the \code{TaskList}
 \if{html}{\out{<a id="method-TaskList-remove_task"></a>}}
 \if{latex}{\out{\hypertarget{method-TaskList-remove_task}{}}}
 \subsection{Method \code{remove_task()}}{
-Remove one or more tasks from the \code{TaskList}
+This method removes one or more tasks from the \code{TaskList}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TaskList$remove_task(x)}\if{html}{\out{</div>}}
 }
@@ -77,7 +82,7 @@ Remove one or more tasks from the \code{TaskList}
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{x}}{Indices or names of the tasks to remove}
+\item{\code{x}}{Indices of the tasks to be removed}
 }
 \if{html}{\out{</div>}}
 }
@@ -86,7 +91,10 @@ Remove one or more tasks from the \code{TaskList}
 \if{html}{\out{<a id="method-TaskList-get_task"></a>}}
 \if{latex}{\out{\hypertarget{method-TaskList-get_task}{}}}
 \subsection{Method \code{get_task()}}{
-Return a single \code{Task} contained in the \code{TaskList}
+Return a single \code{Task} contained in the \code{TaskList}. The
+\code{Task} is not removed from the \code{TaskList}, and has reference semantics:
+if the listed task is completed by a \code{Worker}, then the status of any
+\code{Task} returned by this method will update automatically
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TaskList$get_task(x)}\if{html}{\out{</div>}}
 }
@@ -94,7 +102,7 @@ Return a single \code{Task} contained in the \code{TaskList}
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{x}}{The index or name of the task to return}
+\item{\code{x}}{The index the task to return}
 }
 \if{html}{\out{</div>}}
 }

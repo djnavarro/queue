@@ -1,6 +1,11 @@
 #' R6 class storing a task list
 #'
-#' A task list is a container that holds a collection of tasks
+#' The TaskList class is used as a storage class. It provides a container that
+#' holds a collection of Task objects, along with a collection of methods for
+#' adding, removing, and getting Tasks. It can also report on the status of the
+#' Tasks contained within the list and retrieve results from those Tasks. What
+#' it cannot do is manage interactions with Workers or arrange for the Tasks to
+#' be executed. That's the job of the Queue.
 #' @export
 TaskList <- R6::R6Class(
   classname = "TaskList",
@@ -17,20 +22,23 @@ TaskList <- R6::R6Class(
       length(private$tasks)
     },
 
-    #' @description Append a single task to the bottom of the `TaskList`
-    #' @param task A `Task` object
+    #' @description Add a task to the `TaskList`
+    #' @param task The `Task` object to be added
     add_task = function(task) {
       private$tasks[[length(private$tasks) + 1L]] <- task
     },
 
-    #' @description Remove one or more tasks from the `TaskList`
-    #' @param x Indices or names of the tasks to remove
+    #' @description This method removes one or more tasks from the `TaskList`.
+    #' @param x Indices of the tasks to be removed
     remove_task = function(x) {
       private$tasks[x] <- NULL
     },
 
-    #' @description Return a single `Task` contained in the `TaskList`
-    #' @param x The index or name of the task to return
+    #' @description Return a single `Task` contained in the `TaskList`. The
+    #' `Task` is not removed from the `TaskList`, and has reference semantics:
+    #' if the listed task is completed by a `Worker`, then the status of any
+    #' `Task` returned by this method will update automatically
+    #' @param x The index the task to return
     #' @return A `Task` object
     get_task = function(x) {
       private$tasks[[x]]
