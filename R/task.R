@@ -65,6 +65,7 @@ Task <- R6::R6Class(
     #' @md
     retrieve = function() {
 
+      # data structure to return to user
       out <- tibble::tibble(
         task_id = private$task_id,
         worker_id = private$worker_id,
@@ -85,6 +86,7 @@ Task <- R6::R6Class(
         error = list(NULL)
       )
 
+      # populate fields from callr session
       if(inherits(private$results, "callr_session_result")) {
         out$runtime <- private$time_finished - private$time_started
         out$result <- list(private$results$result)
@@ -134,10 +136,11 @@ Task <- R6::R6Class(
     },
 
     #' @description Register the task creation by updating internal storage.
-    #' This is intended to be called by `Worker` objects. Users should not
-    #' need to call it.
-    #' @return The function is called for its side-effects. Returns `NULL`
-    #' invisibly.
+    #' When this method is called, the state of the `Task` is set to "created"
+    #' and a timestamp is recorded, registering the creation time for the task.
+    #' This method is intended to be called by `Worker` objects. Users should
+    #' not need to call it.
+    #' @return Returns `NULL` invisibly.
     register_task_created = function() {
       private$state <- "created"
       private$time_created <- Sys.time()
@@ -145,10 +148,11 @@ Task <- R6::R6Class(
     },
 
     #' @description Register the addition of the task to a queue by updating
-    #' internal storage. This is intended to be called by `Worker` objects.
-    #' Users should not need to call it.
-    #' @return The function is called for its side-effects. Returns `NULL`
-    #' invisibly.
+    #' internal storage. When this method is called, the state of the `Task`
+    #' is set to "waiting" and a timestamp is recorded, registering the time
+    #' at which the task was added to a queue. This method is intended to be
+    #' called by `Worker` objects. Users should not need to call it.
+    #' @return Returns `NULL` invisibly.
     register_task_waiting = function() {
       private$state <- "waiting"
       private$time_queued <- Sys.time()
@@ -156,11 +160,14 @@ Task <- R6::R6Class(
     },
 
     #' @description Register the assignment of a task to a worker by updating
-    #' internal storage. This is intended to be called by `Worker` objects.
+    #' internal storage. When this method is called, the state of the `Task`
+    #' is set to "assigned" and a timestamp is recorded, registering the time
+    #' at which the task was assigned to a `Worker`. In addition, the
+    #' `worker_id` of the worker object (which is also it's pid) is registered
+    #' with the task. This method is intended to be called by `Worker` objects.
     #' Users should not need to call it.
     #' @param worker_id Identifier for the worker to which the task is assigned.
-    #' @return The function is called for its side-effects. Returns `NULL`
-    #' invisibly.
+    #' @return Returns `NULL` invisibly.
     register_task_assigned = function(worker_id) {
       private$state <- "assigned"
       private$worker_id <- worker_id
@@ -169,11 +176,15 @@ Task <- R6::R6Class(
     },
 
     #' @description Register the commencement of a task to a worker by updating
-    #' internal storage. This is intended to be called by `Worker` objects.
-    #' Users should not need to call it.
+    #' internal storage. When this method is called, the state of the `Task` is
+    #' set to "running" and a timestamp is recorded, registering the time at
+    #' which the `Worker` called the task function. In addition, the `worker_id`
+    #' is recorded, albeit somewhat unnecessarily since this information is
+    #' likely already stored when `register_task_assigned()` is called. This
+    #' method is intended to be called by `Worker` objects. Users should not
+    #' need to call it.
     #' @param worker_id Identifier for the worker on which the task is starting.
-    #' @return The function is called for its side-effects. Returns `NULL`
-    #' invisibly.
+    #' @return Returns `NULL` invisibly.
     register_task_running = function(worker_id) {
       private$state <- "running"
       private$worker_id <- worker_id
@@ -182,11 +193,14 @@ Task <- R6::R6Class(
     },
 
     #' @description Register the finishing of a task to a worker by updating
-    #' internal storage. This is intended to be called by `Worker` objects.
-    #' Users should not need to call it.
+    #' internal storage. When this method is called, the state of the `Task` is
+    #' set to "done" and a timestamp is recorded, registering the time at which
+    #' the `Worker` returned results to the `Task`. The `results` object is
+    #' read from the R session, and is stored locally by the `Task` at this time.
+    #' This method is intended to be called by `Worker` objects. Users should
+    #' not need to call it.
     #' @param results Results read from the R session.
-    #' @return The function is called for its side-effects. Returns `NULL`
-    #' invisibly.
+    #' @return Returns `NULL` invisibly.
     register_task_done = function(results) {
       private$results <- results
       private$state <- "done"
@@ -209,6 +223,8 @@ Task <- R6::R6Class(
   )
 )
 
+# I suppose if I were being rigorous this would be a NullTask object
+# with a retrieve method but that feels a bit like overkill
 no_task_output <- tibble::tibble(
     task_id = character(0),
     worker_id = character(0),

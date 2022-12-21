@@ -185,15 +185,16 @@ yet to complete, a \code{NA} value is returned
 \if{latex}{\out{\hypertarget{method-Task-register_task_created}{}}}
 \subsection{Method \code{register_task_created()}}{
 Register the task creation by updating internal storage.
-This is intended to be called by \code{Worker} objects. Users should not
-need to call it.
+When this method is called, the state of the \code{Task} is set to "created"
+and a timestamp is recorded, registering the creation time for the task.
+This method is intended to be called by \code{Worker} objects. Users should
+not need to call it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$register_task_created()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
-The function is called for its side-effects. Returns \code{NULL}
-invisibly.
+Returns \code{NULL} invisibly.
 }
 }
 \if{html}{\out{<hr>}}
@@ -201,15 +202,16 @@ invisibly.
 \if{latex}{\out{\hypertarget{method-Task-register_task_waiting}{}}}
 \subsection{Method \code{register_task_waiting()}}{
 Register the addition of the task to a queue by updating
-internal storage. This is intended to be called by \code{Worker} objects.
-Users should not need to call it.
+internal storage. When this method is called, the state of the \code{Task}
+is set to "waiting" and a timestamp is recorded, registering the time
+at which the task was added to a queue. This method is intended to be
+called by \code{Worker} objects. Users should not need to call it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$register_task_waiting()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
-The function is called for its side-effects. Returns \code{NULL}
-invisibly.
+Returns \code{NULL} invisibly.
 }
 }
 \if{html}{\out{<hr>}}
@@ -217,7 +219,11 @@ invisibly.
 \if{latex}{\out{\hypertarget{method-Task-register_task_assigned}{}}}
 \subsection{Method \code{register_task_assigned()}}{
 Register the assignment of a task to a worker by updating
-internal storage. This is intended to be called by \code{Worker} objects.
+internal storage. When this method is called, the state of the \code{Task}
+is set to "assigned" and a timestamp is recorded, registering the time
+at which the task was assigned to a \code{Worker}. In addition, the
+\code{worker_id} of the worker object (which is also it's pid) is registered
+with the task. This method is intended to be called by \code{Worker} objects.
 Users should not need to call it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$register_task_assigned(worker_id)}\if{html}{\out{</div>}}
@@ -231,8 +237,7 @@ Users should not need to call it.
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The function is called for its side-effects. Returns \code{NULL}
-invisibly.
+Returns \code{NULL} invisibly.
 }
 }
 \if{html}{\out{<hr>}}
@@ -240,8 +245,13 @@ invisibly.
 \if{latex}{\out{\hypertarget{method-Task-register_task_running}{}}}
 \subsection{Method \code{register_task_running()}}{
 Register the commencement of a task to a worker by updating
-internal storage. This is intended to be called by \code{Worker} objects.
-Users should not need to call it.
+internal storage. When this method is called, the state of the \code{Task} is
+set to "running" and a timestamp is recorded, registering the time at
+which the \code{Worker} called the task function. In addition, the \code{worker_id}
+is recorded, albeit somewhat unnecessarily since this information is
+likely already stored when \code{register_task_assigned()} is called. This
+method is intended to be called by \code{Worker} objects. Users should not
+need to call it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$register_task_running(worker_id)}\if{html}{\out{</div>}}
 }
@@ -254,8 +264,7 @@ Users should not need to call it.
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The function is called for its side-effects. Returns \code{NULL}
-invisibly.
+Returns \code{NULL} invisibly.
 }
 }
 \if{html}{\out{<hr>}}
@@ -263,8 +272,12 @@ invisibly.
 \if{latex}{\out{\hypertarget{method-Task-register_task_done}{}}}
 \subsection{Method \code{register_task_done()}}{
 Register the finishing of a task to a worker by updating
-internal storage. This is intended to be called by \code{Worker} objects.
-Users should not need to call it.
+internal storage. When this method is called, the state of the \code{Task} is
+set to "done" and a timestamp is recorded, registering the time at which
+the \code{Worker} returned results to the \code{Task}. The \code{results} object is
+read from the R session, and is stored locally by the \code{Task} at this time.
+This method is intended to be called by \code{Worker} objects. Users should
+not need to call it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Task$register_task_done(results)}\if{html}{\out{</div>}}
 }
@@ -277,8 +290,7 @@ Users should not need to call it.
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The function is called for its side-effects. Returns \code{NULL}
-invisibly.
+Returns \code{NULL} invisibly.
 }
 }
 \if{html}{\out{<hr>}}
