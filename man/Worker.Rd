@@ -13,7 +13,7 @@ The \code{Worker} class interacts with an external R session, and possesses
 methods that allow it to work with \code{Task} objects. At its core, the
 class is a thin wrapper around a \code{callr::r_session} object, and in fact
 the session object itself can be obtained by calling the
-\code{get_worker_session()} method. In most cases this shouldn't be neccessary
+\code{get_worker_session()} method. In most cases this shouldn't be necessary
 however, because \code{Worker} objects are typically created as part of a
 \code{WorkerPool} that is managed by a \code{Queue}, and those higher level structures
 use the methods exposed by the \code{Worker} object.
@@ -57,7 +57,7 @@ Retrieve the worker identifier.
 }
 
 \subsection{Returns}{
-The worker identifier (also the pid for the R process)
+The worker identifier, which also the process id for the R session
 }
 }
 \if{html}{\out{<hr>}}
@@ -70,10 +70,16 @@ Retrieve the worker state.
 }
 
 \subsection{Returns}{
-A string specifying the current state of the task. Possible
-values are "starting" (the R session is starting up), "idle" (the R
-session is ready to compute), "busy" (the R session is computing), and
-"finished" (the R session has terminated). Importantly, note that a task
+A string specifying the current state of the R session. Possible
+values are:
+\itemize{
+\item \code{"starting"}: the R session is starting up.
+\item \code{"idle"}: the R session is ready to compute.
+\item \code{"busy"}: the R session is computing.
+\item \code{"finished"}: the R session has terminated.
+}
+
+Importantly, note that a task
 function that is still running and a task function that is essentially
 finished and waiting to return will both return "busy". To distinguish
 between these two cases you need to use the \code{poll_process()} method of

@@ -1,9 +1,10 @@
-#' R6 class storing a pool of workers
+#' R6 class managing a pool of workers
 #'
-#' A WorkerPool is a container that holds one or more workers and can request
-#' them to assign tasks, start tasks, and complete tasks. It can also check to
-#' see if any worker sessions have crashed and restart them as needed.
-#' fields and methods that allow it to work on Tasks
+#' `WorkerPool` is the class used to execute multiple `Tasks` concurrently. It
+#' is essentially a container that holds one or more `Workers`, and posesses
+#' methods that allow it to assign tasks, start tasks, and complete tasks. It
+#' can also check to see if any worker sessions have crashed and restart them
+#' as needed.
 #'
 #' @export
 WorkerPool <- R6::R6Class(
@@ -18,17 +19,22 @@ WorkerPool <- R6::R6Class(
       for(i in seq_len(workers)) private$workers[[i]] <- Worker$new()
     },
 
-    #' @description Return a specific worker
-    #' @param ind The index of the worker in the pool
+    #' @description Return a specific `Worker`
+    #' @param x An integer specifying the index of the worker in the pool.
     #' @return The corresponding `Worker` object.
-    get_pool_worker = function(ind) {
-      private$workers[[ind]]
+    get_pool_worker = function(x) {
+      private$workers[[x]]
     },
 
-    #' @description Return a simple summary of the worker pool
+    #' @description Return a summary of the worker pool
     #' @return A named character vector specifying the current state
     #' of each worker ("starting", "idle", "busy", or "finished"). Names
-    #' denote worker ids
+    #' denote worker ids, and the interpretations of each return value is as
+    #' follows:
+    #' * `"starting"`: the R session is starting up.
+    #' * `"idle"`: the R session is ready to compute.
+    #' * `"busy"`: the R session is computing.
+    #' * `"finished"`: the R session has terminated.
     get_pool_state = function() {
       state <- vapply(
         private$workers,
@@ -44,7 +50,13 @@ WorkerPool <- R6::R6Class(
     },
 
     #' @description Attempt to assign tasks to workers. This method is
-    #' intended to be called by `Queue` objects.
+    #' intended to be called by `Queue` objects. When called, this method
+    #' will iterate over tasks in the list and workers in the pool, assigning
+    #' tasks to workers as long as there are both idle workers and waiting
+    #' tasks. It returns once it runs out of one resource or the other. Note
+    #' that this method assigns tasks to workers: it does not instruct the
+    #' workers to to start working on the tasks. That is the job of
+    #' `try_start()`.
     #' @param tasks A `TaskList` object
     #' @return Invisibly returns `NULL`
     try_assign = function(tasks) {
@@ -64,17 +76,19 @@ WorkerPool <- R6::R6Class(
       invisible(NULL)
     },
 
-    #' @description Attempt to start any assigned but not-yet-started tasks
-    #' in the worker pool. This method is intended to be called by `Queue`
-    #' objects.
+    #' @description Iterates over `Workers` in the pool and asks them to
+    #' start any jobs that the have been assigned but have not yet started.
+    #' This method is intended to be called by `Queue` objects.
     #' @return Invisibly returns `NULL`
     try_start = function() {
       lapply(private$workers, function(x) x$try_start())
       invisible(NULL)
     },
 
-    #' @description Attempt to finish any started but not-yet-returned tasks
-    #' in the worker pool. This method is intended to be called by `Queue`
+    #' @description Iterate over `Workers` in the pool and checks to see if
+    #' any of the busy sessions are ready to return results. For those that
+    #' are, it finishes the tasks and ensures those results are returned to
+    #' the `Task` object. This method is intended to be called by `Queue`
     #' objects.
     #' @return Invisibly returns `NULL`
     try_finish = function() {
@@ -82,7 +96,7 @@ WorkerPool <- R6::R6Class(
       invisible(NULL)
     },
 
-    #' @description Check all workers in the pool looking for workers that
+    #' @description Check the `WorkerPool` looking for `Workers` that
     #' have crashed or been shutdown, and replace them with fresh workers.
     #' @return This function is called primarily for its side effect. It
     #' returns a named character documenting the outcome, indicating the
@@ -97,7 +111,7 @@ WorkerPool <- R6::R6Class(
       self$get_pool_state()
     },
 
-    #' @description Terminate all workers in the worker pool.
+    #' @description Terminate all workers in the pool.
     #' @param grace Grace period in milliseconds. If a worker process is still
     #' running after this period, it will be killed.
     #' @return This function is called primarily for its side effect. It

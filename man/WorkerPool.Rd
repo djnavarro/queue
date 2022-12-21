@@ -2,17 +2,18 @@
 % Please edit documentation in R/worker_pool.R
 \name{WorkerPool}
 \alias{WorkerPool}
-\title{R6 class storing a pool of workers}
+\title{R6 class managing a pool of workers}
 \description{
-R6 class storing a pool of workers
+R6 class managing a pool of workers
 
-R6 class storing a pool of workers
+R6 class managing a pool of workers
 }
 \details{
-A WorkerPool is a container that holds one or more workers and can request
-them to assign tasks, start tasks, and complete tasks. It can also check to
-see if any worker sessions have crashed and restart them as needed.
-fields and methods that allow it to work on Tasks
+\code{WorkerPool} is the class used to execute multiple \code{Tasks} concurrently. It
+is essentially a container that holds one or more \code{Workers}, and posesses
+methods that allow it to assign tasks, start tasks, and complete tasks. It
+can also check to see if any worker sessions have crashed and restart them
+as needed.
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -53,15 +54,15 @@ A new \code{WorkerPool} object.
 \if{html}{\out{<a id="method-WorkerPool-get_pool_worker"></a>}}
 \if{latex}{\out{\hypertarget{method-WorkerPool-get_pool_worker}{}}}
 \subsection{Method \code{get_pool_worker()}}{
-Return a specific worker
+Return a specific \code{Worker}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{WorkerPool$get_pool_worker(ind)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{WorkerPool$get_pool_worker(x)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{ind}}{The index of the worker in the pool}
+\item{\code{x}}{An integer specifying the index of the worker in the pool.}
 }
 \if{html}{\out{</div>}}
 }
@@ -73,7 +74,7 @@ The corresponding \code{Worker} object.
 \if{html}{\out{<a id="method-WorkerPool-get_pool_state"></a>}}
 \if{latex}{\out{\hypertarget{method-WorkerPool-get_pool_state}{}}}
 \subsection{Method \code{get_pool_state()}}{
-Return a simple summary of the worker pool
+Return a summary of the worker pool
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{WorkerPool$get_pool_state()}\if{html}{\out{</div>}}
 }
@@ -81,7 +82,14 @@ Return a simple summary of the worker pool
 \subsection{Returns}{
 A named character vector specifying the current state
 of each worker ("starting", "idle", "busy", or "finished"). Names
-denote worker ids
+denote worker ids, and the interpretations of each return value is as
+follows:
+\itemize{
+\item \code{"starting"}: the R session is starting up.
+\item \code{"idle"}: the R session is ready to compute.
+\item \code{"busy"}: the R session is computing.
+\item \code{"finished"}: the R session has terminated.
+}
 }
 }
 \if{html}{\out{<hr>}}
@@ -89,7 +97,13 @@ denote worker ids
 \if{latex}{\out{\hypertarget{method-WorkerPool-try_assign}{}}}
 \subsection{Method \code{try_assign()}}{
 Attempt to assign tasks to workers. This method is
-intended to be called by \code{Queue} objects.
+intended to be called by \code{Queue} objects. When called, this method
+will iterate over tasks in the list and workers in the pool, assigning
+tasks to workers as long as there are both idle workers and waiting
+tasks. It returns once it runs out of one resource or the other. Note
+that this method assigns tasks to workers: it does not instruct the
+workers to to start working on the tasks. That is the job of
+\code{try_start()}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{WorkerPool$try_assign(tasks)}\if{html}{\out{</div>}}
 }
@@ -109,9 +123,9 @@ Invisibly returns \code{NULL}
 \if{html}{\out{<a id="method-WorkerPool-try_start"></a>}}
 \if{latex}{\out{\hypertarget{method-WorkerPool-try_start}{}}}
 \subsection{Method \code{try_start()}}{
-Attempt to start any assigned but not-yet-started tasks
-in the worker pool. This method is intended to be called by \code{Queue}
-objects.
+Iterates over \code{Workers} in the pool and asks them to
+start any jobs that the have been assigned but have not yet started.
+This method is intended to be called by \code{Queue} objects.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{WorkerPool$try_start()}\if{html}{\out{</div>}}
 }
@@ -124,8 +138,10 @@ Invisibly returns \code{NULL}
 \if{html}{\out{<a id="method-WorkerPool-try_finish"></a>}}
 \if{latex}{\out{\hypertarget{method-WorkerPool-try_finish}{}}}
 \subsection{Method \code{try_finish()}}{
-Attempt to finish any started but not-yet-returned tasks
-in the worker pool. This method is intended to be called by \code{Queue}
+Iterate over \code{Workers} in the pool and checks to see if
+any of the busy sessions are ready to return results. For those that
+are, it finishes the tasks and ensures those results are returned to
+the \code{Task} object. This method is intended to be called by \code{Queue}
 objects.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{WorkerPool$try_finish()}\if{html}{\out{</div>}}
@@ -139,7 +155,7 @@ Invisibly returns \code{NULL}
 \if{html}{\out{<a id="method-WorkerPool-refill_pool"></a>}}
 \if{latex}{\out{\hypertarget{method-WorkerPool-refill_pool}{}}}
 \subsection{Method \code{refill_pool()}}{
-Check all workers in the pool looking for workers that
+Check the \code{WorkerPool} looking for \code{Workers} that
 have crashed or been shutdown, and replace them with fresh workers.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{WorkerPool$refill_pool()}\if{html}{\out{</div>}}
@@ -156,7 +172,7 @@ Names denote worker ids.
 \if{html}{\out{<a id="method-WorkerPool-shutdown_pool"></a>}}
 \if{latex}{\out{\hypertarget{method-WorkerPool-shutdown_pool}{}}}
 \subsection{Method \code{shutdown_pool()}}{
-Terminate all workers in the worker pool.
+Terminate all workers in the pool.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{WorkerPool$shutdown_pool(grace = 1000)}\if{html}{\out{</div>}}
 }

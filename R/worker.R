@@ -4,7 +4,7 @@
 #' methods that allow it to work with `Task` objects. At its core, the
 #' class is a thin wrapper around a `callr::r_session` object, and in fact
 #' the session object itself can be obtained by calling the
-#' `get_worker_session()` method. In most cases this shouldn't be neccessary
+#' `get_worker_session()` method. In most cases this shouldn't be necessary
 #' however, because `Worker` objects are typically created as part of a
 #' `WorkerPool` that is managed by a `Queue`, and those higher level structures
 #' use the methods exposed by the `Worker` object.
@@ -24,20 +24,25 @@ Worker <- R6::R6Class(
     },
 
     #' @description Retrieve the worker identifier.
-    #' @return The worker identifier (also the pid for the R process)
+    #' @return The worker identifier, which also the process id for the R session
     get_worker_id = function() {
       private$worker_id
     },
 
     #' @description Retrieve the worker state.
-    #' @return A string specifying the current state of the task. Possible
-    #' values are "starting" (the R session is starting up), "idle" (the R
-    #' session is ready to compute), "busy" (the R session is computing), and
-    #' "finished" (the R session has terminated). Importantly, note that a task
+    #' @return A string specifying the current state of the R session. Possible
+    #' values are:
+    #' * `"starting"`: the R session is starting up.
+    #' * `"idle"`: the R session is ready to compute.
+    #' * `"busy"`: the R session is computing.
+    #' * `"finished"`: the R session has terminated.
+    #'
+    #' Importantly, note that a task
     #' function that is still running and a task function that is essentially
     #' finished and waiting to return will both return "busy". To distinguish
     #' between these two cases you need to use the `poll_process()` method of
     #' a `callr::rsession`, as returned by `get_worker_session()`.
+    #' @md
     get_worker_state = function() {
       private$session$get_state()
     },

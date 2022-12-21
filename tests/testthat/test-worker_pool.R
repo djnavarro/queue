@@ -46,8 +46,10 @@ test_that("WorkerPools can batch assign/start/finish tasks (workers > tasks)", {
   )
 
   # try finish should show all workers idle, all tasks done
+  # (idk why but macos is weirdly slow on ci for this so
+  # set a long sleep just to stop pointless fails)
   workers$try_finish()
-  Sys.sleep(.2)
+  Sys.sleep(.4)
   expect_equal(tasks$get_tasks_in_state("done")$length(), 3)
   expect_equal(
     unname(unlist(workers$get_pool_state())),
@@ -86,7 +88,7 @@ test_that("WorkerPools can batch assign/start/finish tasks (tasks > workers)", {
 
   # try finish should show all workers idle, 4 tasks done, 1 waiting/created
   workers$try_finish()
-  Sys.sleep(.2)
+  Sys.sleep(.4)
   expect_equal(tasks$get_tasks_in_state("done")$length(), 4)
   expect_equal(tasks$get_tasks_in_state("created")$length(), 1)
   expect_equal(
