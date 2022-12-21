@@ -2,18 +2,16 @@
 % Please edit documentation in R/worker_pool.R
 \name{WorkerPool}
 \alias{WorkerPool}
-\title{R6 class managing a pool of workers}
+\title{R6 Class Representing a Worker Pool}
 \description{
-R6 class managing a pool of workers
-
-R6 class managing a pool of workers
+A \code{WorkerPool} manages multiple workers.
 }
 \details{
-\code{WorkerPool} is the class used to execute multiple \code{Tasks} concurrently. It
-is essentially a container that holds one or more \code{Workers}, and posesses
-methods that allow it to assign tasks, start tasks, and complete tasks. It
-can also check to see if any worker sessions have crashed and restart them
-as needed.
+The implementation for a \code{WorkerPool} is essentially a container that holds
+one or more \code{Worker} objects, and posesses methods that allow it to instruct
+them to assign, start, and complete \code{Task}s. It can also check to
+see if any of the R sessions associated with the \code{Worker}s have crashed or
+stalled, and replace them as needed.
 }
 \section{Methods}{
 \subsection{Public methods}{

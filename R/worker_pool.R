@@ -1,10 +1,14 @@
-#' R6 class managing a pool of workers
+#' R6 Class Representing a Worker Pool
 #'
-#' `WorkerPool` is the class used to execute multiple `Tasks` concurrently. It
-#' is essentially a container that holds one or more `Workers`, and posesses
-#' methods that allow it to assign tasks, start tasks, and complete tasks. It
-#' can also check to see if any worker sessions have crashed and restart them
-#' as needed.
+#' @description
+#' A `WorkerPool` manages multiple workers.
+#'
+#' @details
+#' The implementation for a `WorkerPool` is essentially a container that holds
+#' one or more `Worker` objects, and posesses methods that allow it to instruct
+#' them to assign, start, and complete `Task`s. It can also check to
+#' see if any of the R sessions associated with the `Worker`s have crashed or
+#' stalled, and replace them as needed.
 #'
 #' @export
 WorkerPool <- R6::R6Class(

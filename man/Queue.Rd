@@ -2,14 +2,33 @@
 % Please edit documentation in R/queue.R
 \name{Queue}
 \alias{Queue}
-\title{R6 class for a multi-worker task queue}
+\title{R6 Class Representing a Multi-Worker Task Queue}
 \description{
-R6 class for a multi-worker task queue
-
-R6 class for a multi-worker task queue
+A \code{Queue} executes tasks concurrently using multiple workers.
 }
 \details{
-Documentation baby...
+The \code{Queue} class is primary interface provided by the queue package. It
+allows users to execute an arbitrary collection of tasks in parallel across
+multiple R sessions, managed automatically in the background. Once a new
+queue is initialised, tasks can be added to the queue using the \code{add()}
+method. Once all tasks are added, they are executed in parallel
+by calling the \code{run()} method. When completed, \code{run()} returns a
+tibble that contains the results for all tasks, and some additional
+metadata besides.
+
+Internally, a \code{Queue} uses a \code{TaskList} object as its data store and a
+\code{WorkerPool} object to execute the tasks in parallel. These objects can be
+accessed by calling the \code{get_tasks()} method and the \code{get_workers()} methods.
+Usually you would not need to do this, but occasionally it can be useful
+because those objects have some handy methods that allow finer-grained
+control (see the documentation for \code{TaskList} and \code{WorkerPool} respectively).
+}
+\examples{
+queue <- Queue$new(workers = 4L)
+wait <- function(x) Sys.sleep(runif(1))
+for(i in 1:6) queue$add(wait)
+queue$run()
+
 }
 \section{Methods}{
 \subsection{Public methods}{

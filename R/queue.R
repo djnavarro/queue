@@ -1,6 +1,30 @@
-#' R6 class for a multi-worker task queue
+#' R6 Class Representing a Multi-Worker Task Queue
 #'
-#' Documentation baby...
+#' @description
+#' A `Queue` executes tasks concurrently using multiple workers.
+#'
+#' @details
+#' The `Queue` class is primary interface provided by the queue package. It
+#' allows users to execute an arbitrary collection of tasks in parallel across
+#' multiple R sessions, managed automatically in the background. Once a new
+#' queue is initialised, tasks can be added to the queue using the `add()`
+#' method. Once all tasks are added, they are executed in parallel
+#' by calling the `run()` method. When completed, `run()` returns a
+#' tibble that contains the results for all tasks, and some additional
+#' metadata besides.
+#'
+#' Internally, a `Queue` uses a `TaskList` object as its data store and a
+#' `WorkerPool` object to execute the tasks in parallel. These objects can be
+#' accessed by calling the `get_tasks()` method and the `get_workers()` methods.
+#' Usually you would not need to do this, but occasionally it can be useful
+#' because those objects have some handy methods that allow finer-grained
+#' control (see the documentation for `TaskList` and `WorkerPool` respectively).
+#'
+#' @examples
+#' queue <- Queue$new(workers = 4L)
+#' wait <- function(x) Sys.sleep(runif(1))
+#' for(i in 1:6) queue$add(wait)
+#' queue$run()
 #'
 #' @export
 Queue <- R6::R6Class(

@@ -1,5 +1,9 @@
-#' R6 class storing a task
+#' R6 Class Representing a Task
 #'
+#' @description
+#' A `Task` stores a function, arguments, output, and metadata.
+#'
+#' @details
 #' A `Task` object is used as a storage class. It is a container used to hold an
 #' R function and any arguments to be passed to the function. It can also hold
 #' any output returned by the function, anything printed to stdout or stderr

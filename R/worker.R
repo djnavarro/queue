@@ -1,5 +1,9 @@
-#' R6 class storing a worker
+#' R6 Class Representing a Worker
 #'
+#' @description
+#' A `Worker` manages an external R session and completes tasks.
+#'
+#' @details
 #' The `Worker` class interacts with an external R session, and possesses
 #' methods that allow it to work with `Task` objects. At its core, the
 #' class is a thin wrapper around a `callr::r_session` object, and in fact

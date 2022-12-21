@@ -2,11 +2,9 @@
 % Please edit documentation in R/task.R
 \name{Task}
 \alias{Task}
-\title{R6 class storing a task}
+\title{R6 Class Representing a Task}
 \description{
-R6 class storing a task
-
-R6 class storing a task
+A \code{Task} stores a function, arguments, output, and metadata.
 }
 \details{
 A \code{Task} object is used as a storage class. It is a container used to hold an

@@ -1,11 +1,15 @@
-#' R6 class storing a task list
+#' R6 Class Representing a Task List
 #'
-#' The TaskList class is used as a storage class. It provides a container that
-#' holds a collection of Task objects, along with a collection of methods for
-#' adding, removing, and getting Tasks. It can also report on the status of the
-#' Tasks contained within the list and retrieve results from those Tasks. What
-#' it cannot do is manage interactions with Workers or arrange for the Tasks to
-#' be executed. That's the job of the Queue.
+#' @description
+#' A `TaskList` stores and retrieves one or more tasks.
+#'
+#' @details
+#' The `TaskList` class is used as a storage class. It provides a container that
+#' holds a collection of `Task` objects, along with a collection of methods for
+#' adding, removing, and getting `Task`s. It can also report on the status of the
+#' `Task`s contained within the list and retrieve results from those `Task`s. What
+#' it cannot do is manage interactions with `Worker`s or arrange for the `Task`s to
+#' be executed. That's the job of the `Queu`e.
 #' @export
 TaskList <- R6::R6Class(
   classname = "TaskList",

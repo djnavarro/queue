@@ -2,11 +2,9 @@
 % Please edit documentation in R/worker.R
 \name{Worker}
 \alias{Worker}
-\title{R6 class storing a worker}
+\title{R6 Class Representing a Worker}
 \description{
-R6 class storing a worker
-
-R6 class storing a worker
+A \code{Worker} manages an external R session and completes tasks.
 }
 \details{
 The \code{Worker} class interacts with an external R session, and possesses

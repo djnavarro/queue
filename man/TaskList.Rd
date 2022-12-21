@@ -2,19 +2,17 @@
 % Please edit documentation in R/task_list.R
 \name{TaskList}
 \alias{TaskList}
-\title{R6 class storing a task list}
+\title{R6 Class Representing a Task List}
 \description{
-R6 class storing a task list
-
-R6 class storing a task list
+A \code{TaskList} stores and retrieves one or more tasks.
 }
 \details{
-The TaskList class is used as a storage class. It provides a container that
-holds a collection of Task objects, along with a collection of methods for
-adding, removing, and getting Tasks. It can also report on the status of the
-Tasks contained within the list and retrieve results from those Tasks. What
-it cannot do is manage interactions with Workers or arrange for the Tasks to
-be executed. That's the job of the Queue.
+The \code{TaskList} class is used as a storage class. It provides a container that
+holds a collection of \code{Task} objects, along with a collection of methods for
+adding, removing, and getting \code{Task}s. It can also report on the status of the
+\code{Task}s contained within the list and retrieve results from those \code{Task}s. What
+it cannot do is manage interactions with \code{Worker}s or arrange for the \code{Task}s to
+be executed. That's the job of the \code{Queu}e.
 }
 \section{Methods}{
 \subsection{Public methods}{
