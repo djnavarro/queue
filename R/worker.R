@@ -1,7 +1,14 @@
 #' R6 class storing a worker
 #'
-#' A Worker is a container that holds a callr rsession object, and possesses
-#' fields and methods that allow it to work on Tasks
+#' The `Worker` class interacts with an external R session, and possesses
+#' methods that allow it to work with `Task` objects. At its core, the
+#' class is a thin wrapper around a `callr::r_session` object, and in fact
+#' the session object itself can be obtained by calling the
+#' `get_worker_session()` method. In most cases this shouldn't be neccessary
+#' however, because `Worker` objects are typically created as part of a
+#' `WorkerPool` that is managed by a `Queue`, and those higher level structures
+#' use the methods exposed by the `Worker` object.
+#'
 #' @export
 Worker <- R6::R6Class(
   classname = "Worker",
@@ -60,7 +67,7 @@ Worker <- R6::R6Class(
       private$task
     },
 
-    #' @description Retrieve the R session linked to the worker
+    #' @description Retrieve the R session associated with a `Worker`
     #' @return An R session object, see `callr::r_session`
     get_worker_session = function() {
       private$session
@@ -134,7 +141,15 @@ Worker <- R6::R6Class(
     },
 
     #' @description Attempt to shut down the R session gracefully, after making
-    #' an attempt to salvage any task that the worker believes is still running
+    #' an attempt to salvage any task that the worker believes it has been
+    #' assigned. The salvage operation depends on the state of the task. If the
+    #' `Task` has been assigned but not started, the `Worker` will return it
+    #' to a "waiting" state in the hope that the `Queue` will assign it to
+    #' another worker later, and unassign it. If the `Task` is running, the
+    #' `Worker` will attempt to read from the R session and then register the
+    #' `Task` as "done" regardless of the outcome. (The reason for this is to
+    #' ensure that tasks that crash or freeze the R session don't get returned
+    #' to the `Queue`).
     #' @param grace Grace period in milliseconds. If the process is still
     #' running after this period, it will be killed.
     shutdown_worker = function(grace = 1000) {

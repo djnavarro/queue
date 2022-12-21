@@ -9,8 +9,14 @@ R6 class storing a worker
 R6 class storing a worker
 }
 \details{
-A Worker is a container that holds a callr rsession object, and possesses
-fields and methods that allow it to work on Tasks
+The \code{Worker} class interacts with an external R session, and possesses
+methods that allow it to work with \code{Task} objects. At its core, the
+class is a thin wrapper around a \code{callr::r_session} object, and in fact
+the session object itself can be obtained by calling the
+\code{get_worker_session()} method. In most cases this shouldn't be neccessary
+however, because \code{Worker} objects are typically created as part of a
+\code{WorkerPool} that is managed by a \code{Queue}, and those higher level structures
+use the methods exposed by the \code{Worker} object.
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -108,7 +114,7 @@ The \code{Task} object currently assigned to this \code{Worker}, or \code{NULL}.
 \if{html}{\out{<a id="method-Worker-get_worker_session"></a>}}
 \if{latex}{\out{\hypertarget{method-Worker-get_worker_session}{}}}
 \subsection{Method \code{get_worker_session()}}{
-Retrieve the R session linked to the worker
+Retrieve the R session associated with a \code{Worker}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Worker$get_worker_session()}\if{html}{\out{</div>}}
 }
@@ -191,7 +197,15 @@ attempt was successful.
 \if{latex}{\out{\hypertarget{method-Worker-shutdown_worker}{}}}
 \subsection{Method \code{shutdown_worker()}}{
 Attempt to shut down the R session gracefully, after making
-an attempt to salvage any task that the worker believes is still running
+an attempt to salvage any task that the worker believes it has been
+assigned. The salvage operation depends on the state of the task. If the
+\code{Task} has been assigned but not started, the \code{Worker} will return it
+to a "waiting" state in the hope that the \code{Queue} will assign it to
+another worker later, and unassign it. If the \code{Task} is running, the
+\code{Worker} will attempt to read from the R session and then register the
+\code{Task} as "done" regardless of the outcome. (The reason for this is to
+ensure that tasks that crash or freeze the R session don't get returned
+to the \code{Queue}).
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Worker$shutdown_worker(grace = 1000)}\if{html}{\out{</div>}}
 }
