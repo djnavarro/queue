@@ -15,11 +15,10 @@ Documentation baby...
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-Queue-new}{\code{Queue$new()}}
-\item \href{#method-Queue-push}{\code{Queue$push()}}
+\item \href{#method-Queue-add}{\code{Queue$add()}}
 \item \href{#method-Queue-run}{\code{Queue$run()}}
-\item \href{#method-Queue-retrieve}{\code{Queue$retrieve()}}
-\item \href{#method-Queue-get_queue_workers}{\code{Queue$get_queue_workers()}}
-\item \href{#method-Queue-get_queue_tasks}{\code{Queue$get_queue_tasks()}}
+\item \href{#method-Queue-get_workers}{\code{Queue$get_workers()}}
+\item \href{#method-Queue-get_tasks}{\code{Queue$get_tasks()}}
 \item \href{#method-Queue-clone}{\code{Queue$clone()}}
 }
 }
@@ -45,12 +44,12 @@ A new \code{Queue} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Queue-push"></a>}}
-\if{latex}{\out{\hypertarget{method-Queue-push}{}}}
-\subsection{Method \code{push()}}{
+\if{html}{\out{<a id="method-Queue-add"></a>}}
+\if{latex}{\out{\hypertarget{method-Queue-add}{}}}
+\subsection{Method \code{add()}}{
 Adds a task to the queue
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Queue$push(fun, args = list(), id = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Queue$add(fun, args = list(), id = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -106,33 +105,43 @@ R sessions closed) once the tasks are completed. Defaults to \code{TRUE}.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Returns a tibble containing the results of all executed tasks and
-various other useful metadata.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Queue-retrieve"></a>}}
-\if{latex}{\out{\hypertarget{method-Queue-retrieve}{}}}
-\subsection{Method \code{retrieve()}}{
-Retrieve the full state of the tasks queue in tidy form. If
-all tasks have completed this output is the same as the output as the
-\code{run()} method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Queue$retrieve()}\if{html}{\out{</div>}}
+Returns a tibble containing the results of all tasks and
+various other useful metadata. Contains one row per task in the
+\code{Queue}, and the following columns:
+\itemize{
+\item \code{task_id} A character string specifying the task identifiers
+\item \code{worker_id} An integer specifying the worker process ids (pid)
+\item \code{state} A character string indicating the status of each task
+("created", "waiting", "assigned", "running", or "done")
+\item \code{result} A list containing the function outputs, or NULL
+\item \code{runtime} Completion time for the task (NA if the task is not done)
+\item \code{fun} A list containing the functions
+\item \code{args} A list containing the arguments passed to each function
+\item \code{created} The time at which each task was created
+\item \code{queued} The time at which each task was added to a \code{Queue}
+\item \code{assigned} The time at which each task was assigned to a \code{Worker}
+\item \code{started} The time at which a \code{Worker} called each function
+\item \code{finished} The time at which a \code{Worker} output was returned for the task
+\item \code{code} The status code returned by the callr R session (integer)
+\item \code{message} The message returned by the callr R session (character)
+\item \code{stdout} List column containing the contents of stdout during function execution
+\item \code{stderr} List column containing the contents of stderr during function execution
+\item \code{error}  List column containing \code{NULL} values
 }
 
-\subsection{Returns}{
-Returns a tibble containing the results of all executed tasks and
-various other useful metadata. Incomplete tasks may have missing data.
+Note: at present there is one field from the callr rsession::read() method
+that isn't captured here, and that's the error field. I'll add that after
+I've finished wrapping my head around what that actually does. The \code{error}
+column, at present, is included only as a placeholder
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Queue-get_queue_workers"></a>}}
-\if{latex}{\out{\hypertarget{method-Queue-get_queue_workers}{}}}
-\subsection{Method \code{get_queue_workers()}}{
+\if{html}{\out{<a id="method-Queue-get_workers"></a>}}
+\if{latex}{\out{\hypertarget{method-Queue-get_workers}{}}}
+\subsection{Method \code{get_workers()}}{
 Retrieve the workers
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Queue$get_queue_workers()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Queue$get_workers()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
@@ -140,12 +149,12 @@ A \code{WorkerPool} object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Queue-get_queue_tasks"></a>}}
-\if{latex}{\out{\hypertarget{method-Queue-get_queue_tasks}{}}}
-\subsection{Method \code{get_queue_tasks()}}{
+\if{html}{\out{<a id="method-Queue-get_tasks"></a>}}
+\if{latex}{\out{\hypertarget{method-Queue-get_tasks}{}}}
+\subsection{Method \code{get_tasks()}}{
 Retrieve the tasks
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Queue$get_queue_tasks()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Queue$get_tasks()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{

@@ -41,7 +41,7 @@ random_wait <- function() {
   Sys.time()
 }
 queue <- Queue$new(workers = 6)
-for(i in 1:20) queue$push(random_wait)
+for(i in 1:20) queue$add(random_wait)
 out <- queue$run(message = "verbose")
 ```
 

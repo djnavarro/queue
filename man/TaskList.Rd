@@ -166,16 +166,43 @@ A \code{TaskList} object
 \if{html}{\out{<a id="method-TaskList-retrieve"></a>}}
 \if{latex}{\out{\hypertarget{method-TaskList-retrieve}{}}}
 \subsection{Method \code{retrieve()}}{
-Retrieve the full state of the tasks in tidy form. If
-all tasks have completed this output is the same as the output as the
-\code{run()} method for a \code{Queue} object.
+Retrieves the current state of all tasks.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TaskList$retrieve()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
-Returns a tibble containing the results of all executed tasks and
-various other useful metadata. Incomplete tasks may have missing data.
+Returns a tibble containing the results of all tasks and
+various other useful metadata. Contains one row per task in the
+\code{TaskList}, and the following columns:
+\itemize{
+\item \code{task_id} A character string specifying the task identifiers
+\item \code{worker_id} An integer specifying the worker process ids (pid)
+\item \code{state} A character string indicating the status of each task
+("created", "waiting", "assigned", "running", or "done")
+\item \code{result} A list containing the function outputs, or NULL
+\item \code{runtime} Completion time for the task (NA if the task is not done)
+\item \code{fun} A list containing the functions
+\item \code{args} A list containing the arguments passed to each function
+\item \code{created} The time at which each task was created
+\item \code{queued} The time at which each task was added to a \code{Queue}
+\item \code{assigned} The time at which each task was assigned to a \code{Worker}
+\item \code{started} The time at which a \code{Worker} called each function
+\item \code{finished} The time at which a \code{Worker} output was returned for the task
+\item \code{code} The status code returned by the callr R session (integer)
+\item \code{message} The message returned by the callr R session (character)
+\item \code{stdout} List column containing the contents of stdout during function execution
+\item \code{stderr} List column containing the contents of stderr during function execution
+\item \code{error}  List column containing \code{NULL} values
+}
+
+If all tasks have completed this output is the same as the output as the
+\code{run()} method for a \code{Queue} object.
+
+Note: at present there is one field from the callr rsession::read() method
+that isn't captured here, and that's the error field. I'll add that after
+I've finished wrapping my head around what that actually does. The \code{error}
+column, at present, is included only as a placeholder
 }
 }
 \if{html}{\out{<hr>}}

@@ -97,11 +97,38 @@ TaskList <- R6::R6Class(
       private$get_subset(which)
     },
 
-    #' @description Retrieve the full state of the tasks in tidy form. If
-    #' all tasks have completed this output is the same as the output as the
+    #' @description Retrieves the current state of all tasks.
+    #'
+    #' @return Returns a tibble containing the results of all tasks and
+    #' various other useful metadata. Contains one row per task in the
+    #' `TaskList`, and the following columns:
+    #' * `task_id` A character string specifying the task identifiers
+    #' * `worker_id` An integer specifying the worker process ids (pid)
+    #' * `state` A character string indicating the status of each task
+    #'   ("created", "waiting", "assigned", "running", or "done")
+    #' * `result` A list containing the function outputs, or NULL
+    #' * `runtime` Completion time for the task (NA if the task is not done)
+    #' * `fun` A list containing the functions
+    #' * `args` A list containing the arguments passed to each function
+    #' * `created` The time at which each task was created
+    #' * `queued` The time at which each task was added to a `Queue`
+    #' * `assigned` The time at which each task was assigned to a `Worker`
+    #' * `started` The time at which a `Worker` called each function
+    #' * `finished` The time at which a `Worker` output was returned for the task
+    #' * `code` The status code returned by the callr R session (integer)
+    #' * `message` The message returned by the callr R session (character)
+    #' * `stdout` List column containing the contents of stdout during function execution
+    #' * `stderr` List column containing the contents of stderr during function execution
+    #' * `error`  List column containing `NULL` values
+    #'
+    #' If all tasks have completed this output is the same as the output as the
     #' `run()` method for a `Queue` object.
-    #' @return Returns a tibble containing the results of all executed tasks and
-    #' various other useful metadata. Incomplete tasks may have missing data.
+    #'
+    #' Note: at present there is one field from the callr rsession::read() method
+    #' that isn't captured here, and that's the error field. I'll add that after
+    #' I've finished wrapping my head around what that actually does. The `error`
+    #' column, at present, is included only as a placeholder
+    #' @md
     retrieve = function() {
       if(!self$length()) return(no_task_output)
       out <- lapply(private$tasks, function(x) x$retrieve())
