@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">queue</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,9 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="articles/queue.html">Get started</a>
+</li>
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
@@ -62,7 +65,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The queue package allows you to create multi-threaded task queues</p>
+<p>Sometimes you want to do “everything, everywhere, all at once”. When that happens it’s awfully convenient if you have easy-to-use tools to execute your R code in parallel across multiple R sessions. That’s the goal of the queue package. It provides a clean interface implementing multi-worker task queues in R that doesn’t ask the user to do very much work.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -73,66 +76,56 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>Here’s a basic example:</p>
+<p>The queue package adopts an encapsulated object-oriented programming style, and uses R6 classes to manage task queues. The primary class in the package is <code>Queue</code>. When a new task queue is created it also initialises a new <code>WorkerPool</code>, a collection of R sessions in which tasks will be executed. You can set the number of workers during initialisation:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/djnavarro/queue" class="external-link">queue</a></span><span class="op">)</span></span>
-<span><span class="va">random_wait</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>, min <span class="op">=</span> <span class="fl">0</span>, max <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="va">queue</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Queue.html">Queue</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
-<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span> <span class="va">queue</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">random_wait</span><span class="op">)</span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="va">queue</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span>message <span class="op">=</span> <span class="st">"verbose"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; → Task done: task_2 (0.15s)</span></span>
-<span><span class="co">#&gt; → Task done: task_5 (0.15s)</span></span>
-<span><span class="co">#&gt; → Task done: task_7 (0.23s)</span></span>
-<span><span class="co">#&gt; → Task done: task_4 (1.03s)</span></span>
-<span><span class="co">#&gt; → Task done: task_6 (1.26s)</span></span>
-<span><span class="co">#&gt; → Task done: task_11 (1.13s)</span></span>
-<span><span class="co">#&gt; → Task done: task_3 (2.8s)</span></span>
-<span><span class="co">#&gt; → Task done: task_1 (2.92s)</span></span>
-<span><span class="co">#&gt; → Task done: task_9 (2.81s)</span></span>
-<span><span class="co">#&gt; → Task done: task_12 (1.04s)</span></span>
-<span><span class="co">#&gt; → Task done: task_10 (3.33s)</span></span>
-<span><span class="co">#&gt; → Task done: task_16 (0.97s)</span></span>
-<span><span class="co">#&gt; → Task done: task_8 (4.67s)</span></span>
-<span><span class="co">#&gt; → Task done: task_18 (2.27s)</span></span>
-<span><span class="co">#&gt; → Task done: task_15 (3.71s)</span></span>
-<span><span class="co">#&gt; → Task done: task_14 (4.06s)</span></span>
-<span><span class="co">#&gt; → Task done: task_13 (4.8s)</span></span>
-<span><span class="co">#&gt; → Task done: task_20 (1.74s)</span></span>
-<span><span class="co">#&gt; → Task done: task_19 (4.16s)</span></span>
-<span><span class="co">#&gt; → Task done: task_17 (4.79s)</span></span>
-<span><span class="co">#&gt; ✔ Queue complete: 20 tasks done (9.17s)</span></span></code></pre></div>
-<p>The output is stored in a tibble:</p>
+<span><span class="va">queue</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Queue.html">Queue</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<p>Tasks are then pushed to the queue by calling it’s <code>add()</code> method. A task is a function and a list of arguments. In the example below, <code>wait()</code> is a function that sleeps for a specified length of time and then returns its input. We’ll queue up 10 jobs that pause for different lengths of time:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wait</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="va">x</span></span>
+<span><span class="op">}</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">queue</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">wait</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">i</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>We execute the tasks by calling the <code>run()</code> method:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="va">queue</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span>message <span class="op">=</span> <span class="st">"verbose"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; → Task done: task_1 (0.17s)</span></span>
+<span><span class="co">#&gt; → Task done: task_2 (0.3s)</span></span>
+<span><span class="co">#&gt; → Task done: task_3 (0.36s)</span></span>
+<span><span class="co">#&gt; → Task done: task_4 (0.48s)</span></span>
+<span><span class="co">#&gt; → Task done: task_5 (0.53s)</span></span>
+<span><span class="co">#&gt; → Task done: task_6 (0.64s)</span></span>
+<span><span class="co">#&gt; → Task done: task_7 (0.76s)</span></span>
+<span><span class="co">#&gt; → Task done: task_8 (0.86s)</span></span>
+<span><span class="co">#&gt; → Task done: task_9 (0.97s)</span></span>
+<span><span class="co">#&gt; → Task done: task_10 (1.07s)</span></span>
+<span><span class="co">#&gt; ✔ Queue complete: 10 tasks done (2.03s)</span></span></code></pre></div>
+<p>The output is stored in a tibble that contains a fairly detailed representation of everything that happened during the execution of the queue, including time stamps, any messages printed to the R console during the execution of each function, and so on:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">out</span></span>
-<span><span class="co">#&gt; # A tibble: 20 × 17</span></span>
-<span><span class="co">#&gt;    task_id worker_id state result     runtime   fun   args   created            </span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt; &lt;list&gt;     &lt;drtn&gt;    &lt;lis&gt; &lt;list&gt; &lt;dttm&gt;             </span></span>
-<span><span class="co">#&gt;  1 task_1     298331 done  &lt;dttm [1]&gt; 2.921892… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt;  2 task_2     298343 done  &lt;dttm [1]&gt; 0.154564… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt;  3 task_3     298355 done  &lt;dttm [1]&gt; 2.801716… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt;  4 task_4     298367 done  &lt;dttm [1]&gt; 1.026389… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt;  5 task_5     298379 done  &lt;dttm [1]&gt; 0.154445… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt;  6 task_6     298391 done  &lt;dttm [1]&gt; 1.258186… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt;  7 task_7     298343 done  &lt;dttm [1]&gt; 0.228369… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt;  8 task_8     298379 done  &lt;dttm [1]&gt; 4.667863… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt;  9 task_9     298343 done  &lt;dttm [1]&gt; 2.814760… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt; 10 task_10    298367 done  &lt;dttm [1]&gt; 3.327445… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt; 11 task_11    298391 done  &lt;dttm [1]&gt; 1.132713… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt; 12 task_12    298391 done  &lt;dttm [1]&gt; 1.041694… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt; 13 task_13    298355 done  &lt;dttm [1]&gt; 4.796654… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt; 14 task_14    298331 done  &lt;dttm [1]&gt; 4.058190… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt; 15 task_15    298343 done  &lt;dttm [1]&gt; 3.705963… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt; 16 task_16    298391 done  &lt;dttm [1]&gt; 0.972990… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt; 17 task_17    298367 done  &lt;dttm [1]&gt; 4.794048… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt; 18 task_18    298391 done  &lt;dttm [1]&gt; 2.266615… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt; 19 task_19    298379 done  &lt;dttm [1]&gt; 4.160249… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
-<span><span class="co">#&gt; 20 task_20    298391 done  &lt;dttm [1]&gt; 1.740901… &lt;fn&gt;  &lt;list&gt; 2022-12-21 12:09:17</span></span>
+<span><span class="co">#&gt; # A tibble: 10 × 17</span></span>
+<span><span class="co">#&gt;    task_id worker_id state result runtime fun   args         created            </span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt; &lt;list&gt; &lt;drtn&gt;  &lt;lis&gt; &lt;list&gt;       &lt;dttm&gt;             </span></span>
+<span><span class="co">#&gt;  1 task_1     335633 done  &lt;dbl&gt;  0.1723… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
+<span><span class="co">#&gt;  2 task_2     335645 done  &lt;dbl&gt;  0.2955… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
+<span><span class="co">#&gt;  3 task_3     335657 done  &lt;dbl&gt;  0.3587… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
+<span><span class="co">#&gt;  4 task_4     335669 done  &lt;dbl&gt;  0.4754… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
+<span><span class="co">#&gt;  5 task_5     335633 done  &lt;dbl&gt;  0.5304… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
+<span><span class="co">#&gt;  6 task_6     335645 done  &lt;dbl&gt;  0.6419… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
+<span><span class="co">#&gt;  7 task_7     335657 done  &lt;dbl&gt;  0.7579… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
+<span><span class="co">#&gt;  8 task_8     335669 done  &lt;dbl&gt;  0.8647… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
+<span><span class="co">#&gt;  9 task_9     335633 done  &lt;dbl&gt;  0.9653… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
+<span><span class="co">#&gt; 10 task_10    335645 done  &lt;dbl&gt;  1.0666… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
 <span><span class="co">#&gt; # … with 9 more variables: queued &lt;dttm&gt;, assigned &lt;dttm&gt;, started &lt;dttm&gt;,</span></span>
 <span><span class="co">#&gt; #   finished &lt;dttm&gt;, code &lt;int&gt;, message &lt;chr&gt;, stdout &lt;list&gt;, stderr &lt;list&gt;,</span></span>
 <span><span class="co">#&gt; #   error &lt;list&gt;</span></span></code></pre></div>
+<p>The results of the function call are always stored in a list column called <code>result</code> because in general there’s no guarantee that an arbitrary collection of tasks will return results that are consistent with each other, but in this case they are, so we can check the results like this:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
