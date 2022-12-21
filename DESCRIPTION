@@ -1,6 +1,6 @@
 Package: queue
 Title: Simple Multi-Threaded Task Queuing
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: 
     person("Danielle", "Navarro", , "djnavarro@protonmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7648-6578"))
@@ -19,5 +19,8 @@ URL: https://github.com/djnavarro/queue,
 BugReports: https://github.com/djnavarro/queue/issues
 Suggests: 
     covr,
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+VignetteBuilder: knitr

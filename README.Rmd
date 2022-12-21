@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/djnavarro/queue/branch/main/graph/badge.svg)](https://app.codecov.io/gh/djnavarro/queue?branch=main)
 <!-- badges: end -->
 
-The queue package allows you to create multi-threaded task queues
+Sometimes you want to do "everything, everywhere, all at once". When that happens it's awfully convenient if you have easy-to-use tools to execute your R code in parallel across multiple R sessions. That's the goal of the queue package. It provides a clean interface implementing multi-worker task queues in R that doesn't ask the user to do very much work.
 
 ## Installation
 
@@ -32,21 +32,40 @@ remotes::install_github("djnavarro/queue")
 
 ## Example
 
-Here's a basic example:
+The queue package adopts an encapsulated object-oriented programming style, and uses R6 classes to manage task queues. The primary class in the package is `Queue`. When a new task queue is created it also initialises a new `WorkerPool`, a collection of R sessions in which tasks will be executed. You can set the number of workers during initialisation:
 
-```{r example}
+```{r example-new-queue}
 library(queue)
-random_wait <- function() {
-  Sys.sleep(runif(1, min = 0, max = 5))
-  Sys.time()
+queue <- Queue$new(workers = 4)
+```
+
+Tasks are then pushed to the queue by calling it's `add()` method. A task is a function and a list of arguments. In the example below, `wait()` is a function that sleeps for a specified length of time and then returns its input. We'll queue up 10 jobs that pause for different lengths of time:
+
+```{r example-add-tasks}
+wait <- function(x) {
+  Sys.sleep(x)
+  x
 }
-queue <- Queue$new(workers = 6)
-for(i in 1:20) queue$add(random_wait)
+for(i in 1:10) {
+  queue$add(wait, list(x = i/10))
+}
+```
+
+We execute the tasks by calling the `run()` method: 
+
+```{r example-execute-task}
 out <- queue$run(message = "verbose")
 ```
 
-The output is stored in a tibble: 
+The output is stored in a tibble that contains a fairly detailed representation of everything that happened during the execution of the queue, including time stamps, any messages printed to the R console during the execution of each function, and so on:
 
 ```{r example-output}
 out
 ```
+
+The results of the function call are always stored in a list column called `result` because in general there's no guarantee that an arbitrary collection of tasks will return results that are consistent with each other, but in this case they are, so we can check the results like this:
+
+```{r example-results}
+unlist(out$result)
+```
+

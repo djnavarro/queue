@@ -10,7 +10,12 @@
 coverage](https://codecov.io/gh/djnavarro/queue/branch/main/graph/badge.svg)](https://app.codecov.io/gh/djnavarro/queue?branch=main)
 <!-- badges: end -->
 
-The queue package allows you to create multi-threaded task queues
+Sometimes you want to do “everything, everywhere, all at once”. When
+that happens it’s awfully convenient if you have easy-to-use tools to
+execute your R code in parallel across multiple R sessions. That’s the
+goal of the queue package. It provides a clean interface implementing
+multi-worker task queues in R that doesn’t ask the user to do very much
+work.
 
 ## Installation
 
@@ -22,68 +27,83 @@ remotes::install_github("djnavarro/queue")
 
 ## Example
 
-Here’s a basic example:
+The queue package adopts an encapsulated object-oriented programming
+style, and uses R6 classes to manage task queues. The primary class in
+the package is `Queue`. When a new task queue is created it also
+initialises a new `WorkerPool`, a collection of R sessions in which
+tasks will be executed. You can set the number of workers during
+initialisation:
 
 ``` r
 library(queue)
-random_wait <- function() {
-  Sys.sleep(runif(1, min = 0, max = 5))
-  Sys.time()
-}
-queue <- Queue$new(workers = 6)
-for(i in 1:20) queue$add(random_wait)
-out <- queue$run(message = "verbose")
-#> → Task done: task_2 (0.15s)
-#> → Task done: task_5 (0.15s)
-#> → Task done: task_7 (0.23s)
-#> → Task done: task_4 (1.03s)
-#> → Task done: task_6 (1.26s)
-#> → Task done: task_11 (1.13s)
-#> → Task done: task_3 (2.8s)
-#> → Task done: task_1 (2.92s)
-#> → Task done: task_9 (2.81s)
-#> → Task done: task_12 (1.04s)
-#> → Task done: task_10 (3.33s)
-#> → Task done: task_16 (0.97s)
-#> → Task done: task_8 (4.67s)
-#> → Task done: task_18 (2.27s)
-#> → Task done: task_15 (3.71s)
-#> → Task done: task_14 (4.06s)
-#> → Task done: task_13 (4.8s)
-#> → Task done: task_20 (1.74s)
-#> → Task done: task_19 (4.16s)
-#> → Task done: task_17 (4.79s)
-#> ✔ Queue complete: 20 tasks done (9.17s)
+queue <- Queue$new(workers = 4)
 ```
 
-The output is stored in a tibble:
+Tasks are then pushed to the queue by calling it’s `add()` method. A
+task is a function and a list of arguments. In the example below,
+`wait()` is a function that sleeps for a specified length of time and
+then returns its input. We’ll queue up 10 jobs that pause for different
+lengths of time:
+
+``` r
+wait <- function(x) {
+  Sys.sleep(x)
+  x
+}
+for(i in 1:10) {
+  queue$add(wait, list(x = i/10))
+}
+```
+
+We execute the tasks by calling the `run()` method:
+
+``` r
+out <- queue$run(message = "verbose")
+#> → Task done: task_1 (0.17s)
+#> → Task done: task_2 (0.3s)
+#> → Task done: task_3 (0.36s)
+#> → Task done: task_4 (0.48s)
+#> → Task done: task_5 (0.53s)
+#> → Task done: task_6 (0.64s)
+#> → Task done: task_7 (0.76s)
+#> → Task done: task_8 (0.86s)
+#> → Task done: task_9 (0.97s)
+#> → Task done: task_10 (1.07s)
+#> ✔ Queue complete: 10 tasks done (2.03s)
+```
+
+The output is stored in a tibble that contains a fairly detailed
+representation of everything that happened during the execution of the
+queue, including time stamps, any messages printed to the R console
+during the execution of each function, and so on:
 
 ``` r
 out
-#> # A tibble: 20 × 17
-#>    task_id worker_id state result     runtime   fun   args   created            
-#>    <chr>       <int> <chr> <list>     <drtn>    <lis> <list> <dttm>             
-#>  1 task_1     298331 done  <dttm [1]> 2.921892… <fn>  <list> 2022-12-21 12:09:17
-#>  2 task_2     298343 done  <dttm [1]> 0.154564… <fn>  <list> 2022-12-21 12:09:17
-#>  3 task_3     298355 done  <dttm [1]> 2.801716… <fn>  <list> 2022-12-21 12:09:17
-#>  4 task_4     298367 done  <dttm [1]> 1.026389… <fn>  <list> 2022-12-21 12:09:17
-#>  5 task_5     298379 done  <dttm [1]> 0.154445… <fn>  <list> 2022-12-21 12:09:17
-#>  6 task_6     298391 done  <dttm [1]> 1.258186… <fn>  <list> 2022-12-21 12:09:17
-#>  7 task_7     298343 done  <dttm [1]> 0.228369… <fn>  <list> 2022-12-21 12:09:17
-#>  8 task_8     298379 done  <dttm [1]> 4.667863… <fn>  <list> 2022-12-21 12:09:17
-#>  9 task_9     298343 done  <dttm [1]> 2.814760… <fn>  <list> 2022-12-21 12:09:17
-#> 10 task_10    298367 done  <dttm [1]> 3.327445… <fn>  <list> 2022-12-21 12:09:17
-#> 11 task_11    298391 done  <dttm [1]> 1.132713… <fn>  <list> 2022-12-21 12:09:17
-#> 12 task_12    298391 done  <dttm [1]> 1.041694… <fn>  <list> 2022-12-21 12:09:17
-#> 13 task_13    298355 done  <dttm [1]> 4.796654… <fn>  <list> 2022-12-21 12:09:17
-#> 14 task_14    298331 done  <dttm [1]> 4.058190… <fn>  <list> 2022-12-21 12:09:17
-#> 15 task_15    298343 done  <dttm [1]> 3.705963… <fn>  <list> 2022-12-21 12:09:17
-#> 16 task_16    298391 done  <dttm [1]> 0.972990… <fn>  <list> 2022-12-21 12:09:17
-#> 17 task_17    298367 done  <dttm [1]> 4.794048… <fn>  <list> 2022-12-21 12:09:17
-#> 18 task_18    298391 done  <dttm [1]> 2.266615… <fn>  <list> 2022-12-21 12:09:17
-#> 19 task_19    298379 done  <dttm [1]> 4.160249… <fn>  <list> 2022-12-21 12:09:17
-#> 20 task_20    298391 done  <dttm [1]> 1.740901… <fn>  <list> 2022-12-21 12:09:17
+#> # A tibble: 10 × 17
+#>    task_id worker_id state result runtime fun   args         created            
+#>    <chr>       <int> <chr> <list> <drtn>  <lis> <list>       <dttm>             
+#>  1 task_1     335633 done  <dbl>  0.1723… <fn>  <named list> 2022-12-21 16:43:57
+#>  2 task_2     335645 done  <dbl>  0.2955… <fn>  <named list> 2022-12-21 16:43:57
+#>  3 task_3     335657 done  <dbl>  0.3587… <fn>  <named list> 2022-12-21 16:43:57
+#>  4 task_4     335669 done  <dbl>  0.4754… <fn>  <named list> 2022-12-21 16:43:57
+#>  5 task_5     335633 done  <dbl>  0.5304… <fn>  <named list> 2022-12-21 16:43:57
+#>  6 task_6     335645 done  <dbl>  0.6419… <fn>  <named list> 2022-12-21 16:43:57
+#>  7 task_7     335657 done  <dbl>  0.7579… <fn>  <named list> 2022-12-21 16:43:57
+#>  8 task_8     335669 done  <dbl>  0.8647… <fn>  <named list> 2022-12-21 16:43:57
+#>  9 task_9     335633 done  <dbl>  0.9653… <fn>  <named list> 2022-12-21 16:43:57
+#> 10 task_10    335645 done  <dbl>  1.0666… <fn>  <named list> 2022-12-21 16:43:57
 #> # … with 9 more variables: queued <dttm>, assigned <dttm>, started <dttm>,
 #> #   finished <dttm>, code <int>, message <chr>, stdout <list>, stderr <list>,
 #> #   error <list>
+```
+
+The results of the function call are always stored in a list column
+called `result` because in general there’s no guarantee that an
+arbitrary collection of tasks will return results that are consistent
+with each other, but in this case they are, so we can check the results
+like this:
+
+``` r
+unlist(out$result)
+#>  [1] 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
 ```
