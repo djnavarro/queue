@@ -52,8 +52,14 @@ R6 class storing a worker"><!-- mathjax --><script src="https://cdnjs.cloudflare
 
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>A Worker is a container that holds a callr rsession object, and possesses
-fields and methods that allow it to work on Tasks</p>
+    <p>The <code>Worker</code> class interacts with an external R session, and possesses
+methods that allow it to work with <code>Task</code> objects. At its core, the
+class is a thin wrapper around a <code><a href="https://callr.r-lib.org/reference/r_session.html" class="external-link">callr::r_session</a></code> object, and in fact
+the session object itself can be obtained by calling the
+<code>get_worker_session()</code> method. In most cases this shouldn't be neccessary
+however, because <code>Worker</code> objects are typically created as part of a
+<code>WorkerPool</code> that is managed by a <code>Queue</code>, and those higher level structures
+use the methods exposed by the <code>Worker</code> object.</p>
     </div>
     <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
@@ -145,7 +151,7 @@ return a value but the current task time will be <code>NA</code>.</p><div class=
 
 </div><p></p><hr><a id="method-Worker-get_worker_session"></a><div class="section">
 <h3 id="method-get-worker-session-">Method <code>get_worker_session()</code><a class="anchor" aria-label="anchor" href="#method-get-worker-session-"></a></h3>
-<p>Retrieve the R session linked to the worker</p><div class="section">
+<p>Retrieve the R session associated with a <code>Worker</code></p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Worker</span><span class="op">$</span><span class="fu">get_worker_session</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -226,7 +232,15 @@ attempt was successful.</p>
 </div><p></p><hr><a id="method-Worker-shutdown_worker"></a><div class="section">
 <h3 id="method-shutdown-worker-">Method <code>shutdown_worker()</code><a class="anchor" aria-label="anchor" href="#method-shutdown-worker-"></a></h3>
 <p>Attempt to shut down the R session gracefully, after making
-an attempt to salvage any task that the worker believes is still running</p><div class="section">
+an attempt to salvage any task that the worker believes it has been
+assigned. The salvage operation depends on the state of the task. If the
+<code>Task</code> has been assigned but not started, the <code>Worker</code> will return it
+to a "waiting" state in the hope that the <code>Queue</code> will assign it to
+another worker later, and unassign it. If the <code>Task</code> is running, the
+<code>Worker</code> will attempt to read from the R session and then register the
+<code>Task</code> as "done" regardless of the outcome. (The reason for this is to
+ensure that tasks that crash or freeze the R session don't get returned
+to the <code>Queue</code>).</p><div class="section">
 <h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Worker</span><span class="op">$</span><span class="fu">shutdown_worker</span><span class="op">(</span>grace <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
