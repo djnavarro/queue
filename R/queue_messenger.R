@@ -63,14 +63,19 @@ QueueMessenger <- R6::R6Class(
     update_task_done = function(id) {
       task_id <- private$tasks$get_task(id)$get_task_id()
       runtime <- private$tasks$get_task(id)$get_task_runtime()
-      paste0("Task done: ", task_id, " (", round(as.numeric(runtime), 2), "s)")
+      paste("Done:", task_id, "in", private$display_time(runtime))
     },
 
     update_final = function(state, finished_in) {
-      cli::cli_alert_success(paste0(
-        "Queue complete: ", sum(state == "done"),
-        " tasks done", " (", round(as.numeric(finished_in), 2), "s)"
+      cli::cli_alert_success(paste(
+        "Queue complete:", sum(state == "done"),
+        "tasks done in", private$display_time(finished_in)
       ))
+    },
+
+    # elapsed is a difftime
+    display_time = function(elapsed) {
+      format(elapsed, digits = 3)
     }
   )
 )
