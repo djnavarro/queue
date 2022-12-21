@@ -219,37 +219,43 @@ yet to complete, a <code>NA</code> value is returned</p>
 </div><p></p><hr><a id="method-Task-register_task_created"></a><div class="section">
 <h3 id="method-register-task-created-">Method <code>register_task_created()</code><a class="anchor" aria-label="anchor" href="#method-register-task-created-"></a></h3>
 <p>Register the task creation by updating internal storage.
-This is intended to be called by <code>Worker</code> objects. Users should not
-need to call it.</p><div class="section">
+When this method is called, the state of the <code>Task</code> is set to "created"
+and a timestamp is recorded, registering the creation time for the task.
+This method is intended to be called by <code>Worker</code> objects. Users should
+not need to call it.</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">register_task_created</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
-<p>The function is called for its side-effects. Returns <code>NULL</code>
-invisibly.</p>
+<p>Returns <code>NULL</code> invisibly.</p>
 </div>
 
 </div><p></p><hr><a id="method-Task-register_task_waiting"></a><div class="section">
 <h3 id="method-register-task-waiting-">Method <code>register_task_waiting()</code><a class="anchor" aria-label="anchor" href="#method-register-task-waiting-"></a></h3>
 <p>Register the addition of the task to a queue by updating
-internal storage. This is intended to be called by <code>Worker</code> objects.
-Users should not need to call it.</p><div class="section">
+internal storage. When this method is called, the state of the <code>Task</code>
+is set to "waiting" and a timestamp is recorded, registering the time
+at which the task was added to a queue. This method is intended to be
+called by <code>Worker</code> objects. Users should not need to call it.</p><div class="section">
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">register_task_waiting</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
-<p>The function is called for its side-effects. Returns <code>NULL</code>
-invisibly.</p>
+<p>Returns <code>NULL</code> invisibly.</p>
 </div>
 
 </div><p></p><hr><a id="method-Task-register_task_assigned"></a><div class="section">
 <h3 id="method-register-task-assigned-">Method <code>register_task_assigned()</code><a class="anchor" aria-label="anchor" href="#method-register-task-assigned-"></a></h3>
 <p>Register the assignment of a task to a worker by updating
-internal storage. This is intended to be called by <code>Worker</code> objects.
+internal storage. When this method is called, the state of the <code>Task</code>
+is set to "assigned" and a timestamp is recorded, registering the time
+at which the task was assigned to a <code>Worker</code>. In addition, the
+<code>worker_id</code> of the worker object (which is also it's pid) is registered
+with the task. This method is intended to be called by <code>Worker</code> objects.
 Users should not need to call it.</p><div class="section">
 <h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">register_task_assigned</span><span class="op">(</span><span class="va">worker_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
@@ -265,15 +271,19 @@ Users should not need to call it.</p><div class="section">
 </div>
 <div class="section">
 <h4 id="returns-9">Returns<a class="anchor" aria-label="anchor" href="#returns-9"></a></h4>
-<p>The function is called for its side-effects. Returns <code>NULL</code>
-invisibly.</p>
+<p>Returns <code>NULL</code> invisibly.</p>
 </div>
 
 </div><p></p><hr><a id="method-Task-register_task_running"></a><div class="section">
 <h3 id="method-register-task-running-">Method <code>register_task_running()</code><a class="anchor" aria-label="anchor" href="#method-register-task-running-"></a></h3>
 <p>Register the commencement of a task to a worker by updating
-internal storage. This is intended to be called by <code>Worker</code> objects.
-Users should not need to call it.</p><div class="section">
+internal storage. When this method is called, the state of the <code>Task</code> is
+set to "running" and a timestamp is recorded, registering the time at
+which the <code>Worker</code> called the task function. In addition, the <code>worker_id</code>
+is recorded, albeit somewhat unnecessarily since this information is
+likely already stored when <code>register_task_assigned()</code> is called. This
+method is intended to be called by <code>Worker</code> objects. Users should not
+need to call it.</p><div class="section">
 <h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">register_task_running</span><span class="op">(</span><span class="va">worker_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -288,15 +298,18 @@ Users should not need to call it.</p><div class="section">
 </div>
 <div class="section">
 <h4 id="returns-10">Returns<a class="anchor" aria-label="anchor" href="#returns-10"></a></h4>
-<p>The function is called for its side-effects. Returns <code>NULL</code>
-invisibly.</p>
+<p>Returns <code>NULL</code> invisibly.</p>
 </div>
 
 </div><p></p><hr><a id="method-Task-register_task_done"></a><div class="section">
 <h3 id="method-register-task-done-">Method <code>register_task_done()</code><a class="anchor" aria-label="anchor" href="#method-register-task-done-"></a></h3>
 <p>Register the finishing of a task to a worker by updating
-internal storage. This is intended to be called by <code>Worker</code> objects.
-Users should not need to call it.</p><div class="section">
+internal storage. When this method is called, the state of the <code>Task</code> is
+set to "done" and a timestamp is recorded, registering the time at which
+the <code>Worker</code> returned results to the <code>Task</code>. The <code>results</code> object is
+read from the R session, and is stored locally by the <code>Task</code> at this time.
+This method is intended to be called by <code>Worker</code> objects. Users should
+not need to call it.</p><div class="section">
 <h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Task</span><span class="op">$</span><span class="fu">register_task_done</span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -311,8 +324,7 @@ Users should not need to call it.</p><div class="section">
 </div>
 <div class="section">
 <h4 id="returns-11">Returns<a class="anchor" aria-label="anchor" href="#returns-11"></a></h4>
-<p>The function is called for its side-effects. Returns <code>NULL</code>
-invisibly.</p>
+<p>Returns <code>NULL</code> invisibly.</p>
 </div>
 
 </div><p></p><hr><a id="method-Task-clone"></a><div class="section">
