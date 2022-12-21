@@ -56,7 +56,7 @@ R6 class storing a worker"><!-- mathjax --><script src="https://cdnjs.cloudflare
 methods that allow it to work with <code>Task</code> objects. At its core, the
 class is a thin wrapper around a <code><a href="https://callr.r-lib.org/reference/r_session.html" class="external-link">callr::r_session</a></code> object, and in fact
 the session object itself can be obtained by calling the
-<code>get_worker_session()</code> method. In most cases this shouldn't be neccessary
+<code>get_worker_session()</code> method. In most cases this shouldn't be necessary
 however, because <code>Worker</code> objects are typically created as part of a
 <code>WorkerPool</code> that is managed by a <code>Queue</code>, and those higher level structures
 use the methods exposed by the <code>Worker</code> object.</p>
@@ -99,7 +99,7 @@ use the methods exposed by the <code>Worker</code> object.</p>
 
 <div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
-<p>The worker identifier (also the pid for the R process)</p>
+<p>The worker identifier, which also the process id for the R session</p>
 </div>
 
 </div><p></p><hr><a id="method-Worker-get_worker_state"></a><div class="section">
@@ -111,10 +111,12 @@ use the methods exposed by the <code>Worker</code> object.</p>
 
 <div class="section">
 <h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
-<p>A string specifying the current state of the task. Possible
-values are "starting" (the R session is starting up), "idle" (the R
-session is ready to compute), "busy" (the R session is computing), and
-"finished" (the R session has terminated). Importantly, note that a task
+<p>A string specifying the current state of the R session. Possible
+values are:</p><ul><li><p><code>"starting"</code>: the R session is starting up.</p></li>
+<li><p><code>"idle"</code>: the R session is ready to compute.</p></li>
+<li><p><code>"busy"</code>: the R session is computing.</p></li>
+<li><p><code>"finished"</code>: the R session has terminated.</p></li>
+</ul><p>Importantly, note that a task
 function that is still running and a task function that is essentially
 finished and waiting to return will both return "busy". To distinguish
 between these two cases you need to use the <code>poll_process()</code> method of
