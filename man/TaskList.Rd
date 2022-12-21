@@ -12,7 +12,7 @@ holds a collection of \code{Task} objects, along with a collection of methods fo
 adding, removing, and getting \code{Task}s. It can also report on the status of the
 \code{Task}s contained within the list and retrieve results from those \code{Task}s. What
 it cannot do is manage interactions with \code{Worker}s or arrange for the \code{Task}s to
-be executed. That's the job of the \code{Queu}e.
+be executed. That's the job of the \code{Queue}.
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -112,29 +112,11 @@ A \code{Task} object
 \if{html}{\out{<a id="method-TaskList-get_state"></a>}}
 \if{latex}{\out{\hypertarget{method-TaskList-get_state}{}}}
 \subsection{Method \code{get_state()}}{
-Return the status of all tasks in the \code{TaskList}. If
-requested, this method will also display messages summarising the
-current state of the tasks, and any tasks that have completed since
-the last time a status was returned. This messaging system is called
-by \code{Queue} objects as they work on a tasks
+Return the status of all tasks in the \code{TaskList}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TaskList$get_state(message = "none", finished_in = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TaskList$get_state()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{message}}{Character specifying what type of message to display:
-"none" (the default), "minimal", or "verbose"}
-
-\item{\code{finished_in}}{A numeric value or a difftime specifying how long
-the tasks have taken to complete. This argument is only used when
-displaying messages, and it is used only to trigger the display of a
-tidy "all tasks completed" style message. It is purely cosmetic and
-does not affect the task status.}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
 A character vector specifying the completion status for all
 listed tasks

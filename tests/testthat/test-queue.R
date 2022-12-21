@@ -32,7 +32,7 @@ test_that("Queue can execute tasks", {
   Sys.sleep(.2)
 
   tasks <- queue$get_tasks()
-  state <- tasks$get_state(message = "none")
+  state <- tasks$get_state()
   expect_equal(state, c("done", "done", "done"))
 
   # check the auto-shutdown

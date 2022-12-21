@@ -147,17 +147,17 @@ Queue <- R6::R6Class(
     # run all tasks assigned to the queue as a batch job, and return
     # the tidied up results to the user
     run_batch = function(timelimit, message, interval, shutdown) {
-      time_started <- Sys.time()
+      messenger <- QueueMessenger$new(private$tasks, message)
+      started <- Sys.time()
       repeat{
         private$schedule(timelimit)
-        state <- private$tasks$get_state(message)
+        state <- private$tasks$get_state()
+        messenger$post(state)
         finished <- sum(state %in% c("waiting", "running")) == 0
         if(finished) break
         Sys.sleep(interval)
       }
-      time_finished <- Sys.time()
-      elapsed <- time_finished - time_started
-      private$tasks$get_state(message, finished_in = elapsed)
+      messenger$post(state, finished_in = Sys.time() - started)
       if(shutdown) private$workers$shutdown_pool()
       return(private$tasks$retrieve())
     }
