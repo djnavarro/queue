@@ -61,11 +61,10 @@ R6 class for a multi-worker task queue"><!-- mathjax --><script src="https://cdn
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
 <ul><li><p><a href="#method-Queue-new"><code>Queue$new()</code></a></p></li>
-<li><p><a href="#method-Queue-push"><code>Queue$push()</code></a></p></li>
+<li><p><a href="#method-Queue-add"><code>Queue$add()</code></a></p></li>
 <li><p><a href="#method-Queue-run"><code>Queue$run()</code></a></p></li>
-<li><p><a href="#method-Queue-retrieve"><code>Queue$retrieve()</code></a></p></li>
-<li><p><a href="#method-Queue-get_queue_workers"><code>Queue$get_queue_workers()</code></a></p></li>
-<li><p><a href="#method-Queue-get_queue_tasks"><code>Queue$get_queue_tasks()</code></a></p></li>
+<li><p><a href="#method-Queue-get_workers"><code>Queue$get_workers()</code></a></p></li>
+<li><p><a href="#method-Queue-get_tasks"><code>Queue$get_tasks()</code></a></p></li>
 <li><p><a href="#method-Queue-clone"><code>Queue$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-Queue-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -88,11 +87,11 @@ or a <code>WorkerPool</code> object to use when deploying the tasks.</p></dd>
 <p>A new <code>Queue</code> object</p>
 </div>
 
-</div><p></p><hr><a id="method-Queue-push"></a><div class="section">
-<h3 id="method-push-">Method <code>push()</code><a class="anchor" aria-label="anchor" href="#method-push-"></a></h3>
+</div><p></p><hr><a id="method-Queue-add"></a><div class="section">
+<h3 id="method-add-">Method <code>add()</code><a class="anchor" aria-label="anchor" href="#method-add-"></a></h3>
 <p>Adds a task to the queue</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Queue</span><span class="op">$</span><span class="fu">push</span><span class="op">(</span><span class="va">fun</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Queue</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">fun</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -160,53 +159,60 @@ R sessions closed) once the tasks are completed. Defaults to <code>TRUE</code>.<
 </div>
 <div class="section">
 <h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
-<p>Returns a tibble containing the results of all executed tasks and
-various other useful metadata.</p>
+<p>Returns a tibble containing the results of all tasks and
+various other useful metadata. Contains one row per task in the
+<code>Queue</code>, and the following columns:</p><ul><li><p><code>task_id</code> A character string specifying the task identifiers</p></li>
+<li><p><code>worker_id</code> An integer specifying the worker process ids (pid)</p></li>
+<li><p><code>state</code> A character string indicating the status of each task
+("created", "waiting", "assigned", "running", or "done")</p></li>
+<li><p><code>result</code> A list containing the function outputs, or NULL</p></li>
+<li><p><code>runtime</code> Completion time for the task (NA if the task is not done)</p></li>
+<li><p><code>fun</code> A list containing the functions</p></li>
+<li><p><code>args</code> A list containing the arguments passed to each function</p></li>
+<li><p><code>created</code> The time at which each task was created</p></li>
+<li><p><code>queued</code> The time at which each task was added to a <code>Queue</code></p></li>
+<li><p><code>assigned</code> The time at which each task was assigned to a <code>Worker</code></p></li>
+<li><p><code>started</code> The time at which a <code>Worker</code> called each function</p></li>
+<li><p><code>finished</code> The time at which a <code>Worker</code> output was returned for the task</p></li>
+<li><p><code>code</code> The status code returned by the callr R session (integer)</p></li>
+<li><p><code>message</code> The message returned by the callr R session (character)</p></li>
+<li><p><code>stdout</code> List column containing the contents of stdout during function execution</p></li>
+<li><p><code>stderr</code> List column containing the contents of stderr during function execution</p></li>
+<li><p><code>error</code>  List column containing <code>NULL</code> values</p></li>
+</ul><p>Note: at present there is one field from the callr rsession::read() method
+that isn't captured here, and that's the error field. I'll add that after
+I've finished wrapping my head around what that actually does. The <code>error</code>
+column, at present, is included only as a placeholder</p>
 </div>
 
-</div><p></p><hr><a id="method-Queue-retrieve"></a><div class="section">
-<h3 id="method-retrieve-">Method <code>retrieve()</code><a class="anchor" aria-label="anchor" href="#method-retrieve-"></a></h3>
-<p>Retrieve the full state of the tasks queue in tidy form. If
-all tasks have completed this output is the same as the output as the
-<code>run()</code> method.</p><div class="section">
+</div><p></p><hr><a id="method-Queue-get_workers"></a><div class="section">
+<h3 id="method-get-workers-">Method <code>get_workers()</code><a class="anchor" aria-label="anchor" href="#method-get-workers-"></a></h3>
+<p>Retrieve the workers</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Queue</span><span class="op">$</span><span class="fu">retrieve</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Queue</span><span class="op">$</span><span class="fu">get_workers</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
-<p>Returns a tibble containing the results of all executed tasks and
-various other useful metadata. Incomplete tasks may have missing data.</p>
+<p>A <code>WorkerPool</code> object</p>
 </div>
 
-</div><p></p><hr><a id="method-Queue-get_queue_workers"></a><div class="section">
-<h3 id="method-get-queue-workers-">Method <code>get_queue_workers()</code><a class="anchor" aria-label="anchor" href="#method-get-queue-workers-"></a></h3>
-<p>Retrieve the workers</p><div class="section">
+</div><p></p><hr><a id="method-Queue-get_tasks"></a><div class="section">
+<h3 id="method-get-tasks-">Method <code>get_tasks()</code><a class="anchor" aria-label="anchor" href="#method-get-tasks-"></a></h3>
+<p>Retrieve the tasks</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Queue</span><span class="op">$</span><span class="fu">get_queue_workers</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Queue</span><span class="op">$</span><span class="fu">get_tasks</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
-<p>A <code>WorkerPool</code> object</p>
-</div>
-
-</div><p></p><hr><a id="method-Queue-get_queue_tasks"></a><div class="section">
-<h3 id="method-get-queue-tasks-">Method <code>get_queue_tasks()</code><a class="anchor" aria-label="anchor" href="#method-get-queue-tasks-"></a></h3>
-<p>Retrieve the tasks</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Queue</span><span class="op">$</span><span class="fu">get_queue_tasks</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
-<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
 <p>A <code>TaskList</code> object</p>
 </div>
 
 </div><p></p><hr><a id="method-Queue-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Queue</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
