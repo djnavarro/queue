@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   queue: queue.html
-last_built: 2022-12-21T06:46Z
+last_built: 2022-12-22T00:51Z
 urls:
   reference: http://queue.djnavarro.net/reference
   article: http://queue.djnavarro.net/articles

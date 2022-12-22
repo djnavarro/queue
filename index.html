@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">queue</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,33 +92,33 @@
 <p>We execute the tasks by calling the <code>run()</code> method:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="va">queue</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span>message <span class="op">=</span> <span class="st">"verbose"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; → Task done: task_1 (0.17s)</span></span>
-<span><span class="co">#&gt; → Task done: task_2 (0.3s)</span></span>
-<span><span class="co">#&gt; → Task done: task_3 (0.36s)</span></span>
-<span><span class="co">#&gt; → Task done: task_4 (0.48s)</span></span>
-<span><span class="co">#&gt; → Task done: task_5 (0.53s)</span></span>
-<span><span class="co">#&gt; → Task done: task_6 (0.64s)</span></span>
-<span><span class="co">#&gt; → Task done: task_7 (0.76s)</span></span>
-<span><span class="co">#&gt; → Task done: task_8 (0.86s)</span></span>
-<span><span class="co">#&gt; → Task done: task_9 (0.97s)</span></span>
-<span><span class="co">#&gt; → Task done: task_10 (1.07s)</span></span>
-<span><span class="co">#&gt; ✔ Queue complete: 10 tasks done (2.03s)</span></span></code></pre></div>
+<span><span class="co">#&gt; → Done: task_1 finished in 0.156 secs</span></span>
+<span><span class="co">#&gt; → Done: task_2 finished in 0.219 secs</span></span>
+<span><span class="co">#&gt; → Done: task_3 finished in 0.338 secs</span></span>
+<span><span class="co">#&gt; → Done: task_4 finished in 0.454 secs</span></span>
+<span><span class="co">#&gt; → Done: task_5 finished in 0.576 secs</span></span>
+<span><span class="co">#&gt; → Done: task_6 finished in 0.63 secs</span></span>
+<span><span class="co">#&gt; → Done: task_7 finished in 0.738 secs</span></span>
+<span><span class="co">#&gt; → Done: task_8 finished in 0.841 secs</span></span>
+<span><span class="co">#&gt; → Done: task_9 finished in 0.94 secs</span></span>
+<span><span class="co">#&gt; → Done: task_10 finished in 1.04 secs</span></span>
+<span><span class="co">#&gt; ✔ Queue complete: 10 tasks done in 1.91 secs</span></span></code></pre></div>
 <p>The output is stored in a tibble that contains a fairly detailed representation of everything that happened during the execution of the queue, including time stamps, any messages printed to the R console during the execution of each function, and so on:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">out</span></span>
 <span><span class="co">#&gt; # A tibble: 10 × 17</span></span>
 <span><span class="co">#&gt;    task_id worker_id state result runtime fun   args         created            </span></span>
 <span><span class="co">#&gt;    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt; &lt;list&gt; &lt;drtn&gt;  &lt;lis&gt; &lt;list&gt;       &lt;dttm&gt;             </span></span>
-<span><span class="co">#&gt;  1 task_1     335633 done  &lt;dbl&gt;  0.1723… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
-<span><span class="co">#&gt;  2 task_2     335645 done  &lt;dbl&gt;  0.2955… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
-<span><span class="co">#&gt;  3 task_3     335657 done  &lt;dbl&gt;  0.3587… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
-<span><span class="co">#&gt;  4 task_4     335669 done  &lt;dbl&gt;  0.4754… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
-<span><span class="co">#&gt;  5 task_5     335633 done  &lt;dbl&gt;  0.5304… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
-<span><span class="co">#&gt;  6 task_6     335645 done  &lt;dbl&gt;  0.6419… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
-<span><span class="co">#&gt;  7 task_7     335657 done  &lt;dbl&gt;  0.7579… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
-<span><span class="co">#&gt;  8 task_8     335669 done  &lt;dbl&gt;  0.8647… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
-<span><span class="co">#&gt;  9 task_9     335633 done  &lt;dbl&gt;  0.9653… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
-<span><span class="co">#&gt; 10 task_10    335645 done  &lt;dbl&gt;  1.0666… &lt;fn&gt;  &lt;named list&gt; 2022-12-21 16:43:57</span></span>
+<span><span class="co">#&gt;  1 task_1     477826 done  &lt;dbl&gt;  0.1560… &lt;fn&gt;  &lt;named list&gt; 2022-12-22 11:38:06</span></span>
+<span><span class="co">#&gt;  2 task_2     477838 done  &lt;dbl&gt;  0.2185… &lt;fn&gt;  &lt;named list&gt; 2022-12-22 11:38:06</span></span>
+<span><span class="co">#&gt;  3 task_3     477850 done  &lt;dbl&gt;  0.3377… &lt;fn&gt;  &lt;named list&gt; 2022-12-22 11:38:06</span></span>
+<span><span class="co">#&gt;  4 task_4     477862 done  &lt;dbl&gt;  0.4538… &lt;fn&gt;  &lt;named list&gt; 2022-12-22 11:38:06</span></span>
+<span><span class="co">#&gt;  5 task_5     477826 done  &lt;dbl&gt;  0.5761… &lt;fn&gt;  &lt;named list&gt; 2022-12-22 11:38:06</span></span>
+<span><span class="co">#&gt;  6 task_6     477838 done  &lt;dbl&gt;  0.6299… &lt;fn&gt;  &lt;named list&gt; 2022-12-22 11:38:06</span></span>
+<span><span class="co">#&gt;  7 task_7     477850 done  &lt;dbl&gt;  0.7383… &lt;fn&gt;  &lt;named list&gt; 2022-12-22 11:38:06</span></span>
+<span><span class="co">#&gt;  8 task_8     477862 done  &lt;dbl&gt;  0.8409… &lt;fn&gt;  &lt;named list&gt; 2022-12-22 11:38:06</span></span>
+<span><span class="co">#&gt;  9 task_9     477826 done  &lt;dbl&gt;  0.9396… &lt;fn&gt;  &lt;named list&gt; 2022-12-22 11:38:06</span></span>
+<span><span class="co">#&gt; 10 task_10    477838 done  &lt;dbl&gt;  1.0424… &lt;fn&gt;  &lt;named list&gt; 2022-12-22 11:38:06</span></span>
 <span><span class="co">#&gt; # … with 9 more variables: queued &lt;dttm&gt;, assigned &lt;dttm&gt;, started &lt;dttm&gt;,</span></span>
 <span><span class="co">#&gt; #   finished &lt;dttm&gt;, code &lt;int&gt;, message &lt;chr&gt;, stdout &lt;list&gt;, stderr &lt;list&gt;,</span></span>
 <span><span class="co">#&gt; #   error &lt;list&gt;</span></span></code></pre></div>
