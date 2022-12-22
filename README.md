@@ -59,17 +59,17 @@ We execute the tasks by calling the `run()` method:
 
 ``` r
 out <- queue$run(message = "verbose")
-#> → Task done: task_1 (0.17s)
-#> → Task done: task_2 (0.3s)
-#> → Task done: task_3 (0.36s)
-#> → Task done: task_4 (0.48s)
-#> → Task done: task_5 (0.53s)
-#> → Task done: task_6 (0.64s)
-#> → Task done: task_7 (0.76s)
-#> → Task done: task_8 (0.86s)
-#> → Task done: task_9 (0.97s)
-#> → Task done: task_10 (1.07s)
-#> ✔ Queue complete: 10 tasks done (2.03s)
+#> → Done: task_1 finished in 0.156 secs
+#> → Done: task_2 finished in 0.219 secs
+#> → Done: task_3 finished in 0.338 secs
+#> → Done: task_4 finished in 0.454 secs
+#> → Done: task_5 finished in 0.576 secs
+#> → Done: task_6 finished in 0.63 secs
+#> → Done: task_7 finished in 0.738 secs
+#> → Done: task_8 finished in 0.841 secs
+#> → Done: task_9 finished in 0.94 secs
+#> → Done: task_10 finished in 1.04 secs
+#> ✔ Queue complete: 10 tasks done in 1.91 secs
 ```
 
 The output is stored in a tibble that contains a fairly detailed
@@ -82,16 +82,16 @@ out
 #> # A tibble: 10 × 17
 #>    task_id worker_id state result runtime fun   args         created            
 #>    <chr>       <int> <chr> <list> <drtn>  <lis> <list>       <dttm>             
-#>  1 task_1     335633 done  <dbl>  0.1723… <fn>  <named list> 2022-12-21 16:43:57
-#>  2 task_2     335645 done  <dbl>  0.2955… <fn>  <named list> 2022-12-21 16:43:57
-#>  3 task_3     335657 done  <dbl>  0.3587… <fn>  <named list> 2022-12-21 16:43:57
-#>  4 task_4     335669 done  <dbl>  0.4754… <fn>  <named list> 2022-12-21 16:43:57
-#>  5 task_5     335633 done  <dbl>  0.5304… <fn>  <named list> 2022-12-21 16:43:57
-#>  6 task_6     335645 done  <dbl>  0.6419… <fn>  <named list> 2022-12-21 16:43:57
-#>  7 task_7     335657 done  <dbl>  0.7579… <fn>  <named list> 2022-12-21 16:43:57
-#>  8 task_8     335669 done  <dbl>  0.8647… <fn>  <named list> 2022-12-21 16:43:57
-#>  9 task_9     335633 done  <dbl>  0.9653… <fn>  <named list> 2022-12-21 16:43:57
-#> 10 task_10    335645 done  <dbl>  1.0666… <fn>  <named list> 2022-12-21 16:43:57
+#>  1 task_1     477826 done  <dbl>  0.1560… <fn>  <named list> 2022-12-22 11:38:06
+#>  2 task_2     477838 done  <dbl>  0.2185… <fn>  <named list> 2022-12-22 11:38:06
+#>  3 task_3     477850 done  <dbl>  0.3377… <fn>  <named list> 2022-12-22 11:38:06
+#>  4 task_4     477862 done  <dbl>  0.4538… <fn>  <named list> 2022-12-22 11:38:06
+#>  5 task_5     477826 done  <dbl>  0.5761… <fn>  <named list> 2022-12-22 11:38:06
+#>  6 task_6     477838 done  <dbl>  0.6299… <fn>  <named list> 2022-12-22 11:38:06
+#>  7 task_7     477850 done  <dbl>  0.7383… <fn>  <named list> 2022-12-22 11:38:06
+#>  8 task_8     477862 done  <dbl>  0.8409… <fn>  <named list> 2022-12-22 11:38:06
+#>  9 task_9     477826 done  <dbl>  0.9396… <fn>  <named list> 2022-12-22 11:38:06
+#> 10 task_10    477838 done  <dbl>  1.0424… <fn>  <named list> 2022-12-22 11:38:06
 #> # … with 9 more variables: queued <dttm>, assigned <dttm>, started <dttm>,
 #> #   finished <dttm>, code <int>, message <chr>, stdout <list>, stderr <list>,
 #> #   error <list>

@@ -32,7 +32,7 @@ test_that("Queue can execute tasks", {
   Sys.sleep(.2)
 
   tasks <- queue$get_tasks()
-  state <- tasks$get_state(message = "none")
+  state <- tasks$get_state()
   expect_equal(state, c("done", "done", "done"))
 
   # check the auto-shutdown
@@ -86,8 +86,9 @@ test_that("Verbose output produces spinner and task reports", {
   msg <- capture.output(out <- queue$run(message = "verbose"), type = "message")
 
   # printed something to message corresponding to expected message events
+  # (this is not an ideal way to test this)
   expect_true(length(grep("{spin}", msg, fixed = TRUE)) > 0) # spinner
-  expect_true(length(grep("Task done:", msg, fixed = TRUE)) > 0) # cli_alert prefix
+  expect_true(length(grep("Done:", msg, fixed = TRUE)) > 0) # cli_alert prefix
   expect_true(length(grep("Queue complete", msg, fixed = TRUE)) > 0) # final
 
 })
