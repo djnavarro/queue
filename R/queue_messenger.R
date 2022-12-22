@@ -6,28 +6,35 @@ QueueMessenger <- R6::R6Class(
     initialize = function(tasks, message_type) {
       private$tasks <- tasks
       private$message_type <- message_type
-      private$spinner <- private$make_spinner()
+      private$start_spinner()
     },
 
     post = function(state, finished_in = NULL) {
+
+      # silent queues never post
       if(private$message_type == "none") return(invisible(state))
+
+      # verbose queues interrupt the spinner to report task completions
       if(private$message_type == "verbose") {
         done <- which(state == "done")
-        just_done <- setdiff(done, private$done_last_update)
-        if(length(just_done) > 0) {
-          private$done_last_update <- done
-          private$spinner$finish()
-          for(id in just_done) cli::cli_alert(private$update_task_done(id))
-          private$spinner <- private$make_spinner()
+        completions <- setdiff(done, private$done)
+        if(length(completions) > 0) {
+          private$done <- done
+          private$stop_spinner()
+          private$update_tasks(completions)
+          private$start_spinner()
         }
       }
-      if(private$message_type %in% c("verbose", "minimal")) {
-        private$spinner$spin(private$update_overall(state))
-      }
+
+      # verbose & minimal queues display a spinner
+      private$update_spinner(state)
+
+      # verbose & minimal queues report completion summaries
       if(!is.null(finished_in)) {
-        private$spinner$finish()
+        private$stop_spinner()
         private$update_final(state, finished_in)
       }
+
       invisible(state)
     }
   ),
@@ -38,39 +45,55 @@ QueueMessenger <- R6::R6Class(
     spinner = NULL,
     message_type = NULL,
 
-    which_tasks_done = function() {
-      which(vapply(
-        private$tasks,
-        function(t) t$get_task_state() == "done",
-        logical(1)
-      ))
+    done = numeric(0),
+
+    start_spinner = function() {
+      private$spinner <- cli::make_spinner(
+        which = "dots2",
+        template = "{spin} Queue"
+      )
     },
 
-    done_last_update = numeric(0),
-
-    make_spinner = function() {
-      cli::make_spinner(which = "dots2", template = "{spin} Queue")
+    update_spinner = function(state) {
+      msg <- paste(
+        "{spin} Queue progress:",
+        sum(state == "waiting"),
+        "waiting,",
+        sum(state == "running"),
+        "running,",
+        sum(state == "done"),
+        "done"
+      )
+      private$spinner$spin(msg)
     },
 
-    update_overall = function(state) {
-      n_waiting <- sum(state == "waiting")
-      n_running <- sum(state == "running")
-      n_done <- sum(state == "done")
-      paste("{spin} Queue progress:", n_waiting, "waiting", "\u1405",
-            n_running, "running", "\u1405", n_done, "done")
+    stop_spinner = function() {
+      private$spinner$finish()
     },
 
-    update_task_done = function(id) {
-      task_id <- private$tasks$get_task(id)$get_task_id()
-      runtime <- private$tasks$get_task(id)$get_task_runtime()
-      paste("Done:", task_id, "in", private$display_time(runtime))
+    update_tasks = function(ids) {
+      for(id in ids) {
+        task_id <- private$tasks$get_task(id)$get_task_id()
+        runtime <- private$tasks$get_task(id)$get_task_runtime()
+        msg <- paste(
+          "Done:",
+          task_id,
+          "finished in",
+          private$display_time(runtime)
+        )
+        cli::cli_alert(msg)
+      }
+
     },
 
     update_final = function(state, finished_in) {
-      cli::cli_alert_success(paste(
-        "Queue complete:", sum(state == "done"),
-        "tasks done in", private$display_time(finished_in)
-      ))
+      msg <- paste(
+        "Queue complete:",
+        sum(state == "done"),
+        "tasks done in",
+        private$display_time(finished_in)
+      )
+      cli::cli_alert_success(msg)
     },
 
     # elapsed is a difftime
