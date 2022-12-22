@@ -1,6 +1,6 @@
 Package: queue
 Title: Simple Multi-Threaded Task Queuing
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: 
     person("Danielle", "Navarro", , "djnavarro@protonmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7648-6578"))

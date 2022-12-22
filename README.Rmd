@@ -68,3 +68,4 @@ The results of the function call are always stored in a list column called `resu
 ```{r example-results}
 unlist(out$result)
 ```
+
