@@ -38,18 +38,6 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/djnavarro/queue/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://code.djnavarro.net" aria-label="Code projects"><span class="fa fa-code"></span></a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Links"><span class="fa fa-link"></span></button>
-  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-">
-<li><a class="external-link dropdown-item" href="https://djnavarro.net">Homepage</a></li>
-    <li><a class="external-link dropdown-item" href="https://blog.djnavarro.net">Data science blog</a></li>
-    <li><a class="external-link dropdown-item" href="https://art.djnavarro.net">Computational art</a></li>
-    <li><a class="external-link dropdown-item" href="https://code.djnavarro.net">Coding projects</a></li>
-    <li><a class="external-link dropdown-item" href="https://papers.djnavarro.net">Academic papers</a></li>
-    <li><a class="external-link dropdown-item" href="https://djnavarro.net/sites/">More...</a></li>
-  </ul>
-</li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
@@ -133,17 +121,17 @@ pause for different lengths of time:</p>
 <p>We execute the tasks by calling the <code>run()</code> method:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="va">queue</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span>message <span class="op">=</span> <span class="st">"verbose"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; → Done: task_1 finished in 0.163 secs</span></span>
-<span><span class="co">#&gt; → Done: task_2 finished in 0.288 secs</span></span>
-<span><span class="co">#&gt; → Done: task_3 finished in 0.347 secs</span></span>
-<span><span class="co">#&gt; → Done: task_4 finished in 0.452 secs</span></span>
-<span><span class="co">#&gt; → Done: task_5 finished in 0.558 secs</span></span>
-<span><span class="co">#&gt; → Done: task_6 finished in 0.645 secs</span></span>
-<span><span class="co">#&gt; → Done: task_7 finished in 0.745 secs</span></span>
-<span><span class="co">#&gt; → Done: task_8 finished in 0.85 secs</span></span>
-<span><span class="co">#&gt; → Done: task_9 finished in 0.95 secs</span></span>
+<span><span class="co">#&gt; → Done: task_1 finished in 0.161 secs</span></span>
+<span><span class="co">#&gt; → Done: task_2 finished in 0.28 secs</span></span>
+<span><span class="co">#&gt; → Done: task_3 finished in 0.392 secs</span></span>
+<span><span class="co">#&gt; → Done: task_4 finished in 0.444 secs</span></span>
+<span><span class="co">#&gt; → Done: task_5 finished in 0.55 secs</span></span>
+<span><span class="co">#&gt; → Done: task_6 finished in 0.642 secs</span></span>
+<span><span class="co">#&gt; → Done: task_7 finished in 0.74 secs</span></span>
+<span><span class="co">#&gt; → Done: task_8 finished in 0.844 secs</span></span>
+<span><span class="co">#&gt; → Done: task_9 finished in 0.946 secs</span></span>
 <span><span class="co">#&gt; → Done: task_10 finished in 1.05 secs</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Queue complete: 10 tasks done in 2 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Queue complete: 10 tasks done in 1.98 secs</span></span></code></pre></div>
 <p>The output is stored in a tibble that contains a fairly detailed
 representation of everything that happened during the execution of the
 queue, including time stamps, any messages printed to the R console
@@ -153,16 +141,16 @@ during the execution of each function, and so on:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 17</span></span></span>
 <span><span class="co">#&gt;    task_id worker_id state result runtime fun   args         created            </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span> <span style="color: #949494; font-style: italic;">&lt;drtn&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> task_1       <span style="text-decoration: underline;">7</span>497 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.1634… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:53</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> task_2       <span style="text-decoration: underline;">7</span>515 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.2877… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:53</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> task_3       <span style="text-decoration: underline;">7</span>533 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.3474… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:53</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> task_4       <span style="text-decoration: underline;">7</span>551 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.4520… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:53</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> task_5       <span style="text-decoration: underline;">7</span>497 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.5582… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:53</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> task_6       <span style="text-decoration: underline;">7</span>515 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.6453… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:53</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> task_7       <span style="text-decoration: underline;">7</span>533 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.7446… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:53</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> task_8       <span style="text-decoration: underline;">7</span>551 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.8498… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:53</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> task_9       <span style="text-decoration: underline;">7</span>497 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.9504… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:53</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> task_10      <span style="text-decoration: underline;">7</span>515 done  <span style="color: #949494;">&lt;dbl&gt;</span>  1.0513… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:53</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> task_1       <span style="text-decoration: underline;">7</span>557 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.1609… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:02</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> task_2       <span style="text-decoration: underline;">7</span>575 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.2804… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:02</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> task_3       <span style="text-decoration: underline;">7</span>593 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.3920… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:02</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> task_4       <span style="text-decoration: underline;">7</span>611 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.4443… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:02</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> task_5       <span style="text-decoration: underline;">7</span>557 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.5502… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:02</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> task_6       <span style="text-decoration: underline;">7</span>575 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.6419… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:02</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> task_7       <span style="text-decoration: underline;">7</span>593 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.7399… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:02</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> task_8       <span style="text-decoration: underline;">7</span>611 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.8442… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:02</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> task_9       <span style="text-decoration: underline;">7</span>557 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.9455… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:02</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> task_10      <span style="text-decoration: underline;">7</span>575 done  <span style="color: #949494;">&lt;dbl&gt;</span>  1.0460… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:02</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9 more variables: queued &lt;dttm&gt;, assigned &lt;dttm&gt;, started &lt;dttm&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   finished &lt;dttm&gt;, code &lt;int&gt;, message &lt;chr&gt;, stdout &lt;list&gt;, stderr &lt;list&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   error &lt;list&gt;</span></span></span></code></pre></div>
@@ -227,15 +215,15 @@ tasks are started:</p>
 task”. Let’s take a look at what happens when the queue runs:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">queue</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Queue complete: 5 tasks done in 0.364 secs</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Queue complete: 5 tasks done in 0.36 secs</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 17</span></span></span>
 <span><span class="co">#&gt;   task_id worker_id state result runtime  fun   args         created            </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span> <span style="color: #949494; font-style: italic;">&lt;drtn&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> task_1       <span style="text-decoration: underline;">7</span>578 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.16684… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:56</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> task_2       <span style="text-decoration: underline;">7</span>596 done  <span style="color: #949494;">&lt;NULL&gt;</span> 0.11196… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;list [0]&gt;</span>   2026-03-21 <span style="color: #949494;">10:27:56</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> task_3       <span style="text-decoration: underline;">7</span>596 done  <span style="color: #949494;">&lt;NULL&gt;</span> 0.08076… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;list [0]&gt;</span>   2026-03-21 <span style="color: #949494;">10:27:56</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> task_4       <span style="text-decoration: underline;">7</span>578 done  <span style="color: #949494;">&lt;NULL&gt;</span> 0.11052… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;list [0]&gt;</span>   2026-03-21 <span style="color: #949494;">10:27:56</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> task_5       <span style="text-decoration: underline;">7</span>596 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.16120… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">10:27:56</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> task_1       <span style="text-decoration: underline;">7</span>638 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.16572… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> task_2       <span style="text-decoration: underline;">7</span>656 done  <span style="color: #949494;">&lt;NULL&gt;</span> 0.11087… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;list [0]&gt;</span>   2026-03-21 <span style="color: #949494;">21:02:05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> task_3       <span style="text-decoration: underline;">7</span>656 done  <span style="color: #949494;">&lt;NULL&gt;</span> 0.07915… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;list [0]&gt;</span>   2026-03-21 <span style="color: #949494;">21:02:05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> task_4       <span style="text-decoration: underline;">7</span>638 done  <span style="color: #949494;">&lt;NULL&gt;</span> 0.10973… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;list [0]&gt;</span>   2026-03-21 <span style="color: #949494;">21:02:05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> task_5       <span style="text-decoration: underline;">7</span>656 done  <span style="color: #949494;">&lt;dbl&gt;</span>  0.16009… <span style="color: #949494;">&lt;fn&gt;</span>  <span style="color: #949494;">&lt;named list&gt;</span> 2026-03-21 <span style="color: #949494;">21:02:05</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9 more variables: queued &lt;dttm&gt;, assigned &lt;dttm&gt;, started &lt;dttm&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   finished &lt;dttm&gt;, code &lt;int&gt;, message &lt;chr&gt;, stdout &lt;list&gt;, stderr &lt;list&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   error &lt;list&gt;</span></span></span></code></pre></div>
