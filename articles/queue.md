@@ -40,6 +40,7 @@ tasks will be executed. You can set the number of workers during
 initialisation:
 
 ``` r
+
 library(queue)
 queue <- Queue$new(workers = 4)
 ```
@@ -51,6 +52,7 @@ then returns its input. We’ll queue up 10 jobs that pause for different
 lengths of time:
 
 ``` r
+
 wait <- function(x) {
   Sys.sleep(x)
   x
@@ -63,18 +65,19 @@ for(i in 1:10) {
 We execute the tasks by calling the `run()` method:
 
 ``` r
+
 out <- queue$run(message = "verbose")
-#> → Done: task_1 finished in 0.161 secs
-#> → Done: task_2 finished in 0.28 secs
-#> → Done: task_3 finished in 0.392 secs
-#> → Done: task_4 finished in 0.444 secs
-#> → Done: task_5 finished in 0.55 secs
-#> → Done: task_6 finished in 0.642 secs
-#> → Done: task_7 finished in 0.74 secs
-#> → Done: task_8 finished in 0.844 secs
-#> → Done: task_9 finished in 0.946 secs
+#> → Done: task_1 finished in 0.166 secs
+#> → Done: task_2 finished in 0.294 secs
+#> → Done: task_3 finished in 0.354 secs
+#> → Done: task_4 finished in 0.458 secs
+#> → Done: task_5 finished in 0.563 secs
+#> → Done: task_6 finished in 0.647 secs
+#> → Done: task_7 finished in 0.749 secs
+#> → Done: task_8 finished in 0.852 secs
+#> → Done: task_9 finished in 0.952 secs
 #> → Done: task_10 finished in 1.05 secs
-#> ✔ Queue complete: 10 tasks done in 1.98 secs
+#> ✔ Queue complete: 10 tasks done in 2.01 secs
 ```
 
 The output is stored in a tibble that contains a fairly detailed
@@ -83,20 +86,21 @@ queue, including time stamps, any messages printed to the R console
 during the execution of each function, and so on:
 
 ``` r
+
 out
 #> # A tibble: 10 × 17
 #>    task_id worker_id state result runtime fun   args         created            
 #>    <chr>       <int> <chr> <list> <drtn>  <lis> <list>       <dttm>             
-#>  1 task_1       7557 done  <dbl>  0.1609… <fn>  <named list> 2026-03-21 21:02:02
-#>  2 task_2       7575 done  <dbl>  0.2804… <fn>  <named list> 2026-03-21 21:02:02
-#>  3 task_3       7593 done  <dbl>  0.3920… <fn>  <named list> 2026-03-21 21:02:02
-#>  4 task_4       7611 done  <dbl>  0.4443… <fn>  <named list> 2026-03-21 21:02:02
-#>  5 task_5       7557 done  <dbl>  0.5502… <fn>  <named list> 2026-03-21 21:02:02
-#>  6 task_6       7575 done  <dbl>  0.6419… <fn>  <named list> 2026-03-21 21:02:02
-#>  7 task_7       7593 done  <dbl>  0.7399… <fn>  <named list> 2026-03-21 21:02:02
-#>  8 task_8       7611 done  <dbl>  0.8442… <fn>  <named list> 2026-03-21 21:02:02
-#>  9 task_9       7557 done  <dbl>  0.9455… <fn>  <named list> 2026-03-21 21:02:02
-#> 10 task_10      7575 done  <dbl>  1.0460… <fn>  <named list> 2026-03-21 21:02:02
+#>  1 task_1       7057 done  <dbl>  0.1660… <fn>  <named list> 2026-07-19 03:13:39
+#>  2 task_2       7075 done  <dbl>  0.2935… <fn>  <named list> 2026-07-19 03:13:39
+#>  3 task_3       7093 done  <dbl>  0.3536… <fn>  <named list> 2026-07-19 03:13:39
+#>  4 task_4       7111 done  <dbl>  0.4581… <fn>  <named list> 2026-07-19 03:13:39
+#>  5 task_5       7057 done  <dbl>  0.5631… <fn>  <named list> 2026-07-19 03:13:39
+#>  6 task_6       7075 done  <dbl>  0.6469… <fn>  <named list> 2026-07-19 03:13:39
+#>  7 task_7       7093 done  <dbl>  0.7493… <fn>  <named list> 2026-07-19 03:13:39
+#>  8 task_8       7111 done  <dbl>  0.8516… <fn>  <named list> 2026-07-19 03:13:39
+#>  9 task_9       7057 done  <dbl>  0.9521… <fn>  <named list> 2026-07-19 03:13:39
+#> 10 task_10      7075 done  <dbl>  1.0496… <fn>  <named list> 2026-07-19 03:13:39
 #> # ℹ 9 more variables: queued <dttm>, assigned <dttm>, started <dttm>,
 #> #   finished <dttm>, code <int>, message <chr>, stdout <list>, stderr <list>,
 #> #   error <list>
@@ -109,6 +113,7 @@ with each other, but in this case they are, so we can check the results
 like this:
 
 ``` r
+
 unlist(out$result)
 #>  [1] 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
 ```
@@ -147,6 +152,7 @@ function that is guaranteed to crash the R session as soon as it is
 called:
 
 ``` r
+
 crash <- function(x) .Call("abort")
 ```
 
@@ -155,6 +161,7 @@ three tasks that are guaranteed to crash the worker the moment the tasks
 are started:
 
 ``` r
+
 queue <- Queue$new(workers = 2)
 queue$add(wait, list(x = .1))
 queue$add(crash)
@@ -168,16 +175,17 @@ The queue allocates task in a first-in first-out order, so the three
 task”. Let’s take a look at what happens when the queue runs:
 
 ``` r
+
 queue$run()
-#> ✔ Queue complete: 5 tasks done in 0.36 secs
+#> ✔ Queue complete: 5 tasks done in 0.357 secs
 #> # A tibble: 5 × 17
 #>   task_id worker_id state result runtime  fun   args         created            
 #>   <chr>       <int> <chr> <list> <drtn>   <lis> <list>       <dttm>             
-#> 1 task_1       7638 done  <dbl>  0.16572… <fn>  <named list> 2026-03-21 21:02:05
-#> 2 task_2       7656 done  <NULL> 0.11087… <fn>  <list [0]>   2026-03-21 21:02:05
-#> 3 task_3       7656 done  <NULL> 0.07915… <fn>  <list [0]>   2026-03-21 21:02:05
-#> 4 task_4       7638 done  <NULL> 0.10973… <fn>  <list [0]>   2026-03-21 21:02:05
-#> 5 task_5       7656 done  <dbl>  0.16009… <fn>  <named list> 2026-03-21 21:02:05
+#> 1 task_1       7137 done  <dbl>  0.17212… <fn>  <named list> 2026-07-19 03:13:42
+#> 2 task_2       7155 done  <NULL> 0.11638… <fn>  <list [0]>   2026-07-19 03:13:42
+#> 3 task_3       7155 done  <NULL> 0.06869… <fn>  <list [0]>   2026-07-19 03:13:42
+#> 4 task_4       7137 done  <NULL> 0.11007… <fn>  <list [0]>   2026-07-19 03:13:42
+#> 5 task_5       7155 done  <dbl>  0.16038… <fn>  <named list> 2026-07-19 03:13:42
 #> # ℹ 9 more variables: queued <dttm>, assigned <dttm>, started <dttm>,
 #> #   finished <dttm>, code <int>, message <chr>, stdout <list>, stderr <list>,
 #> #   error <list>

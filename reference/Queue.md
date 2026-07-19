@@ -229,16 +229,16 @@ queue <- Queue$new(workers = 4L)
 wait <- function(x) Sys.sleep(runif(1))
 for(i in 1:6) queue$add(wait)
 queue$run()
-#> ✔ Queue complete: 6 tasks done in 1.24 secs
+#> ✔ Queue complete: 6 tasks done in 1.16 secs
 #> # A tibble: 6 × 17
 #>   task_id worker_id state result runtime        fun   args   created            
 #>   <chr>       <int> <chr> <list> <drtn>         <lis> <list> <dttm>             
-#> 1 task_1       7355 done  <NULL> 0.4780772 secs <fn>  <list> 2026-03-21 21:01:57
-#> 2 task_2       7376 done  <NULL> 0.5830512 secs <fn>  <list> 2026-03-21 21:01:57
-#> 3 task_3       7391 done  <NULL> 0.6651108 secs <fn>  <list> 2026-03-21 21:01:57
-#> 4 task_4       7409 done  <NULL> 0.6640930 secs <fn>  <list> 2026-03-21 21:01:57
-#> 5 task_5       7355 done  <NULL> 0.6530542 secs <fn>  <list> 2026-03-21 21:01:57
-#> 6 task_6       7376 done  <NULL> 0.5665414 secs <fn>  <list> 2026-03-21 21:01:57
+#> 1 task_1       6855 done  <NULL> 0.7395797 secs <fn>  <list> 2026-07-19 03:13:33
+#> 2 task_2       6873 done  <NULL> 0.8428593 secs <fn>  <list> 2026-07-19 03:13:33
+#> 3 task_3       6891 done  <NULL> 0.1561053 secs <fn>  <list> 2026-07-19 03:13:33
+#> 4 task_4       6909 done  <NULL> 0.5730157 secs <fn>  <list> 2026-07-19 03:13:33
+#> 5 task_5       6891 done  <NULL> 0.5238111 secs <fn>  <list> 2026-07-19 03:13:33
+#> 6 task_6       6909 done  <NULL> 0.5614467 secs <fn>  <list> 2026-07-19 03:13:33
 #> # ℹ 9 more variables: queued <dttm>, assigned <dttm>, started <dttm>,
 #> #   finished <dttm>, code <int>, message <chr>, stdout <list>, stderr <list>,
 #> #   error <list>

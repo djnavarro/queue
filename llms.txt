@@ -12,6 +12,7 @@ work.
 You can install the development version of queue like so:
 
 ``` r
+
 remotes::install_github("djnavarro/queue")
 ```
 
@@ -25,6 +26,7 @@ tasks will be executed. You can set the number of workers during
 initialisation:
 
 ``` r
+
 library(queue)
 queue <- Queue$new(workers = 4)
 ```
@@ -36,6 +38,7 @@ then returns its input. We’ll queue up 10 jobs that pause for different
 lengths of time:
 
 ``` r
+
 wait <- function(x) {
   Sys.sleep(x)
   x
@@ -48,6 +51,7 @@ for(i in 1:10) {
 We execute the tasks by calling the `run()` method:
 
 ``` r
+
 out <- queue$run(message = "verbose")
 #> → Done: task_1 finished in 0.156 secs
 #> → Done: task_2 finished in 0.219 secs
@@ -68,6 +72,7 @@ queue, including time stamps, any messages printed to the R console
 during the execution of each function, and so on:
 
 ``` r
+
 out
 #> # A tibble: 10 × 17
 #>    task_id worker_id state result runtime fun   args         created            
@@ -94,6 +99,7 @@ with each other, but in this case they are, so we can check the results
 like this:
 
 ``` r
+
 unlist(out$result)
 #>  [1] 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
 ```
